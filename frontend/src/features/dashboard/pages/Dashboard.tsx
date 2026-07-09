@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Brain,
@@ -28,7 +28,20 @@ const widgets = [
 
 export default function Dashboard() {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [farms, setFarms] = useState<Farm[]>([]);
+
+  const [farms, setFarms] = useState<Farm[]>(() => {
+    const savedFarms = localStorage.getItem("agrios-farms");
+
+    if (!savedFarms) {
+      return [];
+    }
+
+    return JSON.parse(savedFarms) as Farm[];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("agrios-farms", JSON.stringify(farms));
+  }, [farms]);
 
   return (
     <section className="space-y-6">
@@ -100,9 +113,11 @@ export default function Dashboard() {
                     >
                       <h4 className="font-bold text-slate-900">{farm.name}</h4>
                       <p className="text-sm text-slate-500">{farm.owner}</p>
+
                       <p className="mt-2 text-sm text-slate-700">
                         {farm.area} ha • {farm.crop}
                       </p>
+
                       <p className="mt-1 text-xs text-slate-500">
                         GPS: {farm.latitude}, {farm.longitude}
                       </p>
@@ -135,6 +150,7 @@ export default function Dashboard() {
 
                 <p className="mt-4 text-sm text-slate-500">{item.title}</p>
                 <h3 className="mt-1 text-3xl font-bold">{item.value}</h3>
+
                 <p className="mt-2 text-sm text-slate-500">
                   {item.description}
                 </p>
