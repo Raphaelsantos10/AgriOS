@@ -1,11 +1,30 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MapPin, Plus, Sprout } from "lucide-react";
 
 import type { Farm } from "../types/farm";
+import { getFarms } from "../services/farmsService";
 
 export default function FarmsPage() {
-  const savedFarms = localStorage.getItem("agrios-farms");
-  const farms = savedFarms ? (JSON.parse(savedFarms) as Farm[]) : [];
+  const [farms, setFarms] = useState<Farm[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadFarms() {
+      try {
+        setLoading(true);
+        const data = await getFarms();
+        setFarms(data);
+      } catch (error) {
+        console.error("ERRO AO CARREGAR EXPLORAÇÕES:", error);
+        alert("Erro ao carregar explorações do Supabase.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadFarms();
+  }, []);
 
   return (
     <section className="space-y-6">
@@ -29,7 +48,11 @@ export default function FarmsPage() {
         </Link>
       </div>
 
-      {farms.length === 0 ? (
+      {loading ? (
+        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+          <p className="text-slate-500">A carregar explorações...</p>
+        </div>
+      ) : farms.length === 0 ? (
         <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
           <h2 className="text-xl font-bold text-slate-900">
             Nenhuma exploração cadastrada

@@ -16,32 +16,94 @@ import {
 import MapView from "../../maps/components/MapView";
 import FarmDrawer from "../../farms/components/FarmDrawer";
 import type { Farm } from "../../farms/types/farm";
+import { createFarm, getFarms } from "../../farms/services/farmsService";
 
 const widgets = [
-  { title: "Clima", value: "22°C", description: "Chuva prevista às 16:00", icon: CloudSun, color: "bg-blue-100 text-blue-700" },
-  { title: "IA Agrícola", value: "3 alertas", description: "Talhão Norte requer atenção", icon: Brain, color: "bg-violet-100 text-violet-700" },
-  { title: "Máquinas", value: "4 ativas", description: "1 manutenção pendente", icon: Tractor, color: "bg-orange-100 text-orange-700" },
-  { title: "Saúde das Culturas", value: "87%", description: "Índice médio", icon: Sprout, color: "bg-green-100 text-green-700" },
-  { title: "ROI", value: "€2.430", description: "Estimativa mensal", icon: TrendingUp, color: "bg-emerald-100 text-emerald-700" },
-  { title: "Tarefas", value: "8", description: "3 críticas hoje", icon: ClipboardList, color: "bg-slate-200 text-slate-700" },
+  {
+    title: "Clima",
+    value: "22°C",
+    description: "Chuva prevista às 16:00",
+    icon: CloudSun,
+    color: "bg-blue-100 text-blue-700",
+  },
+  {
+    title: "IA Agrícola",
+    value: "3 alertas",
+    description: "Talhão Norte requer atenção",
+    icon: Brain,
+    color: "bg-violet-100 text-violet-700",
+  },
+  {
+    title: "Máquinas",
+    value: "4 ativas",
+    description: "1 manutenção pendente",
+    icon: Tractor,
+    color: "bg-orange-100 text-orange-700",
+  },
+  {
+    title: "Saúde das Culturas",
+    value: "87%",
+    description: "Índice médio",
+    icon: Sprout,
+    color: "bg-green-100 text-green-700",
+  },
+  {
+    title: "ROI",
+    value: "€2.430",
+    description: "Estimativa mensal",
+    icon: TrendingUp,
+    color: "bg-emerald-100 text-emerald-700",
+  },
+  {
+    title: "Tarefas",
+    value: "8",
+    description: "3 críticas hoje",
+    icon: ClipboardList,
+    color: "bg-slate-200 text-slate-700",
+  },
 ];
 
 export default function Dashboard() {
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const [farms, setFarms] = useState<Farm[]>(() => {
-    const savedFarms = localStorage.getItem("agrios-farms");
-
-    if (!savedFarms) {
-      return [];
-    }
-
-    return JSON.parse(savedFarms) as Farm[];
-  });
+  const [farms, setFarms] = useState<Farm[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem("agrios-farms", JSON.stringify(farms));
-  }, [farms]);
+    let isMounted = true;
+
+    async function fetchFarms() {
+      try {
+        const data = await getFarms();
+
+        if (isMounted) {
+          setFarms(data);
+        }
+      } catch (error) {
+        console.error("SUPABASE ERROR:", error);
+        alert(JSON.stringify(error, null, 2));
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchFarms();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  async function handleCreateFarm(farm: Farm) {
+    try {
+      const createdFarm = await createFarm(farm);
+      setFarms((current) => [createdFarm, ...current]);
+    } catch (error) {
+      console.error("SUPABASE INSERT ERROR:", error);
+      alert(JSON.stringify(error, null, 2));
+    }
+  }
 
   return (
     <section className="space-y-6">
@@ -99,12 +161,18 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {farms.length > 0 && (
-              <div className="border-t border-slate-200 p-6">
-                <h3 className="text-lg font-bold text-slate-900">
-                  Explorações cadastradas
-                </h3>
+            <div className="border-t border-slate-200 p-6">
+              <h3 className="text-lg font-bold text-slate-900">
+                Explorações cadastradas
+              </h3>
 
+              {loading ? (
+                <p className="mt-3 text-slate-500">A carregar explorações...</p>
+              ) : farms.length === 0 ? (
+                <p className="mt-3 text-slate-500">
+                  Nenhuma exploração cadastrada ainda.
+                </p>
+              ) : (
                 <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                   {farms.map((farm) => (
                     <div
@@ -112,6 +180,7 @@ export default function Dashboard() {
                       className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
                     >
                       <h4 className="font-bold text-slate-900">{farm.name}</h4>
+
                       <p className="text-sm text-slate-500">{farm.owner}</p>
 
                       <p className="mt-2 text-sm text-slate-700">
@@ -124,8 +193,8 @@ export default function Dashboard() {
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
 
@@ -163,7 +232,7 @@ export default function Dashboard() {
       <FarmDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        onCreateFarm={(farm) => setFarms((current) => [...current, farm])}
+        onCreateFarm={handleCreateFarm}
       />
     </section>
   );

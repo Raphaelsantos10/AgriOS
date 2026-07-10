@@ -5,7 +5,7 @@ import type { Farm } from "../types/farm";
 interface Props {
   open: boolean;
   onClose: () => void;
-  onCreateFarm: (farm: Farm) => void;
+  onCreateFarm: (farm: Farm) => Promise<void> | void;
 }
 
 export default function FarmDrawer({ open, onClose, onCreateFarm }: Props) {
@@ -15,32 +15,42 @@ export default function FarmDrawer({ open, onClose, onCreateFarm }: Props) {
   const [crop, setCrop] = useState("Milho");
   const [latitude, setLatitude] = useState("41.1496");
   const [longitude, setLongitude] = useState("-8.6109");
+  const [loading, setLoading] = useState(false);
 
   if (!open) return null;
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!name || !owner || !area || !latitude || !longitude) {
       alert("Preencha todos os campos.");
       return;
     }
 
-    onCreateFarm({
-      id: crypto.randomUUID(),
-      name,
-      owner,
-      area: Number(area),
-      crop,
-      latitude: Number(latitude),
-      longitude: Number(longitude),
-    });
+    try {
+      setLoading(true);
 
-    setName("");
-    setOwner("");
-    setArea("");
-    setCrop("Milho");
-    setLatitude("41.1496");
-    setLongitude("-8.6109");
-    onClose();
+      await onCreateFarm({
+        id: crypto.randomUUID(),
+        name,
+        owner,
+        area: Number(area),
+        crop,
+        latitude: Number(latitude),
+        longitude: Number(longitude),
+      });
+
+      setName("");
+      setOwner("");
+      setArea("");
+      setCrop("Milho");
+      setLatitude("41.1496");
+      setLongitude("-8.6109");
+      onClose();
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao guardar exploração no Supabase.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -56,10 +66,7 @@ export default function FarmDrawer({ open, onClose, onCreateFarm }: Props) {
             </p>
           </div>
 
-          <button
-            onClick={onClose}
-            className="rounded-xl p-2 hover:bg-slate-100"
-          >
+          <button onClick={onClose} className="rounded-xl p-2 hover:bg-slate-100">
             <X />
           </button>
         </div>
@@ -143,9 +150,10 @@ export default function FarmDrawer({ open, onClose, onCreateFarm }: Props) {
 
           <button
             onClick={handleSubmit}
-            className="w-full rounded-xl bg-green-700 py-4 font-semibold text-white hover:bg-green-800"
+            disabled={loading}
+            className="w-full rounded-xl bg-green-700 py-4 font-semibold text-white hover:bg-green-800 disabled:opacity-60"
           >
-            Guardar Exploração
+            {loading ? "A guardar..." : "Guardar Exploração"}
           </button>
         </div>
       </div>
