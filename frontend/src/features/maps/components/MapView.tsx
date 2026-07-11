@@ -3,7 +3,10 @@ import maplibregl from "maplibre-gl";
 import * as turf from "@turf/turf";
 
 import type { Farm } from "../../farms/types/farm";
-import type { Field, PolygonGeometry } from "../../fields/types/field";
+import type {
+  Field,
+  PolygonGeometry,
+} from "../../fields/types/field";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
@@ -11,6 +14,9 @@ interface Props {
   farms: Farm[];
   fields?: Field[];
   drawingMode?: boolean;
+  selectedFieldId?: string | null;
+  focusFieldId?: string | null;
+  onFieldSelect?: (field: Field | null) => void;
   onPolygonCreated?: (
     geometry: PolygonGeometry,
     area: number
@@ -19,50 +25,67 @@ interface Props {
 
 type MapMode = "map" | "satellite";
 
+const EMPTY_COLLECTION: GeoJSON.FeatureCollection = {
+  type: "FeatureCollection",
+  features: [],
+};
+
 export default function MapView({
   farms,
   fields = [],
   drawingMode = false,
+  selectedFieldId = null,
+  focusFieldId = null,
+  onFieldSelect,
   onPolygonCreated,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
-  /*
-   * Mantém o valor atual de drawingMode disponível
-   * dentro dos eventos do MapLibre sem recriar o mapa.
-   */
   const drawingModeRef = useRef(drawingMode);
+  const fieldsRef = useRef<Field[]>(fields);
+  const onFieldSelectRef = useRef(onFieldSelect);
+  const onPolygonCreatedRef = useRef(onPolygonCreated);
+
+  const terrainAvailableRef = useRef(true);
 
   const [points, setPoints] = useState<[number, number][]>([]);
   const [mapMode, setMapMode] = useState<MapMode>("map");
   const [mapLoaded, setMapLoaded] = useState(false);
   const [view3D, setView3D] = useState(false);
 
-  /*
-   * Atualiza apenas a referência.
-   * Não provoca renderizações adicionais.
-   */
   useEffect(() => {
     drawingModeRef.current = drawingMode;
   }, [drawingMode]);
 
-  /*
-   * CRIAR MAPA
-   */
+  useEffect(() => {
+    fieldsRef.current = fields;
+  }, [fields]);
+
+  useEffect(() => {
+    onFieldSelectRef.current = onFieldSelect;
+  }, [onFieldSelect]);
+
+  useEffect(() => {
+    onPolygonCreatedRef.current = onPolygonCreated;
+  }, [onPolygonCreated]);
+
   useEffect(() => {
     if (!containerRef.current || mapRef.current) {
       return;
     }
 
+    const container = containerRef.current;
+
     const map = new maplibregl.Map({
-      container: containerRef.current,
+      container,
       center: [-7.9, 39.5],
       zoom: 6,
       pitch: 0,
       bearing: 0,
-      maxPitch: 85,
+      maxPitch: 75,
 
       canvasContextAttributes: {
         antialias: true,
@@ -137,15 +160,43 @@ export default function MapView({
       "bottom-left"
     );
 
+    map.on("error", (event) => {
+      const message =
+        event.error instanceof Error
+          ? event.error.message
+          : String(event.error ?? "");
+
+      const normalizedMessage = message.toLowerCase();
+
+      if (
+        normalizedMessage.includes("terrain") ||
+        normalizedMessage.includes("raster-dem") ||
+        normalizedMessage.includes("terrarium")
+      ) {
+        terrainAvailableRef.current = false;
+
+        console.error(
+          "Não foi possível carregar o relevo 3D:",
+          event.error
+        );
+      }
+    });
+
     map.on("load", () => {
-      /*
-       * RELEVO 3D
-       */
       if (!map.getSource("terrain-dem")) {
         map.addSource("terrain-dem", {
           type: "raster-dem",
-          url: "https://tiles.mapterhorn.com/tilejson.json",
-          tileSize: 512,
+
+          tiles: [
+            "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+          ],
+
+          tileSize: 256,
+          maxzoom: 15,
+          encoding: "terrarium",
+
+          attribution:
+            "Terrain Tiles: Tilezen, OpenStreetMap and contributors",
         });
       }
 
@@ -160,85 +211,18 @@ export default function MapView({
           },
 
           paint: {
-            "hillshade-shadow-color": "#473b24",
+            "hillshade-shadow-color": "#3f3a2e",
             "hillshade-highlight-color": "#ffffff",
-            "hillshade-exaggeration": 0.35,
+            "hillshade-accent-color": "#64748b",
+            "hillshade-exaggeration": 0.25,
           },
         });
       }
 
-      /*
-       * EDIFÍCIOS 3D
-       */
-      if (!map.getSource("openfreemap-buildings")) {
-        map.addSource("openfreemap-buildings", {
-          type: "vector",
-          url: "https://tiles.openfreemap.org/planet",
-        });
-      }
-
-      if (!map.getLayer("3d-buildings")) {
-        map.addLayer({
-          id: "3d-buildings",
-          type: "fill-extrusion",
-          source: "openfreemap-buildings",
-          "source-layer": "building",
-          minzoom: 15,
-
-          layout: {
-            visibility: "none",
-          },
-
-          filter: ["!=", ["get", "hide_3d"], true],
-
-          paint: {
-            "fill-extrusion-color": [
-              "interpolate",
-              ["linear"],
-              ["coalesce", ["get", "render_height"], 0],
-              0,
-              "#d6d3d1",
-              50,
-              "#a8a29e",
-              150,
-              "#78716c",
-            ],
-
-            "fill-extrusion-height": [
-              "interpolate",
-              ["linear"],
-              ["zoom"],
-              15,
-              0,
-              16,
-              [
-                "coalesce",
-                ["get", "render_height"],
-                6,
-              ],
-            ],
-
-            "fill-extrusion-base": [
-              "coalesce",
-              ["get", "render_min_height"],
-              0,
-            ],
-
-            "fill-extrusion-opacity": 0.82,
-          },
-        });
-      }
-
-      /*
-       * TALHÕES GUARDADOS
-       */
       if (!map.getSource("fields")) {
         map.addSource("fields", {
           type: "geojson",
-          data: {
-            type: "FeatureCollection",
-            features: [],
-          },
+          data: EMPTY_COLLECTION,
         });
       }
 
@@ -257,7 +241,7 @@ export default function MapView({
               "#16a34a",
 
               "attention",
-              "#facc15",
+              "#f59e0b",
 
               "critical",
               "#ef4444",
@@ -265,7 +249,7 @@ export default function MapView({
               "#16a34a",
             ],
 
-            "fill-opacity": 0.36,
+            "fill-opacity": 0.32,
           },
         });
       }
@@ -285,7 +269,7 @@ export default function MapView({
               "#15803d",
 
               "attention",
-              "#ca8a04",
+              "#b45309",
 
               "critical",
               "#b91c1c",
@@ -294,6 +278,95 @@ export default function MapView({
             ],
 
             "line-width": 3,
+          },
+        });
+      }
+
+      if (!map.getLayer("selected-field-glow")) {
+        map.addLayer({
+          id: "selected-field-glow",
+          type: "line",
+          source: "fields",
+
+          filter: [
+            "==",
+            ["get", "id"],
+            "",
+          ],
+
+          paint: {
+            "line-color": "#ffffff",
+            "line-width": 10,
+            "line-opacity": 0.9,
+            "line-blur": 3,
+          },
+        });
+      }
+
+      if (!map.getLayer("selected-field-fill")) {
+        map.addLayer({
+          id: "selected-field-fill",
+          type: "fill",
+          source: "fields",
+
+          filter: [
+            "==",
+            ["get", "id"],
+            "",
+          ],
+
+          paint: {
+            "fill-color": [
+              "match",
+              ["get", "status"],
+
+              "healthy",
+              "#22c55e",
+
+              "attention",
+              "#fbbf24",
+
+              "critical",
+              "#f87171",
+
+              "#22c55e",
+            ],
+
+            "fill-opacity": 0.58,
+          },
+        });
+      }
+
+      if (!map.getLayer("selected-field-line")) {
+        map.addLayer({
+          id: "selected-field-line",
+          type: "line",
+          source: "fields",
+
+          filter: [
+            "==",
+            ["get", "id"],
+            "",
+          ],
+
+          paint: {
+            "line-color": [
+              "match",
+              ["get", "status"],
+
+              "healthy",
+              "#065f46",
+
+              "attention",
+              "#92400e",
+
+              "critical",
+              "#991b1b",
+
+              "#065f46",
+            ],
+
+            "line-width": 5,
           },
         });
       }
@@ -341,16 +414,10 @@ export default function MapView({
         });
       }
 
-      /*
-       * TALHÃO EM DESENHO
-       */
       if (!map.getSource("draft-field")) {
         map.addSource("draft-field", {
           type: "geojson",
-          data: {
-            type: "FeatureCollection",
-            features: [],
-          },
+          data: EMPTY_COLLECTION,
         });
       }
 
@@ -381,79 +448,41 @@ export default function MapView({
         });
       }
 
-      /*
-       * POPUP DO TALHÃO
-       */
       map.on("click", "fields-fill", (event) => {
         if (drawingModeRef.current) {
           return;
         }
 
         const feature = event.features?.[0];
+        const fieldId = feature?.properties?.id;
 
-        if (!feature) {
+        if (!fieldId) {
           return;
         }
 
-        const name =
-          feature.properties?.name ?? "Talhão";
+        const selectedField =
+          fieldsRef.current.find(
+            (field) => field.id === String(fieldId)
+          ) ?? null;
 
-        const crop =
-          feature.properties?.crop ?? "Sem cultura";
+        onFieldSelectRef.current?.(selectedField);
+      });
 
-        const area = Number(
-          feature.properties?.area ?? 0
+      map.on("click", (event) => {
+        if (drawingModeRef.current) {
+          return;
+        }
+
+        const visibleFields = map.queryRenderedFeatures(
+          event.point,
+          {
+            layers: ["fields-fill"],
+          }
         );
 
-        const status =
-          feature.properties?.status ?? "healthy";
-
-        const statusLabel =
-          status === "healthy"
-            ? "Saudável"
-            : status === "attention"
-              ? "Atenção"
-              : "Crítico";
-
-        new maplibregl.Popup({
-          closeButton: true,
-          offset: 12,
-        })
-          .setLngLat(event.lngLat)
-          .setHTML(`
-            <div style="
-              min-width: 220px;
-              font-family: Arial, Helvetica, sans-serif;
-              padding: 4px;
-            ">
-              <h3 style="
-                margin: 0 0 10px;
-                color: #166534;
-                font-size: 18px;
-                font-weight: 700;
-              ">
-                🌱 ${name}
-              </h3>
-
-              <div style="
-                border-top: 1px solid #e2e8f0;
-                padding-top: 10px;
-              ">
-                <p style="margin: 6px 0;">
-                  🌾 <strong>Cultura:</strong> ${crop}
-                </p>
-
-                <p style="margin: 6px 0;">
-                  📐 <strong>Área:</strong> ${area.toFixed(2)} ha
-                </p>
-
-                <p style="margin: 6px 0;">
-                  📊 <strong>Estado:</strong> ${statusLabel}
-                </p>
-              </div>
-            </div>
-          `)
-          .addTo(map);
+        if (visibleFields.length === 0) {
+          onFieldSelectRef.current?.(null);
+        }
       });
 
       map.on("mouseenter", "fields-fill", () => {
@@ -463,17 +492,31 @@ export default function MapView({
       });
 
       map.on("mouseleave", "fields-fill", () => {
-        map.getCanvas().style.cursor = drawingModeRef.current
-          ? "crosshair"
-          : "";
+        map.getCanvas().style.cursor =
+          drawingModeRef.current ? "crosshair" : "";
       });
 
       setMapLoaded(true);
+
+      window.setTimeout(() => {
+        map.resize();
+      }, 100);
     });
 
     mapRef.current = map;
 
+    const resizeObserver = new ResizeObserver(() => {
+      map.resize();
+    });
+
+    resizeObserver.observe(container);
+
+    resizeObserverRef.current = resizeObserver;
+
     return () => {
+      resizeObserver.disconnect();
+      resizeObserverRef.current = null;
+
       markersRef.current.forEach((marker) => {
         marker.remove();
       });
@@ -485,9 +528,6 @@ export default function MapView({
     };
   }, []);
 
-  /*
-   * ALTERAR CURSOR NO MODO DESENHO
-   */
   useEffect(() => {
     const map = mapRef.current;
 
@@ -500,9 +540,6 @@ export default function MapView({
       : "";
   }, [drawingMode, mapLoaded]);
 
-  /*
-   * ALTERAR MAPA / SATÉLITE
-   */
   useEffect(() => {
     const map = mapRef.current;
 
@@ -522,16 +559,11 @@ export default function MapView({
       map.setLayoutProperty(
         "satellite-layer",
         "visibility",
-        mapMode === "satellite"
-          ? "visible"
-          : "none"
+        mapMode === "satellite" ? "visible" : "none"
       );
     }
   }, [mapMode, mapLoaded]);
 
-  /*
-   * ATIVAR / DESATIVAR 3D
-   */
   useEffect(() => {
     const map = mapRef.current;
 
@@ -539,33 +571,47 @@ export default function MapView({
       return;
     }
 
-    if (view3D) {
-      map.setTerrain({
-        source: "terrain-dem",
-        exaggeration: 1.25,
-      });
+    if (view3D && terrainAvailableRef.current) {
+      try {
+        map.setTerrain({
+          source: "terrain-dem",
+          exaggeration: 1.1,
+        });
 
-      if (map.getLayer("terrain-hillshade")) {
-        map.setLayoutProperty(
-          "terrain-hillshade",
-          "visibility",
-          "visible"
-        );
+        if (map.getLayer("terrain-hillshade")) {
+          map.setLayoutProperty(
+            "terrain-hillshade",
+            "visibility",
+            "visible"
+          );
+        }
+
+        map.easeTo({
+          pitch: 55,
+          bearing: -18,
+          duration: 1000,
+        });
+      } catch (error) {
+        terrainAvailableRef.current = false;
+
+        console.error("MAP 3D ERROR:", error);
+
+        map.setTerrain(null);
+
+        if (map.getLayer("terrain-hillshade")) {
+          map.setLayoutProperty(
+            "terrain-hillshade",
+            "visibility",
+            "none"
+          );
+        }
+
+        map.easeTo({
+          pitch: 0,
+          bearing: 0,
+          duration: 800,
+        });
       }
-
-      if (map.getLayer("3d-buildings")) {
-        map.setLayoutProperty(
-          "3d-buildings",
-          "visibility",
-          "visible"
-        );
-      }
-
-      map.easeTo({
-        pitch: 62,
-        bearing: -22,
-        duration: 1200,
-      });
     } else {
       map.setTerrain(null);
 
@@ -577,25 +623,18 @@ export default function MapView({
         );
       }
 
-      if (map.getLayer("3d-buildings")) {
-        map.setLayoutProperty(
-          "3d-buildings",
-          "visibility",
-          "none"
-        );
-      }
-
       map.easeTo({
         pitch: 0,
         bearing: 0,
-        duration: 900,
+        duration: 800,
       });
     }
+
+    window.setTimeout(() => {
+      map.resize();
+    }, 1100);
   }, [view3D, mapLoaded]);
 
-  /*
-   * MARCADORES DAS EXPLORAÇÕES
-   */
   useEffect(() => {
     const map = mapRef.current;
 
@@ -671,8 +710,8 @@ export default function MapView({
         map.flyTo({
           center: [longitude, latitude],
           zoom: 16,
-          pitch: view3D ? 62 : 0,
-          bearing: view3D ? -22 : 0,
+          pitch: view3D ? 55 : 0,
+          bearing: view3D ? -18 : 0,
           speed: 1.2,
           curve: 1.3,
         });
@@ -680,9 +719,6 @@ export default function MapView({
     }
   }, [farms, mapLoaded, view3D]);
 
-  /*
-   * MOSTRAR TALHÕES GUARDADOS
-   */
   useEffect(() => {
     const map = mapRef.current;
 
@@ -694,27 +730,28 @@ export default function MapView({
       return;
     }
 
-    const features: GeoJSON.Feature<
-      GeoJSON.Polygon
-    >[] = fields
-      .filter(
-        (
-          field
-        ): field is Field & {
-          geometry: PolygonGeometry;
-        } => Boolean(field.geometry)
-      )
-      .map((field) => ({
-        type: "Feature",
-        properties: {
-          id: field.id,
-          name: field.name,
-          crop: field.crop,
-          area: Number(field.area),
-          status: field.status,
-        },
-        geometry: field.geometry,
-      }));
+    const features: GeoJSON.Feature<GeoJSON.Polygon>[] =
+      fields
+        .filter(
+          (
+            field
+          ): field is Field & {
+            geometry: PolygonGeometry;
+          } => Boolean(field.geometry)
+        )
+        .map((field) => ({
+          type: "Feature",
+
+          properties: {
+            id: field.id,
+            name: field.name,
+            crop: field.crop,
+            area: Number(field.area).toFixed(2),
+            status: field.status,
+          },
+
+          geometry: field.geometry,
+        }));
 
     const source = map.getSource(
       "fields"
@@ -726,9 +763,109 @@ export default function MapView({
     });
   }, [fields, mapLoaded]);
 
-  /*
-   * MOSTRAR POLÍGONO EM DESENHO
-   */
+  useEffect(() => {
+    const map = mapRef.current;
+
+    if (!map || !mapLoaded) {
+      return;
+    }
+
+    const filter: maplibregl.FilterSpecification = [
+      "==",
+      ["get", "id"],
+      selectedFieldId ?? "",
+    ];
+
+    const selectedLayers = [
+      "selected-field-glow",
+      "selected-field-fill",
+      "selected-field-line",
+    ];
+
+    selectedLayers.forEach((layerId) => {
+      if (map.getLayer(layerId)) {
+        map.setFilter(layerId, filter);
+      }
+    });
+
+    if (map.getLayer("fields-fill")) {
+      map.setPaintProperty(
+        "fields-fill",
+        "fill-opacity",
+        selectedFieldId ? 0.16 : 0.32
+      );
+    }
+  }, [selectedFieldId, mapLoaded]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+
+    if (
+      !map ||
+      !mapLoaded ||
+      !focusFieldId
+    ) {
+      return;
+    }
+
+    const field = fields.find(
+      (item) => item.id === focusFieldId
+    );
+
+    if (!field?.geometry) {
+      return;
+    }
+
+    try {
+      const polygon = turf.polygon(
+        field.geometry.coordinates
+      );
+
+      const [west, south, east, north] =
+        turf.bbox(polygon);
+
+      if (
+        !Number.isFinite(west) ||
+        !Number.isFinite(south) ||
+        !Number.isFinite(east) ||
+        !Number.isFinite(north)
+      ) {
+        return;
+      }
+
+      map.fitBounds(
+        [
+          [west, south],
+          [east, north],
+        ],
+        {
+          padding: {
+            top: 90,
+            bottom: 90,
+            left: 90,
+            right: 440,
+          },
+
+          maxZoom: 18,
+          duration: 1100,
+          pitch: view3D ? 45 : 0,
+          bearing: view3D ? -15 : 0,
+        }
+      );
+
+      window.setTimeout(() => {
+        map.resize();
+      }, 1150);
+    } catch (error) {
+      console.error("FIELD CENTER ERROR:", error);
+    }
+  }, [
+    focusFieldId,
+    fields,
+    mapLoaded,
+    view3D,
+  ]);
+
   useEffect(() => {
     const map = mapRef.current;
 
@@ -746,6 +883,7 @@ export default function MapView({
       features.push({
         type: "Feature",
         properties: {},
+
         geometry: {
           type: "LineString",
           coordinates: points,
@@ -757,6 +895,7 @@ export default function MapView({
       features.push({
         type: "Feature",
         properties: {},
+
         geometry: {
           type: "Polygon",
           coordinates: [
@@ -776,9 +915,6 @@ export default function MapView({
     });
   }, [points, mapLoaded]);
 
-  /*
-   * CLIQUES PARA DESENHAR
-   */
   useEffect(() => {
     const map = mapRef.current;
 
@@ -795,7 +931,10 @@ export default function MapView({
 
       setPoints((current) => [
         ...current,
-        [event.lngLat.lng, event.lngLat.lat],
+        [
+          event.lngLat.lng,
+          event.lngLat.lat,
+        ],
       ]);
     }
 
@@ -808,9 +947,7 @@ export default function MapView({
 
   function finishDrawing() {
     if (points.length < 3) {
-      alert(
-        "Marque pelo menos três pontos no mapa."
-      );
+      alert("Marque pelo menos três pontos no mapa.");
       return;
     }
 
@@ -835,13 +972,11 @@ export default function MapView({
       !Number.isFinite(areaInHectares) ||
       areaInHectares <= 0
     ) {
-      alert(
-        "Não foi possível calcular a área. Tente desenhar novamente."
-      );
+      alert("Não foi possível calcular a área.");
       return;
     }
 
-    onPolygonCreated?.(
+    onPolygonCreatedRef.current?.(
       geometry,
       areaInHectares
     );
@@ -859,7 +994,7 @@ export default function MapView({
     setPoints([]);
   }
 
-  function centralizeMap() {
+  function centralizeFarm() {
     const map = mapRef.current;
 
     if (!map || farms.length === 0) {
@@ -881,10 +1016,22 @@ export default function MapView({
     map.flyTo({
       center: [longitude, latitude],
       zoom: 16,
-      pitch: view3D ? 62 : 0,
-      bearing: view3D ? -22 : 0,
+      pitch: view3D ? 55 : 0,
+      bearing: view3D ? -18 : 0,
       duration: 1000,
     });
+  }
+
+  function toggle3D() {
+    if (!terrainAvailableRef.current) {
+      alert(
+        "O serviço de relevo não está disponível neste momento."
+      );
+
+      return;
+    }
+
+    setView3D((current) => !current);
   }
 
   return (
@@ -894,7 +1041,6 @@ export default function MapView({
         className="h-full w-full"
       />
 
-      {/* SELETOR MAPA */}
       <div className="absolute right-14 top-3 z-10 flex flex-wrap gap-1 rounded-xl border border-slate-200 bg-white/95 p-1.5 shadow-xl backdrop-blur">
         <button
           type="button"
@@ -910,9 +1056,7 @@ export default function MapView({
 
         <button
           type="button"
-          onClick={() =>
-            setMapMode("satellite")
-          }
+          onClick={() => setMapMode("satellite")}
           className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
             mapMode === "satellite"
               ? "bg-green-700 text-white"
@@ -924,9 +1068,7 @@ export default function MapView({
 
         <button
           type="button"
-          onClick={() =>
-            setView3D((current) => !current)
-          }
+          onClick={toggle3D}
           className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
             view3D
               ? "bg-blue-700 text-white"
@@ -938,7 +1080,7 @@ export default function MapView({
 
         <button
           type="button"
-          onClick={centralizeMap}
+          onClick={centralizeFarm}
           className="rounded-lg px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-100"
           title="Centralizar exploração"
         >
@@ -946,7 +1088,6 @@ export default function MapView({
         </button>
       </div>
 
-      {/* PAINEL DE DESENHO */}
       {drawingMode && (
         <div className="absolute left-4 top-4 z-10 w-64 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-2xl backdrop-blur">
           <p className="font-bold text-slate-900">
@@ -954,8 +1095,7 @@ export default function MapView({
           </p>
 
           <p className="mt-1 text-xs leading-5 text-slate-500">
-            Clique no mapa para marcar os limites do
-            terreno.
+            Clique no mapa para marcar os limites do terreno.
           </p>
 
           <div className="mt-3 rounded-xl bg-green-50 px-3 py-2">
@@ -995,7 +1135,6 @@ export default function MapView({
         </div>
       )}
 
-      {/* INDICADOR 3D */}
       {view3D && (
         <div className="absolute bottom-7 right-4 z-10 rounded-xl bg-slate-950/80 px-4 py-2 text-xs font-semibold text-white shadow-lg backdrop-blur">
           🌍 Relevo 3D ativo
