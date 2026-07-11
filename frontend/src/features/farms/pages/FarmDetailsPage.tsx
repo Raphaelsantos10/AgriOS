@@ -120,6 +120,11 @@ export default function FarmDetailsPage() {
     setCalculatedArea,
   ] = useState(0);
 
+  const [editGeometryMode, setEditGeometryMode] = useState(false);
+  const [editableGeometry, setEditableGeometry] = useState<PolygonGeometry | null>(null);
+  const [editableArea, setEditableArea] = useState(0);
+  const [savingGeometry, setSavingGeometry] = useState(false);
+
   /*
    * CARREGAR EXPLORAÇÃO
    */
@@ -216,6 +221,8 @@ export default function FarmDetailsPage() {
    * INICIAR DESENHO
    */
   function handleStartDrawing() {
+    setEditGeometryMode(false);
+    setEditableGeometry(null);
     setSelectedField(null);
     setFocusFieldId(null);
     setEditingField(null);
@@ -324,6 +331,64 @@ export default function FarmDetailsPage() {
       );
 
       throw error;
+    }
+  }
+
+  function handleStartGeometryEdit(field: Field) {
+    if (!field.geometry) {
+      alert("Este talhão ainda não possui limites válidos.");
+      return;
+    }
+
+    setDrawingMode(false);
+    setFieldDrawerOpen(false);
+    setEditingField(null);
+    setSelectedField(field);
+    setEditableGeometry(field.geometry);
+    setEditableArea(Number(field.area) || 0);
+    setEditGeometryMode(true);
+    setFocusFieldId(field.id);
+  }
+
+  function handleGeometryChange(geometry: PolygonGeometry, area: number) {
+    setEditableGeometry(geometry);
+    setEditableArea(area);
+    setSelectedField((current) =>
+      current ? { ...current, geometry, area } : current
+    );
+  }
+
+  function handleCancelGeometryEdit() {
+    const original = fields.find((field) => field.id === selectedField?.id) ?? null;
+    setSelectedField(original);
+    setEditableGeometry(null);
+    setEditableArea(0);
+    setEditGeometryMode(false);
+  }
+
+  async function handleSaveGeometryEdit() {
+    if (!selectedField || !editableGeometry) return;
+
+    try {
+      setSavingGeometry(true);
+      const updatedField = await updateField({
+        ...selectedField,
+        geometry: editableGeometry,
+        area: editableArea,
+      });
+
+      setFields((current) =>
+        current.map((item) => item.id === updatedField.id ? updatedField : item)
+      );
+      setSelectedField(updatedField);
+      setEditableGeometry(null);
+      setEditableArea(0);
+      setEditGeometryMode(false);
+    } catch (error) {
+      console.error("FIELD GEOMETRY UPDATE ERROR:", error);
+      alert("Não foi possível guardar os novos limites do talhão.");
+    } finally {
+      setSavingGeometry(false);
     }
   }
 
@@ -591,7 +656,7 @@ export default function FarmDetailsPage() {
                 onClick={
                   handleStartDrawing
                 }
-                disabled={drawingMode}
+                disabled={drawingMode || editGeometryMode}
                 className="flex items-center justify-center gap-2 rounded-xl bg-green-700 px-4 py-3 font-semibold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <Plus size={18} />
@@ -616,6 +681,9 @@ export default function FarmDetailsPage() {
                 focusFieldId={
                   focusFieldId
                 }
+                editGeometryMode={editGeometryMode}
+                editableGeometry={editableGeometry}
+                onGeometryChange={handleGeometryChange}
                 onFieldSelect={
                   handleFieldSelect
                 }
@@ -848,12 +916,18 @@ export default function FarmDetailsPage() {
       <FieldDetailsPanel
         field={selectedField}
         onClose={() => {
+          if (editGeometryMode) return;
           setSelectedField(null);
           setFocusFieldId(null);
         }}
         onEdit={
           handleEditField
         }
+        isEditingGeometry={editGeometryMode}
+        isSavingGeometry={savingGeometry}
+        onEditGeometry={handleStartGeometryEdit}
+        onSaveGeometry={handleSaveGeometryEdit}
+        onCancelGeometry={handleCancelGeometryEdit}
         onCenter={
           handleCenterField
         }

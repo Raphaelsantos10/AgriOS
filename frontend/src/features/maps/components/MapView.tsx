@@ -16,6 +16,9 @@ interface Props {
   drawingMode?: boolean;
   selectedFieldId?: string | null;
   focusFieldId?: string | null;
+  editGeometryMode?: boolean;
+  editableGeometry?: PolygonGeometry | null;
+  onGeometryChange?: (geometry: PolygonGeometry, area: number) => void;
   onFieldSelect?: (field: Field | null) => void;
   onPolygonCreated?: (
     geometry: PolygonGeometry,
@@ -36,6 +39,9 @@ export default function MapView({
   drawingMode = false,
   selectedFieldId = null,
   focusFieldId = null,
+  editGeometryMode = false,
+  editableGeometry = null,
+  onGeometryChange,
   onFieldSelect,
   onPolygonCreated,
 }: Props) {
@@ -45,6 +51,10 @@ export default function MapView({
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
   const drawingModeRef = useRef(drawingMode);
+  const editGeometryModeRef = useRef(editGeometryMode);
+  const editableGeometryRef = useRef<PolygonGeometry | null>(editableGeometry);
+  const onGeometryChangeRef = useRef(onGeometryChange);
+  const draggedVertexRef = useRef<number | null>(null);
   const fieldsRef = useRef<Field[]>(fields);
   const onFieldSelectRef = useRef(onFieldSelect);
   const onPolygonCreatedRef = useRef(onPolygonCreated);
@@ -59,6 +69,18 @@ export default function MapView({
   useEffect(() => {
     drawingModeRef.current = drawingMode;
   }, [drawingMode]);
+
+  useEffect(() => {
+    editGeometryModeRef.current = editGeometryMode;
+  }, [editGeometryMode]);
+
+  useEffect(() => {
+    editableGeometryRef.current = editableGeometry;
+  }, [editableGeometry]);
+
+  useEffect(() => {
+    onGeometryChangeRef.current = onGeometryChange;
+  }, [onGeometryChange]);
 
   useEffect(() => {
     fieldsRef.current = fields;
@@ -448,8 +470,72 @@ export default function MapView({
         });
       }
 
+      if (!map.getSource("edit-field")) {
+        map.addSource("edit-field", {
+          type: "geojson",
+          data: EMPTY_COLLECTION,
+        });
+      }
+
+      if (!map.getLayer("edit-field-fill")) {
+        map.addLayer({
+          id: "edit-field-fill",
+          type: "fill",
+          source: "edit-field",
+          filter: ["==", ["geometry-type"], "Polygon"],
+          paint: {
+            "fill-color": "#2563eb",
+            "fill-opacity": 0.2,
+          },
+        });
+      }
+
+      if (!map.getLayer("edit-field-line")) {
+        map.addLayer({
+          id: "edit-field-line",
+          type: "line",
+          source: "edit-field",
+          filter: ["==", ["geometry-type"], "Polygon"],
+          paint: {
+            "line-color": "#1d4ed8",
+            "line-width": 4,
+            "line-dasharray": [1.5, 1],
+          },
+        });
+      }
+
+      if (!map.getLayer("edit-midpoints")) {
+        map.addLayer({
+          id: "edit-midpoints",
+          type: "circle",
+          source: "edit-field",
+          filter: ["==", ["get", "kind"], "midpoint"],
+          paint: {
+            "circle-radius": 5,
+            "circle-color": "#ffffff",
+            "circle-stroke-color": "#2563eb",
+            "circle-stroke-width": 2,
+          },
+        });
+      }
+
+      if (!map.getLayer("edit-vertices")) {
+        map.addLayer({
+          id: "edit-vertices",
+          type: "circle",
+          source: "edit-field",
+          filter: ["==", ["get", "kind"], "vertex"],
+          paint: {
+            "circle-radius": 7,
+            "circle-color": "#2563eb",
+            "circle-stroke-color": "#ffffff",
+            "circle-stroke-width": 3,
+          },
+        });
+      }
+
       map.on("click", "fields-fill", (event) => {
-        if (drawingModeRef.current) {
+        if (drawingModeRef.current || editGeometryModeRef.current) {
           return;
         }
 
@@ -469,7 +555,7 @@ export default function MapView({
       });
 
       map.on("click", (event) => {
-        if (drawingModeRef.current) {
+        if (drawingModeRef.current || editGeometryModeRef.current) {
           return;
         }
 
@@ -486,14 +572,18 @@ export default function MapView({
       });
 
       map.on("mouseenter", "fields-fill", () => {
-        if (!drawingModeRef.current) {
+        if (!drawingModeRef.current && !editGeometryModeRef.current) {
           map.getCanvas().style.cursor = "pointer";
         }
       });
 
       map.on("mouseleave", "fields-fill", () => {
         map.getCanvas().style.cursor =
-          drawingModeRef.current ? "crosshair" : "";
+          drawingModeRef.current
+            ? "crosshair"
+            : editGeometryModeRef.current
+              ? "default"
+              : "";
       });
 
       setMapLoaded(true);
@@ -537,8 +627,10 @@ export default function MapView({
 
     map.getCanvas().style.cursor = drawingMode
       ? "crosshair"
-      : "";
-  }, [drawingMode, mapLoaded]);
+      : editGeometryMode
+        ? "default"
+        : "";
+  }, [drawingMode, editGeometryMode, mapLoaded]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -945,6 +1037,175 @@ export default function MapView({
     };
   }, [mapLoaded]);
 
+  useEffect(() => {
+    const map = mapRef.current;
+
+    if (!map || !mapLoaded) {
+      return;
+    }
+
+    const source = map.getSource("edit-field") as maplibregl.GeoJSONSource | undefined;
+
+    if (!source) {
+      return;
+    }
+
+    const activeMap = map;
+    const activeSource = source;
+
+    function buildEditCollection(geometry: PolygonGeometry | null): GeoJSON.FeatureCollection {
+      if (!geometry || geometry.coordinates.length === 0) {
+        return EMPTY_COLLECTION;
+      }
+
+      const closedRing = geometry.coordinates[0] ?? [];
+      const ring = closedRing.length > 1
+        ? closedRing.slice(0, -1)
+        : closedRing;
+
+      const features: GeoJSON.Feature[] = [
+        {
+          type: "Feature",
+          properties: { kind: "polygon" },
+          geometry,
+        },
+      ];
+
+      ring.forEach((coordinate, index) => {
+        features.push({
+          type: "Feature",
+          properties: { kind: "vertex", index },
+          geometry: { type: "Point", coordinates: coordinate },
+        });
+
+        const next = ring[(index + 1) % ring.length];
+        if (next) {
+          features.push({
+            type: "Feature",
+            properties: { kind: "midpoint", index },
+            geometry: {
+              type: "Point",
+              coordinates: [
+                (coordinate[0] + next[0]) / 2,
+                (coordinate[1] + next[1]) / 2,
+              ],
+            },
+          });
+        }
+      });
+
+      return { type: "FeatureCollection", features };
+    }
+
+    function publishGeometry(ring: number[][]) {
+      if (ring.length < 3) {
+        return;
+      }
+
+      const closedRing = [...ring, [...ring[0]]];
+      const geometry: PolygonGeometry = {
+        type: "Polygon",
+        coordinates: [closedRing],
+      };
+
+      editableGeometryRef.current = geometry;
+      activeSource.setData(buildEditCollection(geometry));
+
+      const polygon = turf.polygon(geometry.coordinates);
+      const area = turf.area(polygon) / 10000;
+      onGeometryChangeRef.current?.(geometry, area);
+    }
+
+    activeSource.setData(
+      editGeometryMode
+        ? buildEditCollection(editableGeometry)
+        : EMPTY_COLLECTION
+    );
+
+    if (!editGeometryMode) {
+      return;
+    }
+
+    function getRing() {
+      const coordinates = editableGeometryRef.current?.coordinates[0] ?? [];
+      return coordinates.length > 1 ? coordinates.slice(0, -1).map((point) => [...point]) : [];
+    }
+
+    function handleVertexMouseDown(event: maplibregl.MapLayerMouseEvent) {
+      const index = Number(event.features?.[0]?.properties?.index);
+      if (!Number.isInteger(index)) return;
+      event.preventDefault();
+      draggedVertexRef.current = index;
+      activeMap.dragPan.disable();
+      activeMap.getCanvas().style.cursor = "grabbing";
+    }
+
+    function handleMouseMove(event: maplibregl.MapMouseEvent) {
+      const index = draggedVertexRef.current;
+      if (index === null) return;
+      const ring = getRing();
+      if (!ring[index]) return;
+      ring[index] = [event.lngLat.lng, event.lngLat.lat];
+      publishGeometry(ring);
+    }
+
+    function handleMouseUp() {
+      if (draggedVertexRef.current === null) return;
+      draggedVertexRef.current = null;
+      activeMap.dragPan.enable();
+      activeMap.getCanvas().style.cursor = "default";
+    }
+
+    function handleMidpointClick(event: maplibregl.MapLayerMouseEvent) {
+      const index = Number(event.features?.[0]?.properties?.index);
+      if (!Number.isInteger(index)) return;
+      const ring = getRing();
+      ring.splice(index + 1, 0, [event.lngLat.lng, event.lngLat.lat]);
+      publishGeometry(ring);
+    }
+
+    function handleVertexContextMenu(event: maplibregl.MapLayerMouseEvent) {
+      event.preventDefault();
+      const index = Number(event.features?.[0]?.properties?.index);
+      const ring = getRing();
+      if (!Number.isInteger(index) || ring.length <= 3) {
+        if (ring.length <= 3) alert("Um talhão precisa de pelo menos três vértices.");
+        return;
+      }
+      ring.splice(index, 1);
+      publishGeometry(ring);
+    }
+
+    function handleVertexEnter() { activeMap.getCanvas().style.cursor = "grab"; }
+    function handleVertexLeave() { if (draggedVertexRef.current === null) activeMap.getCanvas().style.cursor = "default"; }
+    function handleMidpointEnter() { activeMap.getCanvas().style.cursor = "copy"; }
+    function handleMidpointLeave() { activeMap.getCanvas().style.cursor = "default"; }
+
+    activeMap.on("mousedown", "edit-vertices", handleVertexMouseDown);
+    activeMap.on("mousemove", handleMouseMove);
+    activeMap.on("mouseup", handleMouseUp);
+    activeMap.on("click", "edit-midpoints", handleMidpointClick);
+    activeMap.on("contextmenu", "edit-vertices", handleVertexContextMenu);
+    activeMap.on("mouseenter", "edit-vertices", handleVertexEnter);
+    activeMap.on("mouseleave", "edit-vertices", handleVertexLeave);
+    activeMap.on("mouseenter", "edit-midpoints", handleMidpointEnter);
+    activeMap.on("mouseleave", "edit-midpoints", handleMidpointLeave);
+
+    return () => {
+      draggedVertexRef.current = null;
+      activeMap.dragPan.enable();
+      activeMap.off("mousedown", "edit-vertices", handleVertexMouseDown);
+      activeMap.off("mousemove", handleMouseMove);
+      activeMap.off("mouseup", handleMouseUp);
+      activeMap.off("click", "edit-midpoints", handleMidpointClick);
+      activeMap.off("contextmenu", "edit-vertices", handleVertexContextMenu);
+      activeMap.off("mouseenter", "edit-vertices", handleVertexEnter);
+      activeMap.off("mouseleave", "edit-vertices", handleVertexLeave);
+      activeMap.off("mouseenter", "edit-midpoints", handleMidpointEnter);
+      activeMap.off("mouseleave", "edit-midpoints", handleMidpointLeave);
+    };
+  }, [editGeometryMode, editableGeometry, mapLoaded]);
+
   function finishDrawing() {
     if (points.length < 3) {
       alert("Marque pelo menos três pontos no mapa.");
@@ -1132,6 +1393,15 @@ export default function MapView({
               Limpar desenho
             </button>
           </div>
+        </div>
+      )}
+
+      {editGeometryMode && (
+        <div className="absolute left-4 top-4 z-10 w-72 rounded-2xl border border-blue-200 bg-white/95 p-4 shadow-2xl backdrop-blur">
+          <p className="font-bold text-slate-900">Editar limites</p>
+          <p className="mt-1 text-xs leading-5 text-slate-500">
+            Arraste os pontos azuis. Clique nos pontos brancos para adicionar um vértice. Use o botão direito num ponto azul para removê-lo.
+          </p>
         </div>
       )}
 

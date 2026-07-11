@@ -5,6 +5,7 @@ import {
   MapPin,
   Maximize2,
   Pencil,
+  Save,
   Ruler,
   Sprout,
   Trash2,
@@ -21,6 +22,11 @@ interface Props {
   onEdit: (field: Field) => void;
   onCenter: (field: Field) => void;
   onDelete: (field: Field) => void;
+  isEditingGeometry?: boolean;
+  isSavingGeometry?: boolean;
+  onEditGeometry: (field: Field) => void;
+  onSaveGeometry: () => void;
+  onCancelGeometry: () => void;
 }
 
 interface FieldMetrics {
@@ -130,6 +136,11 @@ export default function FieldDetailsPanel({
   onEdit,
   onCenter,
   onDelete,
+  isEditingGeometry = false,
+  isSavingGeometry = false,
+  onEditGeometry,
+  onSaveGeometry,
+  onCancelGeometry,
 }: Props) {
   if (!field) {
     return null;
@@ -162,6 +173,7 @@ export default function FieldDetailsPanel({
         <button
           type="button"
           onClick={onClose}
+          disabled={isEditingGeometry}
           aria-label="Fechar painel"
           className="rounded-xl p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
         >
@@ -399,34 +411,76 @@ export default function FieldDetailsPanel({
       </div>
 
       <footer className="space-y-3 border-t border-slate-200 bg-white p-5">
-        <button
-          type="button"
-          onClick={() => onCenter(field)}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-700 px-5 py-3 font-semibold text-white transition hover:bg-green-800"
-        >
-          <MapPin size={18} />
-          Centralizar no mapa
-        </button>
+        {isEditingGeometry ? (
+          <>
+            <div className="rounded-xl border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
+              Os valores acima são atualizados em tempo real enquanto altera os limites.
+            </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => onEdit(field)}
-            className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-3 font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
-          >
-            <Pencil size={18} />
-            Editar
-          </button>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={onSaveGeometry}
+                disabled={isSavingGeometry}
+                className="flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-3 font-semibold text-white transition hover:bg-blue-800 disabled:opacity-60"
+              >
+                <Save size={18} />
+                {isSavingGeometry ? "A guardar..." : "Guardar limites"}
+              </button>
 
-          <button
-            type="button"
-            onClick={() => onDelete(field)}
-            className="flex items-center justify-center gap-2 rounded-xl border border-red-200 px-4 py-3 font-semibold text-red-600 transition hover:bg-red-50"
-          >
-            <Trash2 size={18} />
-            Apagar
-          </button>
-        </div>
+              <button
+                type="button"
+                onClick={onCancelGeometry}
+                disabled={isSavingGeometry}
+                className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-3 font-semibold text-slate-700 transition hover:bg-slate-100 disabled:opacity-60"
+              >
+                <X size={18} />
+                Cancelar
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() => onCenter(field)}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-700 px-5 py-3 font-semibold text-white transition hover:bg-green-800"
+            >
+              <MapPin size={18} />
+              Centralizar no mapa
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onEditGeometry(field)}
+              disabled={!field.geometry}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-5 py-3 font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Pencil size={18} />
+              Editar limites
+            </button>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => onEdit(field)}
+                className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-3 font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+              >
+                <Pencil size={18} />
+                Editar dados
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onDelete(field)}
+                className="flex items-center justify-center gap-2 rounded-xl border border-red-200 px-4 py-3 font-semibold text-red-600 transition hover:bg-red-50"
+              >
+                <Trash2 size={18} />
+                Apagar
+              </button>
+            </div>
+          </>
+        )}
       </footer>
     </aside>
   );
