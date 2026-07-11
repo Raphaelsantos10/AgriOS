@@ -23,6 +23,7 @@ import {
   createField,
   deleteField,
   getFieldsByFarm,
+  updateField,
 } from "../../fields/services/fieldsService";
 
 function getStatusLabel(status: Field["status"]) {
@@ -43,6 +44,7 @@ export default function FarmDetailsPage() {
   const [farm, setFarm] = useState<Farm | null>(null);
   const [fields, setFields] = useState<Field[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editingField, setEditingField] = useState<Field | null>(null);
   const [drawingMode, setDrawingMode] = useState(false);
   const [selectedGeometry, setSelectedGeometry] =
     useState<PolygonGeometry | null>(null);
@@ -88,13 +90,16 @@ export default function FarmDetailsPage() {
     loadFields();
   }, [farmId]);
 
-  function handleStartDrawing() {
-    setSelectedGeometry(null);
-    setCalculatedArea(0);
-    setDrawingMode(true);
-    alert("Clique no mapa para desenhar o talhão. Faça pelo menos 3 cliques e depois clique em Concluir.");
-  }
+function handleStartDrawing() {
+  setEditingField(null);
+  setSelectedGeometry(null);
+  setCalculatedArea(0);
+  setDrawingMode(true);
 
+  alert(
+    "Clique no mapa para desenhar o talhão. Faça pelo menos 3 cliques e depois clique em Concluir."
+  );
+}
   function handlePolygonCreated(geometry: PolygonGeometry, area: number) {
     setSelectedGeometry(geometry);
     setCalculatedArea(area);
@@ -107,6 +112,24 @@ export default function FarmDetailsPage() {
     setFields((current) => [createdField, ...current]);
     setSelectedGeometry(null);
     setCalculatedArea(0);
+  }
+
+  async function handleUpdateField(updatedField: Field) {
+    try {
+      const savedField = await updateField(updatedField);
+
+      setFields((current) =>
+        current.map((field) =>
+          field.id === savedField.id ? savedField : field
+        )
+      );
+
+      setEditingField(null);
+      setDrawerOpen(false);
+    } catch (error) {
+      console.error("UPDATE FIELD ERROR:", error);
+      alert("Erro ao atualizar talhão.");
+    }
   }
 
   async function handleDeleteField(fieldId: string) {
@@ -341,7 +364,13 @@ export default function FarmDetailsPage() {
                 </div>
 
                 <div className="mt-5 flex gap-3">
-                  <button className="flex-1 rounded-xl border border-slate-200 py-2 hover:bg-slate-100">
+                  <button
+                    onClick={() => {
+                      setEditingField(field);
+                      setDrawerOpen(true);
+                    }}
+                    className="flex-1 rounded-xl border border-slate-200 py-2 hover:bg-slate-100"
+                  >
                     Editar
                   </button>
 
@@ -363,8 +392,13 @@ export default function FarmDetailsPage() {
         farmId={farm.id}
         geometry={selectedGeometry}
         calculatedArea={calculatedArea}
-        onClose={() => setDrawerOpen(false)}
+        editingField={editingField}
+        onClose={() => {
+          setDrawerOpen(false);
+          setEditingField(null);
+        }}
         onCreateField={handleCreateField}
+        onUpdateField={handleUpdateField}
       />
     </section>
   );
