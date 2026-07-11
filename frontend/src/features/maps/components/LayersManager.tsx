@@ -1,6 +1,20 @@
-import { ChevronDown, ChevronUp, Eye, EyeOff, Layers3, RotateCcw } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Eye,
+  EyeOff,
+  Layers3,
+  Map,
+  Mountain,
+  RotateCcw,
+  Satellite,
+  SunMedium,
+} from "lucide-react";
+
+export type BaseMapId = "osm" | "satellite" | "topographic" | "light";
 
 export type MapLayerPreferences = {
+  baseMap: BaseMapId;
   fields: boolean;
   labels: boolean;
   farms: boolean;
@@ -30,6 +44,38 @@ const items: Array<{ key: ToggleKey; label: string; description: string }> = [
   { key: "draft", label: "Desenhos temporários", description: "Novos limites e edição" },
 ];
 
+const baseMaps: Array<{
+  id: BaseMapId;
+  label: string;
+  description: string;
+  icon: typeof Map;
+}> = [
+  {
+    id: "osm",
+    label: "Mapa",
+    description: "OpenStreetMap",
+    icon: Map,
+  },
+  {
+    id: "satellite",
+    label: "Satélite",
+    description: "Imagem aérea Esri",
+    icon: Satellite,
+  },
+  {
+    id: "topographic",
+    label: "Topográfico",
+    description: "Relevo e caminhos",
+    icon: Mountain,
+  },
+  {
+    id: "light",
+    label: "Claro",
+    description: "Base limpa para análise",
+    icon: SunMedium,
+  },
+];
+
 export default function LayersManager({
   open,
   preferences,
@@ -56,7 +102,51 @@ export default function LayersManager({
       </button>
 
       {open && (
-        <div className="border-t border-slate-200 px-4 pb-4 pt-3">
+        <div className="max-h-[70vh] overflow-y-auto border-t border-slate-200 px-4 pb-4 pt-3">
+          <div>
+            <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">
+              Mapa base
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {baseMaps.map((baseMap) => {
+                const active = preferences.baseMap === baseMap.id;
+                const Icon = baseMap.icon;
+
+                return (
+                  <button
+                    key={baseMap.id}
+                    type="button"
+                    onClick={() => onChange({ ...preferences, baseMap: baseMap.id })}
+                    className={`rounded-xl border p-3 text-left transition ${
+                      active
+                        ? "border-green-700 bg-green-50 ring-1 ring-green-700"
+                        : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <Icon
+                        size={17}
+                        className={active ? "text-green-700" : "text-slate-500"}
+                      />
+                      <span className={`text-sm font-bold ${active ? "text-green-900" : "text-slate-800"}`}>
+                        {baseMap.label}
+                      </span>
+                    </span>
+                    <span className="mt-1 block text-[10px] leading-4 text-slate-500">
+                      {baseMap.description}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="my-4 h-px bg-slate-200" />
+
+          <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">
+            Camadas operacionais
+          </p>
+
           <div className="space-y-2">
             {items.map((item) => {
               const enabled = preferences[item.key];

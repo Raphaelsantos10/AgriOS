@@ -29,12 +29,12 @@ interface Props {
   ) => void;
 }
 
-type MapMode = "map" | "satellite";
 type MeasurementMode = "distance" | "area" | null;
 
 const LAYER_PREFERENCES_KEY = "agrios.map.layer-preferences.v1";
 
 const DEFAULT_LAYER_PREFERENCES: MapLayerPreferences = {
+  baseMap: "osm",
   fields: true,
   labels: true,
   farms: true,
@@ -92,7 +92,6 @@ export default function MapView({
   const terrainAvailableRef = useRef(true);
 
   const [points, setPoints] = useState<[number, number][]>([]);
-  const [mapMode, setMapMode] = useState<MapMode>("map");
   const [mapLoaded, setMapLoaded] = useState(false);
   const [view3D, setView3D] = useState(false);
   const [measurementMode, setMeasurementMode] = useState<MeasurementMode>(null);
@@ -178,6 +177,28 @@ export default function MapView({
             maxzoom: 19,
             attribution: "© Esri",
           },
+
+          topographic: {
+            type: "raster",
+            tiles: [
+              "https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+            ],
+            tileSize: 256,
+            maxzoom: 19,
+            attribution: "© Esri, HERE, Garmin, FAO, NOAA, USGS",
+          },
+
+          light: {
+            type: "raster",
+            tiles: [
+              "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+              "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+              "https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+            ],
+            tileSize: 256,
+            maxzoom: 20,
+            attribution: "© OpenStreetMap contributors © CARTO",
+          },
         },
 
         layers: [
@@ -194,6 +215,24 @@ export default function MapView({
             id: "satellite-layer",
             type: "raster",
             source: "satellite",
+            layout: {
+              visibility: "none",
+            },
+          },
+
+          {
+            id: "topographic-layer",
+            type: "raster",
+            source: "topographic",
+            layout: {
+              visibility: "none",
+            },
+          },
+
+          {
+            id: "light-layer",
+            type: "raster",
+            source: "light",
             layout: {
               visibility: "none",
             },
@@ -784,22 +823,23 @@ export default function MapView({
       return;
     }
 
-    if (map.getLayer("osm-layer")) {
-      map.setLayoutProperty(
-        "osm-layer",
-        "visibility",
-        mapMode === "map" ? "visible" : "none"
-      );
-    }
+    const baseLayers = {
+      osm: "osm-layer",
+      satellite: "satellite-layer",
+      topographic: "topographic-layer",
+      light: "light-layer",
+    } as const;
 
-    if (map.getLayer("satellite-layer")) {
-      map.setLayoutProperty(
-        "satellite-layer",
-        "visibility",
-        mapMode === "satellite" ? "visible" : "none"
-      );
-    }
-  }, [mapMode, mapLoaded]);
+    Object.entries(baseLayers).forEach(([baseMapId, layerId]) => {
+      if (map.getLayer(layerId)) {
+        map.setLayoutProperty(
+          layerId,
+          "visibility",
+          layerPreferences.baseMap === baseMapId ? "visible" : "none"
+        );
+      }
+    });
+  }, [layerPreferences.baseMap, mapLoaded]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -1582,9 +1622,11 @@ export default function MapView({
       <div className="absolute right-14 top-3 z-10 flex flex-wrap gap-1 rounded-xl border border-slate-200 bg-white/95 p-1.5 shadow-xl backdrop-blur">
         <button
           type="button"
-          onClick={() => setMapMode("map")}
+          onClick={() =>
+            setLayerPreferences((current) => ({ ...current, baseMap: "osm" }))
+          }
           className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-            mapMode === "map"
+            layerPreferences.baseMap === "osm"
               ? "bg-green-700 text-white"
               : "text-slate-600 hover:bg-slate-100"
           }`}
@@ -1594,14 +1636,44 @@ export default function MapView({
 
         <button
           type="button"
-          onClick={() => setMapMode("satellite")}
+          onClick={() =>
+            setLayerPreferences((current) => ({ ...current, baseMap: "satellite" }))
+          }
           className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-            mapMode === "satellite"
+            layerPreferences.baseMap === "satellite"
               ? "bg-green-700 text-white"
               : "text-slate-600 hover:bg-slate-100"
           }`}
         >
           🛰️ Satélite
+        </button>
+
+        <button
+          type="button"
+          onClick={() =>
+            setLayerPreferences((current) => ({ ...current, baseMap: "topographic" }))
+          }
+          className={`hidden rounded-lg px-3 py-2 text-xs font-semibold transition xl:block ${
+            layerPreferences.baseMap === "topographic"
+              ? "bg-green-700 text-white"
+              : "text-slate-600 hover:bg-slate-100"
+          }`}
+        >
+          ⛰️ Topo
+        </button>
+
+        <button
+          type="button"
+          onClick={() =>
+            setLayerPreferences((current) => ({ ...current, baseMap: "light" }))
+          }
+          className={`hidden rounded-lg px-3 py-2 text-xs font-semibold transition 2xl:block ${
+            layerPreferences.baseMap === "light"
+              ? "bg-green-700 text-white"
+              : "text-slate-600 hover:bg-slate-100"
+          }`}
+        >
+          ☀️ Claro
         </button>
 
         <button
