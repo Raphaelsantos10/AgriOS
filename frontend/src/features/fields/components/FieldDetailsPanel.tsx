@@ -3,6 +3,7 @@ import {
   Brain,
   Droplets,
   Download,
+  Copy,
   MapPin,
   Maximize2,
   Pencil,
@@ -25,6 +26,7 @@ interface Props {
   onEdit: (field: Field) => void;
   onCenter: (field: Field) => void;
   onDelete: (field: Field) => void;
+  onDuplicate: (field: Field) => void;
   onExport: (field: Field) => void;
   onExportKML: (field: Field) => void;
   isEditingGeometry?: boolean;
@@ -145,6 +147,7 @@ export default function FieldDetailsPanel({
   onEdit,
   onCenter,
   onDelete,
+  onDuplicate,
   onExport,
   onExportKML,
   isEditingGeometry = false,
@@ -511,6 +514,16 @@ export default function FieldDetailsPanel({
             >
               <Download size={18} />
               Exportar talhão em KML
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onDuplicate(field)}
+              disabled={!field.geometry}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-cyan-200 bg-cyan-50 px-5 py-3 font-semibold text-cyan-700 transition hover:bg-cyan-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Copy size={18} />
+              Duplicar talhão
             </button>
 
             <button

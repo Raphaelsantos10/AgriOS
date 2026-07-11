@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import * as turf from "@turf/turf";
 import { useParams } from "react-router-dom";
 
 import {
@@ -608,6 +609,57 @@ export default function FarmDetailsPage() {
       setFields(refreshedFields);
     } finally {
       setImportingGeoJSON(false);
+    }
+  }
+
+  /*
+   * DUPLICAR TALHÃO
+   */
+  async function handleDuplicateField(field: Field) {
+    if (!farmId || !field.geometry) {
+      alert("Este talhão não possui limites válidos para duplicar.");
+      return;
+    }
+
+    const suggestedName = `${field.name} - Cópia`;
+    const name = window.prompt("Nome do novo talhão:", suggestedName)?.trim();
+
+    if (!name) {
+      return;
+    }
+
+    try {
+      const originalPolygon = turf.polygon(field.geometry.coordinates);
+      const translatedPolygon = turf.transformTranslate(originalPolygon, 8, 45, {
+        units: "meters",
+      });
+
+      const geometry: PolygonGeometry = {
+        type: "Polygon",
+        coordinates: translatedPolygon.geometry.coordinates,
+      };
+
+      const area = turf.area(translatedPolygon) / 10000;
+
+      const duplicatedField = await createField({
+        farm_id: farmId,
+        name,
+        crop: field.crop,
+        area,
+        status: field.status,
+        geometry,
+      });
+
+      setFields((current) => [duplicatedField, ...current]);
+      setSelectedField(duplicatedField);
+      setFocusFieldId(null);
+
+      window.setTimeout(() => {
+        setFocusFieldId(duplicatedField.id);
+      }, 0);
+    } catch (error) {
+      console.error("FIELD DUPLICATE ERROR:", error);
+      alert("Não foi possível duplicar o talhão.");
     }
   }
 
@@ -1276,6 +1328,7 @@ export default function FarmDetailsPage() {
         onDelete={
           handleDeleteField
         }
+        onDuplicate={handleDuplicateField}
         onExport={handleExportField}
         onExportKML={handleExportFieldKML}
       />
