@@ -43,11 +43,23 @@ function readText(
 ) {
   if (!properties) return fallback;
 
+  const normalizedEntries = Object.entries(properties).map(([key, value]) => [
+    key.toLowerCase(),
+    value,
+  ] as const);
+
   for (const key of keys) {
-    const value = properties[key];
+    const entry = normalizedEntries.find(
+      ([propertyKey]) => propertyKey === key.toLowerCase()
+    );
+    const value = entry?.[1];
 
     if (typeof value === "string" && value.trim()) {
       return value.trim();
+    }
+
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return String(value);
     }
   }
 
@@ -105,10 +117,10 @@ function featureCandidates(
       : null;
   const baseName = readText(
     properties,
-    ["name", "field_name", "talhao", "title"],
+    ["name", "nome", "field_name", "fieldname", "talhao", "talhão", "title", "label"],
     `Talhão importado ${featureIndex + 1}`
   );
-  const crop = readText(properties, ["crop", "culture", "cultura"], "Milho");
+  const crop = readText(properties, ["crop", "culture", "cultura", "cultivo", "cultivar"], "Milho");
   const status = normalizeStatus(properties?.status);
 
   const polygons =

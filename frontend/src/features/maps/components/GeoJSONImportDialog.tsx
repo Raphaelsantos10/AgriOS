@@ -7,6 +7,7 @@ import {
   type ImportedFieldCandidate,
 } from "../utils/geojsonImport";
 import { parseKMLFields } from "../utils/kml";
+import { parseShapefileFields } from "../utils/shapefile";
 
 interface Props {
   open: boolean;
@@ -34,16 +35,25 @@ export default function GeoJSONImportDialog({
   async function readFile(file: File) {
     setError(null);
 
-    if (!/\.(geojson|json|kml)$/i.test(file.name)) {
-      setError("Selecione um ficheiro .geojson, .json ou .kml.");
+    if (!/\.(geojson|json|kml|zip)$/i.test(file.name)) {
+      setError("Selecione um ficheiro .geojson, .json, .kml ou Shapefile .zip.");
       return;
     }
 
     try {
-      const text = await file.text();
-      const parsed = /\.kml$/i.test(file.name)
-        ? parseKMLFields(text, existingFields)
-        : parseGeoJSONFields(text, existingFields);
+      let parsed: ImportedFieldCandidate[];
+
+      if (/\.zip$/i.test(file.name)) {
+        parsed = await parseShapefileFields(
+          await file.arrayBuffer(),
+          existingFields
+        );
+      } else {
+        const text = await file.text();
+        parsed = /\.kml$/i.test(file.name)
+          ? parseKMLFields(text, existingFields)
+          : parseGeoJSONFields(text, existingFields);
+      }
       setFilename(file.name);
       setCandidates(parsed);
     } catch (readError) {
@@ -106,7 +116,7 @@ export default function GeoJSONImportDialog({
           <input
             ref={inputRef}
             type="file"
-            accept=".geojson,.json,.kml,application/geo+json,application/json,application/vnd.google-earth.kml+xml"
+            accept=".geojson,.json,.kml,.zip,application/geo+json,application/json,application/vnd.google-earth.kml+xml,application/zip"
             className="hidden"
             onChange={(event) => {
               const file = event.target.files?.[0];
@@ -141,10 +151,10 @@ export default function GeoJSONImportDialog({
           >
             <Upload size={34} className="text-blue-700" />
             <span className="mt-3 font-bold text-slate-900">
-              Clique ou arraste um ficheiro GeoJSON ou KML
+              Clique ou arraste um ficheiro GIS
             </span>
             <span className="mt-1 text-sm text-slate-500">
-              Suporta GeoJSON Polygon/MultiPolygon e KML Polygon
+              GeoJSON, KML ou Shapefile compactado (.zip)
             </span>
           </button>
 
