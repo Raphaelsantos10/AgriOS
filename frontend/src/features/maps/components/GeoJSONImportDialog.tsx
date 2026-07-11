@@ -1,11 +1,12 @@
 import { useRef, useState } from "react";
-import { AlertTriangle, CheckCircle2, FileJson, Upload, X } from "lucide-react";
+import { AlertTriangle, CheckCircle2, FileCode2, Upload, X } from "lucide-react";
 
 import type { Field } from "../../fields/types/field";
 import {
   parseGeoJSONFields,
   type ImportedFieldCandidate,
 } from "../utils/geojsonImport";
+import { parseKMLFields } from "../utils/kml";
 
 interface Props {
   open: boolean;
@@ -33,14 +34,16 @@ export default function GeoJSONImportDialog({
   async function readFile(file: File) {
     setError(null);
 
-    if (!/\.(geojson|json)$/i.test(file.name)) {
-      setError("Selecione um ficheiro .geojson ou .json.");
+    if (!/\.(geojson|json|kml)$/i.test(file.name)) {
+      setError("Selecione um ficheiro .geojson, .json ou .kml.");
       return;
     }
 
     try {
       const text = await file.text();
-      const parsed = parseGeoJSONFields(text, existingFields);
+      const parsed = /\.kml$/i.test(file.name)
+        ? parseKMLFields(text, existingFields)
+        : parseGeoJSONFields(text, existingFields);
       setFilename(file.name);
       setCandidates(parsed);
     } catch (readError) {
@@ -76,11 +79,11 @@ export default function GeoJSONImportDialog({
         <header className="flex items-start justify-between border-b border-slate-200 px-6 py-5">
           <div className="flex items-center gap-3">
             <div className="rounded-2xl bg-blue-100 p-3 text-blue-700">
-              <FileJson size={24} />
+              <FileCode2 size={24} />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-slate-900">
-                Importar GeoJSON
+                Importar ficheiro GIS
               </h2>
               <p className="mt-1 text-sm text-slate-500">
                 Pré-visualize e escolha os talhões antes de guardar no Supabase.
@@ -103,7 +106,7 @@ export default function GeoJSONImportDialog({
           <input
             ref={inputRef}
             type="file"
-            accept=".geojson,.json,application/geo+json,application/json"
+            accept=".geojson,.json,.kml,application/geo+json,application/json,application/vnd.google-earth.kml+xml"
             className="hidden"
             onChange={(event) => {
               const file = event.target.files?.[0];
@@ -138,10 +141,10 @@ export default function GeoJSONImportDialog({
           >
             <Upload size={34} className="text-blue-700" />
             <span className="mt-3 font-bold text-slate-900">
-              Clique ou arraste um ficheiro GeoJSON
+              Clique ou arraste um ficheiro GeoJSON ou KML
             </span>
             <span className="mt-1 text-sm text-slate-500">
-              Suporta FeatureCollection, Feature, Polygon e MultiPolygon
+              Suporta GeoJSON Polygon/MultiPolygon e KML Polygon
             </span>
           </button>
 

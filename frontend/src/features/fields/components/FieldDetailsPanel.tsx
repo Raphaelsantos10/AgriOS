@@ -26,6 +26,7 @@ interface Props {
   onCenter: (field: Field) => void;
   onDelete: (field: Field) => void;
   onExport: (field: Field) => void;
+  onExportKML: (field: Field) => void;
   isEditingGeometry?: boolean;
   isSavingGeometry?: boolean;
   canUndoGeometry?: boolean;
@@ -145,6 +146,7 @@ export default function FieldDetailsPanel({
   onCenter,
   onDelete,
   onExport,
+  onExportKML,
   isEditingGeometry = false,
   isSavingGeometry = false,
   canUndoGeometry = false,
@@ -499,6 +501,16 @@ export default function FieldDetailsPanel({
             >
               <Download size={18} />
               Exportar talhão em GeoJSON
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onExportKML(field)}
+              disabled={!field.geometry}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-5 py-3 font-semibold text-violet-700 transition hover:bg-violet-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Download size={18} />
+              Exportar talhão em KML
             </button>
 
             <button

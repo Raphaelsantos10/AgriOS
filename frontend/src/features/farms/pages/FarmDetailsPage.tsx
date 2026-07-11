@@ -20,6 +20,10 @@ import {
   exportFieldAsGeoJSON,
   exportFieldsAsGeoJSON,
 } from "../../maps/utils/geojsonExport";
+import {
+  exportFieldAsKML,
+  exportFieldsAsKML,
+} from "../../maps/utils/kml";
 import GeoJSONImportDialog from "../../maps/components/GeoJSONImportDialog";
 import type { ImportedFieldCandidate } from "../../maps/utils/geojsonImport";
 
@@ -793,6 +797,40 @@ export default function FarmDetailsPage() {
     }
   }
 
+  function handleExportAllFieldsKML() {
+    if (!farm) {
+      return;
+    }
+
+    try {
+      exportFieldsAsKML(fields, farm);
+    } catch (error) {
+      console.error("KML EXPORT ERROR:", error);
+      window.alert(
+        error instanceof Error
+          ? error.message
+          : "Não foi possível exportar os talhões em KML."
+      );
+    }
+  }
+
+  function handleExportFieldKML(field: Field) {
+    if (!farm) {
+      return;
+    }
+
+    try {
+      exportFieldAsKML(field, farm);
+    } catch (error) {
+      console.error("KML FIELD EXPORT ERROR:", error);
+      window.alert(
+        error instanceof Error
+          ? error.message
+          : "Não foi possível exportar o talhão em KML."
+      );
+    }
+  }
+
   return (
     <>
       <section className="space-y-6">
@@ -917,12 +955,26 @@ export default function FarmDetailsPage() {
 
                 <button
                   type="button"
+                  onClick={handleExportAllFieldsKML}
+                  disabled={
+                    drawingMode ||
+                    editGeometryMode ||
+                    !fields.some((field) => field.geometry)
+                  }
+                  className="flex items-center justify-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-4 py-3 font-semibold text-violet-700 transition hover:bg-violet-100 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Download size={18} />
+                  Exportar KML
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => setImportDialogOpen(true)}
                   disabled={drawingMode || editGeometryMode}
                   className="flex items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Upload size={18} />
-                  Importar GeoJSON
+                  Importar GIS
                 </button>
 
                 <button
@@ -1225,6 +1277,7 @@ export default function FarmDetailsPage() {
           handleDeleteField
         }
         onExport={handleExportField}
+        onExportKML={handleExportFieldKML}
       />
     </>
   );
