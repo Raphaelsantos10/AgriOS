@@ -8,6 +8,8 @@ import type {
   PolygonGeometry,
 } from "../../fields/types/field";
 
+import LayersManager, { type MapLayerPreferences } from "./LayersManager";
+
 import "maplibre-gl/dist/maplibre-gl.css";
 
 interface Props {
@@ -29,6 +31,29 @@ interface Props {
 
 type MapMode = "map" | "satellite";
 type MeasurementMode = "distance" | "area" | null;
+
+const LAYER_PREFERENCES_KEY = "agrios.map.layer-preferences.v1";
+
+const DEFAULT_LAYER_PREFERENCES: MapLayerPreferences = {
+  fields: true,
+  labels: true,
+  farms: true,
+  hillshade: true,
+  measurements: true,
+  draft: true,
+  fieldsOpacity: 0.32,
+  hillshadeOpacity: 0.25,
+};
+
+function loadLayerPreferences(): MapLayerPreferences {
+  try {
+    const saved = window.localStorage.getItem(LAYER_PREFERENCES_KEY);
+    if (!saved) return DEFAULT_LAYER_PREFERENCES;
+    return { ...DEFAULT_LAYER_PREFERENCES, ...JSON.parse(saved) };
+  } catch {
+    return DEFAULT_LAYER_PREFERENCES;
+  }
+}
 
 const EMPTY_COLLECTION: GeoJSON.FeatureCollection = {
   type: "FeatureCollection",
@@ -72,6 +97,8 @@ export default function MapView({
   const [view3D, setView3D] = useState(false);
   const [measurementMode, setMeasurementMode] = useState<MeasurementMode>(null);
   const [measurementPoints, setMeasurementPoints] = useState<[number, number][]>([]);
+  const [layersOpen, setLayersOpen] = useState(false);
+  const [layerPreferences, setLayerPreferences] = useState<MapLayerPreferences>(loadLayerPreferences);
 
   useEffect(() => {
     drawingModeRef.current = drawingMode;
@@ -682,6 +709,60 @@ export default function MapView({
     };
   }, []);
 
+
+  useEffect(() => {
+    window.localStorage.setItem(
+      LAYER_PREFERENCES_KEY,
+      JSON.stringify(layerPreferences)
+    );
+  }, [layerPreferences]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+
+    if (!map || !mapLoaded) {
+      return;
+    }
+
+    const setVisibility = (layerId: string, visible: boolean) => {
+      if (map.getLayer(layerId)) {
+        map.setLayoutProperty(layerId, "visibility", visible ? "visible" : "none");
+      }
+    };
+
+    ["fields-fill", "fields-line", "selected-field-glow", "selected-field-fill", "selected-field-line"].forEach(
+      (layerId) => setVisibility(layerId, layerPreferences.fields)
+    );
+    setVisibility("fields-label", layerPreferences.fields && layerPreferences.labels);
+    setVisibility("terrain-hillshade", view3D && layerPreferences.hillshade);
+    ["measurement-fill", "measurement-line", "measurement-points"].forEach(
+      (layerId) => setVisibility(layerId, layerPreferences.measurements)
+    );
+    ["draft-fill", "draft-line", "edit-field-fill", "edit-field-line", "edit-midpoints", "edit-vertices"].forEach(
+      (layerId) => setVisibility(layerId, layerPreferences.draft)
+    );
+
+    if (map.getLayer("fields-fill")) {
+      map.setPaintProperty(
+        "fields-fill",
+        "fill-opacity",
+        selectedFieldId ? layerPreferences.fieldsOpacity / 2 : layerPreferences.fieldsOpacity
+      );
+    }
+
+    if (map.getLayer("terrain-hillshade")) {
+      map.setPaintProperty(
+        "terrain-hillshade",
+        "hillshade-exaggeration",
+        layerPreferences.hillshadeOpacity
+      );
+    }
+
+    markersRef.current.forEach((marker) => {
+      marker.getElement().style.display = layerPreferences.farms ? "" : "none";
+    });
+  }, [layerPreferences, mapLoaded, selectedFieldId, view3D]);
+
   useEffect(() => {
     const map = mapRef.current;
 
@@ -850,6 +931,7 @@ export default function MapView({
         .setPopup(popup)
         .addTo(map);
 
+      marker.getElement().style.display = layerPreferences.farms ? "" : "none";
       markersRef.current.push(marker);
     });
 
@@ -873,7 +955,7 @@ export default function MapView({
         });
       }
     }
-  }, [farms, mapLoaded, view3D]);
+  }, [farms, mapLoaded, view3D, layerPreferences.farms]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -948,10 +1030,10 @@ export default function MapView({
       map.setPaintProperty(
         "fields-fill",
         "fill-opacity",
-        selectedFieldId ? 0.16 : 0.32
+        selectedFieldId ? layerPreferences.fieldsOpacity / 2 : layerPreferences.fieldsOpacity
       );
     }
-  }, [selectedFieldId, mapLoaded]);
+  }, [selectedFieldId, mapLoaded, layerPreferences.fieldsOpacity]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -1571,6 +1653,14 @@ export default function MapView({
           🎯
         </button>
       </div>
+
+      <LayersManager
+        open={layersOpen}
+        preferences={layerPreferences}
+        onOpenChange={setLayersOpen}
+        onChange={setLayerPreferences}
+        onReset={() => setLayerPreferences(DEFAULT_LAYER_PREFERENCES)}
+      />
 
       {measurementMode && (
         <div className="absolute left-4 top-4 z-10 w-72 rounded-2xl border border-amber-200 bg-white/95 p-4 shadow-2xl backdrop-blur">
