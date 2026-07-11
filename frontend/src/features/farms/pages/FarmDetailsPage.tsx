@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import {
@@ -7,13 +7,21 @@ import {
   Brain,
   CalendarDays,
   CloudSun,
+  Download,
   MapPin,
   Plus,
   Sprout,
   Tractor,
+  Upload,
 } from "lucide-react";
 
 import MapView from "../../maps/components/MapView";
+import {
+  exportFieldAsGeoJSON,
+  exportFieldsAsGeoJSON,
+} from "../../maps/utils/geojsonExport";
+import GeoJSONImportDialog from "../../maps/components/GeoJSONImportDialog";
+import type { ImportedFieldCandidate } from "../../maps/utils/geojsonImport";
 
 import FieldDrawer from "../../fields/components/FieldDrawer";
 import FieldDetailsPanel from "../../fields/components/FieldDetailsPanel";
@@ -62,6 +70,27 @@ function getStatusClass(
   }
 
   return "bg-red-100 text-red-700";
+}
+
+type GeometryHistoryEntry = {
+  geometry: PolygonGeometry;
+  area: number;
+};
+
+function cloneGeometry(geometry: PolygonGeometry): PolygonGeometry {
+  return {
+    type: "Polygon",
+    coordinates: geometry.coordinates.map((ring) =>
+      ring.map((coordinate) => [...coordinate])
+    ),
+  };
+}
+
+function geometriesAreEqual(
+  first: PolygonGeometry,
+  second: PolygonGeometry
+) {
+  return JSON.stringify(first.coordinates) === JSON.stringify(second.coordinates);
 }
 
 export default function FarmDetailsPage() {
@@ -124,6 +153,71 @@ export default function FarmDetailsPage() {
   const [editableGeometry, setEditableGeometry] = useState<PolygonGeometry | null>(null);
   const [editableArea, setEditableArea] = useState(0);
   const [savingGeometry, setSavingGeometry] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [importingGeoJSON, setImportingGeoJSON] = useState(false);
+  const [canUndoGeometry, setCanUndoGeometry] = useState(false);
+  const [canRedoGeometry, setCanRedoGeometry] = useState(false);
+
+  const geometryHistoryRef = useRef<GeometryHistoryEntry[]>([]);
+  const geometryHistoryIndexRef = useRef(-1);
+
+  function updateGeometryHistoryControls() {
+    const index = geometryHistoryIndexRef.current;
+    const history = geometryHistoryRef.current;
+
+    setCanUndoGeometry(index > 0);
+    setCanRedoGeometry(index >= 0 && index < history.length - 1);
+  }
+
+  function resetGeometryHistory(geometry?: PolygonGeometry, area = 0) {
+    if (!geometry) {
+      geometryHistoryRef.current = [];
+      geometryHistoryIndexRef.current = -1;
+    } else {
+      geometryHistoryRef.current = [
+        { geometry: cloneGeometry(geometry), area },
+      ];
+      geometryHistoryIndexRef.current = 0;
+    }
+
+    updateGeometryHistoryControls();
+  }
+
+  function applyGeometryHistoryEntry(entry: GeometryHistoryEntry) {
+    const geometry = cloneGeometry(entry.geometry);
+
+    setEditableGeometry(geometry);
+    setEditableArea(entry.area);
+    setSelectedField((current) =>
+      current
+        ? { ...current, geometry, area: entry.area }
+        : current
+    );
+  }
+
+  function handleUndoGeometry() {
+    const nextIndex = geometryHistoryIndexRef.current - 1;
+
+    if (nextIndex < 0) {
+      return;
+    }
+
+    geometryHistoryIndexRef.current = nextIndex;
+    applyGeometryHistoryEntry(geometryHistoryRef.current[nextIndex]);
+    updateGeometryHistoryControls();
+  }
+
+  function handleRedoGeometry() {
+    const nextIndex = geometryHistoryIndexRef.current + 1;
+
+    if (nextIndex >= geometryHistoryRef.current.length) {
+      return;
+    }
+
+    geometryHistoryIndexRef.current = nextIndex;
+    applyGeometryHistoryEntry(geometryHistoryRef.current[nextIndex]);
+    updateGeometryHistoryControls();
+  }
 
   /*
    * CARREGAR EXPLORAÇÃO
@@ -344,18 +438,48 @@ export default function FarmDetailsPage() {
     setFieldDrawerOpen(false);
     setEditingField(null);
     setSelectedField(field);
-    setEditableGeometry(field.geometry);
-    setEditableArea(Number(field.area) || 0);
+    const initialArea = Number(field.area) || 0;
+
+    setEditableGeometry(cloneGeometry(field.geometry));
+    setEditableArea(initialArea);
+    resetGeometryHistory(field.geometry, initialArea);
     setEditGeometryMode(true);
     setFocusFieldId(field.id);
   }
 
   function handleGeometryChange(geometry: PolygonGeometry, area: number) {
-    setEditableGeometry(geometry);
+    const clonedGeometry = cloneGeometry(geometry);
+
+    setEditableGeometry(clonedGeometry);
     setEditableArea(area);
     setSelectedField((current) =>
-      current ? { ...current, geometry, area } : current
+      current ? { ...current, geometry: clonedGeometry, area } : current
     );
+  }
+
+  function handleGeometryCommit(geometry: PolygonGeometry, area: number) {
+    const clonedGeometry = cloneGeometry(geometry);
+    const currentEntry =
+      geometryHistoryRef.current[geometryHistoryIndexRef.current];
+
+    if (currentEntry && geometriesAreEqual(currentEntry.geometry, clonedGeometry)) {
+      return;
+    }
+
+    const nextHistory = geometryHistoryRef.current.slice(
+      0,
+      geometryHistoryIndexRef.current + 1
+    );
+
+    nextHistory.push({
+      geometry: clonedGeometry,
+      area,
+    });
+
+    const limitedHistory = nextHistory.slice(-60);
+    geometryHistoryRef.current = limitedHistory;
+    geometryHistoryIndexRef.current = limitedHistory.length - 1;
+    updateGeometryHistoryControls();
   }
 
   function handleCancelGeometryEdit() {
@@ -364,6 +488,7 @@ export default function FarmDetailsPage() {
     setEditableGeometry(null);
     setEditableArea(0);
     setEditGeometryMode(false);
+    resetGeometryHistory();
   }
 
   async function handleSaveGeometryEdit() {
@@ -384,11 +509,101 @@ export default function FarmDetailsPage() {
       setEditableGeometry(null);
       setEditableArea(0);
       setEditGeometryMode(false);
+      resetGeometryHistory();
     } catch (error) {
       console.error("FIELD GEOMETRY UPDATE ERROR:", error);
       alert("Não foi possível guardar os novos limites do talhão.");
     } finally {
       setSavingGeometry(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!editGeometryMode) {
+      return;
+    }
+
+    function handleKeyboardShortcut(event: KeyboardEvent) {
+      const modifierPressed = event.ctrlKey || event.metaKey;
+
+      if (!modifierPressed) {
+        return;
+      }
+
+      const key = event.key.toLowerCase();
+
+      if (key === "z" && event.shiftKey) {
+        event.preventDefault();
+        handleRedoGeometry();
+        return;
+      }
+
+      if (key === "z") {
+        event.preventDefault();
+        handleUndoGeometry();
+        return;
+      }
+
+      if (key === "y") {
+        event.preventDefault();
+        handleRedoGeometry();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyboardShortcut);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyboardShortcut);
+    };
+    // Os controladores usam refs mutáveis para manter o histórico atual.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editGeometryMode]);
+
+  async function handleImportGeoJSON(
+    candidates: ImportedFieldCandidate[]
+  ) {
+    if (!farmId || candidates.length === 0) {
+      return;
+    }
+
+    try {
+      setImportingGeoJSON(true);
+
+      const createdFields: Field[] = [];
+
+      for (const candidate of candidates) {
+        const createdField = await createField({
+          farm_id: farmId,
+          name: candidate.name.trim(),
+          crop: candidate.crop.trim(),
+          area: candidate.area,
+          status: candidate.status,
+          geometry: candidate.geometry,
+        });
+
+        createdFields.push(createdField);
+      }
+
+      setFields((current) => [...createdFields, ...current]);
+      setImportDialogOpen(false);
+
+      const firstCreated = createdFields[0] ?? null;
+      setSelectedField(firstCreated);
+      setFocusFieldId(firstCreated?.id ?? null);
+
+      alert(
+        `${createdFields.length} talhão(ões) importado(s) com sucesso.`
+      );
+    } catch (error) {
+      console.error("GEOJSON IMPORT ERROR:", error);
+      alert(
+        "A importação foi interrompida. Verifique os dados e tente novamente."
+      );
+
+      const refreshedFields = await getFieldsByFarm(farmId);
+      setFields(refreshedFields);
+    } finally {
+      setImportingGeoJSON(false);
     }
   }
 
@@ -544,6 +759,40 @@ export default function FarmDetailsPage() {
     );
   }
 
+  function handleExportAllFields() {
+    if (!farm) {
+      return;
+    }
+
+    try {
+      exportFieldsAsGeoJSON(fields, farm);
+    } catch (error) {
+      console.error("GEOJSON EXPORT ERROR:", error);
+      window.alert(
+        error instanceof Error
+          ? error.message
+          : "Não foi possível exportar os talhões."
+      );
+    }
+  }
+
+  function handleExportField(field: Field) {
+    if (!farm) {
+      return;
+    }
+
+    try {
+      exportFieldAsGeoJSON(field, farm);
+    } catch (error) {
+      console.error("GEOJSON FIELD EXPORT ERROR:", error);
+      window.alert(
+        error instanceof Error
+          ? error.message
+          : "Não foi possível exportar o talhão."
+      );
+    }
+  }
+
   return (
     <>
       <section className="space-y-6">
@@ -651,20 +900,44 @@ export default function FarmDetailsPage() {
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={
-                  handleStartDrawing
-                }
-                disabled={drawingMode || editGeometryMode}
-                className="flex items-center justify-center gap-2 rounded-xl bg-green-700 px-4 py-3 font-semibold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                <Plus size={18} />
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={handleExportAllFields}
+                  disabled={
+                    drawingMode ||
+                    editGeometryMode ||
+                    !fields.some((field) => field.geometry)
+                  }
+                  className="flex items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 font-semibold text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Download size={18} />
+                  Exportar GeoJSON
+                </button>
 
-                {drawingMode
-                  ? "A desenhar..."
-                  : "Adicionar Talhão"}
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setImportDialogOpen(true)}
+                  disabled={drawingMode || editGeometryMode}
+                  className="flex items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <Upload size={18} />
+                  Importar GeoJSON
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleStartDrawing}
+                  disabled={drawingMode || editGeometryMode}
+                  className="flex items-center justify-center gap-2 rounded-xl bg-green-700 px-4 py-3 font-semibold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <Plus size={18} />
+
+                  {drawingMode
+                    ? "A desenhar..."
+                    : "Adicionar Talhão"}
+                </button>
+              </div>
             </div>
 
             <div className="h-150">
@@ -684,6 +957,7 @@ export default function FarmDetailsPage() {
                 editGeometryMode={editGeometryMode}
                 editableGeometry={editableGeometry}
                 onGeometryChange={handleGeometryChange}
+                onGeometryCommit={handleGeometryCommit}
                 onFieldSelect={
                   handleFieldSelect
                 }
@@ -912,6 +1186,18 @@ export default function FarmDetailsPage() {
         />
       </section>
 
+      <GeoJSONImportDialog
+        open={importDialogOpen}
+        existingFields={fields}
+        importing={importingGeoJSON}
+        onClose={() => {
+          if (!importingGeoJSON) {
+            setImportDialogOpen(false);
+          }
+        }}
+        onImport={handleImportGeoJSON}
+      />
+
       {/* PAINEL GIS DO TALHÃO */}
       <FieldDetailsPanel
         field={selectedField}
@@ -925,7 +1211,11 @@ export default function FarmDetailsPage() {
         }
         isEditingGeometry={editGeometryMode}
         isSavingGeometry={savingGeometry}
+        canUndoGeometry={canUndoGeometry}
+        canRedoGeometry={canRedoGeometry}
         onEditGeometry={handleStartGeometryEdit}
+        onUndoGeometry={handleUndoGeometry}
+        onRedoGeometry={handleRedoGeometry}
         onSaveGeometry={handleSaveGeometryEdit}
         onCancelGeometry={handleCancelGeometryEdit}
         onCenter={
@@ -934,6 +1224,7 @@ export default function FarmDetailsPage() {
         onDelete={
           handleDeleteField
         }
+        onExport={handleExportField}
       />
     </>
   );

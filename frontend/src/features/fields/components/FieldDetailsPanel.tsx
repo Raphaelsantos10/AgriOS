@@ -2,6 +2,7 @@ import {
   Activity,
   Brain,
   Droplets,
+  Download,
   MapPin,
   Maximize2,
   Pencil,
@@ -9,6 +10,8 @@ import {
   Ruler,
   Sprout,
   Trash2,
+  Undo2,
+  Redo2,
   X,
 } from "lucide-react";
 
@@ -22,9 +25,14 @@ interface Props {
   onEdit: (field: Field) => void;
   onCenter: (field: Field) => void;
   onDelete: (field: Field) => void;
+  onExport: (field: Field) => void;
   isEditingGeometry?: boolean;
   isSavingGeometry?: boolean;
+  canUndoGeometry?: boolean;
+  canRedoGeometry?: boolean;
   onEditGeometry: (field: Field) => void;
+  onUndoGeometry: () => void;
+  onRedoGeometry: () => void;
   onSaveGeometry: () => void;
   onCancelGeometry: () => void;
 }
@@ -136,9 +144,14 @@ export default function FieldDetailsPanel({
   onEdit,
   onCenter,
   onDelete,
+  onExport,
   isEditingGeometry = false,
   isSavingGeometry = false,
+  canUndoGeometry = false,
+  canRedoGeometry = false,
   onEditGeometry,
+  onUndoGeometry,
+  onRedoGeometry,
   onSaveGeometry,
   onCancelGeometry,
 }: Props) {
@@ -420,6 +433,34 @@ export default function FieldDetailsPanel({
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
+                onClick={onUndoGeometry}
+                disabled={!canUndoGeometry || isSavingGeometry}
+                title="Desfazer (Ctrl+Z)"
+                className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-3 font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Undo2 size={18} />
+                Desfazer
+              </button>
+
+              <button
+                type="button"
+                onClick={onRedoGeometry}
+                disabled={!canRedoGeometry || isSavingGeometry}
+                title="Refazer (Ctrl+Y ou Ctrl+Shift+Z)"
+                className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-3 font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Redo2 size={18} />
+                Refazer
+              </button>
+            </div>
+
+            <p className="text-center text-xs text-slate-500">
+              Atalhos: Ctrl+Z para desfazer e Ctrl+Y para refazer.
+            </p>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
                 onClick={onSaveGeometry}
                 disabled={isSavingGeometry}
                 className="flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-3 font-semibold text-white transition hover:bg-blue-800 disabled:opacity-60"
@@ -448,6 +489,16 @@ export default function FieldDetailsPanel({
             >
               <MapPin size={18} />
               Centralizar no mapa
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onExport(field)}
+              disabled={!field.geometry}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-3 font-semibold text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Download size={18} />
+              Exportar talhão em GeoJSON
             </button>
 
             <button

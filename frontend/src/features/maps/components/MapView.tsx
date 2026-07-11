@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 import * as turf from "@turf/turf";
 
@@ -19,6 +19,7 @@ interface Props {
   editGeometryMode?: boolean;
   editableGeometry?: PolygonGeometry | null;
   onGeometryChange?: (geometry: PolygonGeometry, area: number) => void;
+  onGeometryCommit?: (geometry: PolygonGeometry, area: number) => void;
   onFieldSelect?: (field: Field | null) => void;
   onPolygonCreated?: (
     geometry: PolygonGeometry,
@@ -27,6 +28,7 @@ interface Props {
 }
 
 type MapMode = "map" | "satellite";
+type MeasurementMode = "distance" | "area" | null;
 
 const EMPTY_COLLECTION: GeoJSON.FeatureCollection = {
   type: "FeatureCollection",
@@ -42,6 +44,7 @@ export default function MapView({
   editGeometryMode = false,
   editableGeometry = null,
   onGeometryChange,
+  onGeometryCommit,
   onFieldSelect,
   onPolygonCreated,
 }: Props) {
@@ -54,10 +57,12 @@ export default function MapView({
   const editGeometryModeRef = useRef(editGeometryMode);
   const editableGeometryRef = useRef<PolygonGeometry | null>(editableGeometry);
   const onGeometryChangeRef = useRef(onGeometryChange);
+  const onGeometryCommitRef = useRef(onGeometryCommit);
   const draggedVertexRef = useRef<number | null>(null);
   const fieldsRef = useRef<Field[]>(fields);
   const onFieldSelectRef = useRef(onFieldSelect);
   const onPolygonCreatedRef = useRef(onPolygonCreated);
+  const measurementModeRef = useRef<MeasurementMode>(null);
 
   const terrainAvailableRef = useRef(true);
 
@@ -65,10 +70,16 @@ export default function MapView({
   const [mapMode, setMapMode] = useState<MapMode>("map");
   const [mapLoaded, setMapLoaded] = useState(false);
   const [view3D, setView3D] = useState(false);
+  const [measurementMode, setMeasurementMode] = useState<MeasurementMode>(null);
+  const [measurementPoints, setMeasurementPoints] = useState<[number, number][]>([]);
 
   useEffect(() => {
     drawingModeRef.current = drawingMode;
   }, [drawingMode]);
+
+  useEffect(() => {
+    measurementModeRef.current = measurementMode;
+  }, [measurementMode]);
 
   useEffect(() => {
     editGeometryModeRef.current = editGeometryMode;
@@ -81,6 +92,10 @@ export default function MapView({
   useEffect(() => {
     onGeometryChangeRef.current = onGeometryChange;
   }, [onGeometryChange]);
+
+  useEffect(() => {
+    onGeometryCommitRef.current = onGeometryCommit;
+  }, [onGeometryCommit]);
 
   useEffect(() => {
     fieldsRef.current = fields;
@@ -534,8 +549,57 @@ export default function MapView({
         });
       }
 
+      if (!map.getSource("measurement")) {
+        map.addSource("measurement", {
+          type: "geojson",
+          data: EMPTY_COLLECTION,
+        });
+      }
+
+      if (!map.getLayer("measurement-fill")) {
+        map.addLayer({
+          id: "measurement-fill",
+          type: "fill",
+          source: "measurement",
+          filter: ["==", ["geometry-type"], "Polygon"],
+          paint: {
+            "fill-color": "#f59e0b",
+            "fill-opacity": 0.2,
+          },
+        });
+      }
+
+      if (!map.getLayer("measurement-line")) {
+        map.addLayer({
+          id: "measurement-line",
+          type: "line",
+          source: "measurement",
+          filter: ["in", ["geometry-type"], ["literal", ["LineString", "Polygon"]]],
+          paint: {
+            "line-color": "#d97706",
+            "line-width": 3,
+            "line-dasharray": [2, 1],
+          },
+        });
+      }
+
+      if (!map.getLayer("measurement-points")) {
+        map.addLayer({
+          id: "measurement-points",
+          type: "circle",
+          source: "measurement",
+          filter: ["==", ["geometry-type"], "Point"],
+          paint: {
+            "circle-radius": 6,
+            "circle-color": "#f59e0b",
+            "circle-stroke-color": "#ffffff",
+            "circle-stroke-width": 2,
+          },
+        });
+      }
+
       map.on("click", "fields-fill", (event) => {
-        if (drawingModeRef.current || editGeometryModeRef.current) {
+        if (drawingModeRef.current || editGeometryModeRef.current || measurementModeRef.current) {
           return;
         }
 
@@ -555,7 +619,7 @@ export default function MapView({
       });
 
       map.on("click", (event) => {
-        if (drawingModeRef.current || editGeometryModeRef.current) {
+        if (drawingModeRef.current || editGeometryModeRef.current || measurementModeRef.current) {
           return;
         }
 
@@ -572,7 +636,7 @@ export default function MapView({
       });
 
       map.on("mouseenter", "fields-fill", () => {
-        if (!drawingModeRef.current && !editGeometryModeRef.current) {
+        if (!drawingModeRef.current && !editGeometryModeRef.current && !measurementModeRef.current) {
           map.getCanvas().style.cursor = "pointer";
         }
       });
@@ -1017,6 +1081,14 @@ export default function MapView({
     function handleMapClick(
       event: maplibregl.MapMouseEvent
     ) {
+      if (measurementModeRef.current) {
+        setMeasurementPoints((current) => [
+          ...current,
+          [event.lngLat.lng, event.lngLat.lat],
+        ]);
+        return;
+      }
+
       if (!drawingModeRef.current) {
         return;
       }
@@ -1036,6 +1108,87 @@ export default function MapView({
       map.off("click", handleMapClick);
     };
   }, [mapLoaded]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+
+    if (!map || !mapLoaded) {
+      return;
+    }
+
+    const source = map.getSource("measurement") as maplibregl.GeoJSONSource | undefined;
+
+    if (!source) {
+      return;
+    }
+
+    const features: GeoJSON.Feature[] = measurementPoints.map((coordinate, index) => ({
+      type: "Feature",
+      properties: { index },
+      geometry: {
+        type: "Point",
+        coordinates: coordinate,
+      },
+    }));
+
+    if (measurementMode === "distance" && measurementPoints.length >= 2) {
+      features.push({
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates: measurementPoints,
+        },
+      });
+    }
+
+    if (measurementMode === "area" && measurementPoints.length >= 3) {
+      features.push({
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "Polygon",
+          coordinates: [[...measurementPoints, measurementPoints[0]]],
+        },
+      });
+    } else if (measurementMode === "area" && measurementPoints.length >= 2) {
+      features.push({
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates: measurementPoints,
+        },
+      });
+    }
+
+    source.setData({
+      type: "FeatureCollection",
+      features,
+    });
+  }, [mapLoaded, measurementMode, measurementPoints]);
+
+  const measurementResult = useMemo(() => {
+    if (measurementMode === "distance" && measurementPoints.length >= 2) {
+      const line = turf.lineString(measurementPoints);
+      const meters = turf.length(line, { units: "kilometers" }) * 1000;
+
+      return meters >= 1000
+        ? `${(meters / 1000).toFixed(2)} km`
+        : `${meters.toFixed(1)} m`;
+    }
+
+    if (measurementMode === "area" && measurementPoints.length >= 3) {
+      const polygon = turf.polygon([[...measurementPoints, measurementPoints[0]]]);
+      const squareMeters = turf.area(polygon);
+
+      return squareMeters >= 10000
+        ? `${(squareMeters / 10000).toFixed(2)} ha`
+        : `${squareMeters.toFixed(1)} m²`;
+    }
+
+    return "—";
+  }, [measurementMode, measurementPoints]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -1099,7 +1252,7 @@ export default function MapView({
 
     function publishGeometry(ring: number[][]) {
       if (ring.length < 3) {
-        return;
+        return null;
       }
 
       const closedRing = [...ring, [...ring[0]]];
@@ -1114,6 +1267,8 @@ export default function MapView({
       const polygon = turf.polygon(geometry.coordinates);
       const area = turf.area(polygon) / 10000;
       onGeometryChangeRef.current?.(geometry, area);
+
+      return { geometry, area };
     }
 
     activeSource.setData(
@@ -1154,6 +1309,14 @@ export default function MapView({
       draggedVertexRef.current = null;
       activeMap.dragPan.enable();
       activeMap.getCanvas().style.cursor = "default";
+
+      const geometry = editableGeometryRef.current;
+
+      if (geometry) {
+        const polygon = turf.polygon(geometry.coordinates);
+        const area = turf.area(polygon) / 10000;
+        onGeometryCommitRef.current?.(geometry, area);
+      }
     }
 
     function handleMidpointClick(event: maplibregl.MapLayerMouseEvent) {
@@ -1161,7 +1324,11 @@ export default function MapView({
       if (!Number.isInteger(index)) return;
       const ring = getRing();
       ring.splice(index + 1, 0, [event.lngLat.lng, event.lngLat.lat]);
-      publishGeometry(ring);
+      const result = publishGeometry(ring);
+
+      if (result) {
+        onGeometryCommitRef.current?.(result.geometry, result.area);
+      }
     }
 
     function handleVertexContextMenu(event: maplibregl.MapLayerMouseEvent) {
@@ -1173,7 +1340,11 @@ export default function MapView({
         return;
       }
       ring.splice(index, 1);
-      publishGeometry(ring);
+      const result = publishGeometry(ring);
+
+      if (result) {
+        onGeometryCommitRef.current?.(result.geometry, result.area);
+      }
     }
 
     function handleVertexEnter() { activeMap.getCanvas().style.cursor = "grab"; }
@@ -1253,6 +1424,30 @@ export default function MapView({
 
   function clearDrawing() {
     setPoints([]);
+  }
+
+  function startMeasurement(mode: Exclude<MeasurementMode, null>) {
+    setMeasurementMode((current) => {
+      const nextMode = current === mode ? null : mode;
+      measurementModeRef.current = nextMode;
+      return nextMode;
+    });
+    setMeasurementPoints([]);
+    setPoints([]);
+  }
+
+  function undoMeasurementPoint() {
+    setMeasurementPoints((current) => current.slice(0, -1));
+  }
+
+  function clearMeasurement() {
+    setMeasurementPoints([]);
+  }
+
+  function closeMeasurement() {
+    measurementModeRef.current = null;
+    setMeasurementMode(null);
+    setMeasurementPoints([]);
   }
 
   function centralizeFarm() {
@@ -1341,6 +1536,34 @@ export default function MapView({
 
         <button
           type="button"
+          onClick={() => startMeasurement("distance")}
+          disabled={drawingMode || editGeometryMode}
+          className={`rounded-lg px-3 py-2 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-40 ${
+            measurementMode === "distance"
+              ? "bg-amber-500 text-white"
+              : "text-slate-600 hover:bg-slate-100"
+          }`}
+          title="Medir distância"
+        >
+          📏 Distância
+        </button>
+
+        <button
+          type="button"
+          onClick={() => startMeasurement("area")}
+          disabled={drawingMode || editGeometryMode}
+          className={`rounded-lg px-3 py-2 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-40 ${
+            measurementMode === "area"
+              ? "bg-amber-500 text-white"
+              : "text-slate-600 hover:bg-slate-100"
+          }`}
+          title="Medir área"
+        >
+          📐 Área
+        </button>
+
+        <button
+          type="button"
           onClick={centralizeFarm}
           className="rounded-lg px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-100"
           title="Centralizar exploração"
@@ -1348,6 +1571,59 @@ export default function MapView({
           🎯
         </button>
       </div>
+
+      {measurementMode && (
+        <div className="absolute left-4 top-4 z-10 w-72 rounded-2xl border border-amber-200 bg-white/95 p-4 shadow-2xl backdrop-blur">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="font-bold text-slate-900">
+                {measurementMode === "distance" ? "Medir distância" : "Medir área"}
+              </p>
+              <p className="mt-1 text-xs leading-5 text-slate-500">
+                Clique no mapa para adicionar pontos à medição.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={closeMeasurement}
+              className="rounded-lg px-2 py-1 text-sm font-bold text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+              aria-label="Fechar medição"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="rounded-xl bg-amber-50 px-3 py-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-700">Resultado</p>
+              <p className="mt-1 text-lg font-bold text-amber-900">{measurementResult}</p>
+            </div>
+            <div className="rounded-xl bg-slate-50 px-3 py-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Pontos</p>
+              <p className="mt-1 text-lg font-bold text-slate-900">{measurementPoints.length}</p>
+            </div>
+          </div>
+
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={undoMeasurementPoint}
+              disabled={measurementPoints.length === 0}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Desfazer ponto
+            </button>
+            <button
+              type="button"
+              onClick={clearMeasurement}
+              disabled={measurementPoints.length === 0}
+              className="rounded-xl border border-red-200 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Limpar
+            </button>
+          </div>
+        </div>
+      )}
 
       {drawingMode && (
         <div className="absolute left-4 top-4 z-10 w-64 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-2xl backdrop-blur">
