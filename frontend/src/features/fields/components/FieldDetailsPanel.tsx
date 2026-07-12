@@ -15,6 +15,7 @@ import {
   Redo2,
   Scissors,
   GitMerge,
+  History,
   X,
 } from "lucide-react";
 
@@ -33,6 +34,7 @@ interface Props {
   onMerge: (field: Field) => void;
   onExport: (field: Field) => void;
   onExportKML: (field: Field) => void;
+  onHistory: (field: Field) => void;
   isEditingGeometry?: boolean;
   isSavingGeometry?: boolean;
   canUndoGeometry?: boolean;
@@ -156,6 +158,7 @@ export default function FieldDetailsPanel({
   onMerge,
   onExport,
   onExportKML,
+  onHistory,
   isEditingGeometry = false,
   isSavingGeometry = false,
   canUndoGeometry = false,
@@ -550,6 +553,15 @@ export default function FieldDetailsPanel({
             >
               <GitMerge size={18} />
               Unir talhões
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onHistory(field)}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-5 py-3 font-semibold text-violet-700 transition hover:bg-violet-100"
+            >
+              <History size={18} />
+              Histórico do talhão
             </button>
 
             <button

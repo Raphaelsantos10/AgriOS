@@ -34,6 +34,7 @@ import type { ImportedFieldCandidate } from "../../maps/utils/geojsonImport";
 
 import FieldDrawer from "../../fields/components/FieldDrawer";
 import FieldDetailsPanel from "../../fields/components/FieldDetailsPanel";
+import FieldHistoryDialog from "../../fields/components/FieldHistoryDialog";
 
 import type {
   Field,
@@ -46,6 +47,8 @@ import {
   getFieldsByFarm,
   updateField,
 } from "../../fields/services/fieldsService";
+import { createFieldHistorySnapshot } from "../../fields/services/fieldHistoryService";
+import type { FieldHistory } from "../../fields/types/fieldHistory";
 
 import type { Farm } from "../types/farm";
 
@@ -178,6 +181,9 @@ export default function FarmDetailsPage() {
   const [mergeTargetFieldId, setMergeTargetFieldId] = useState("");
   const [mergeName, setMergeName] = useState("");
   const [savingMerge, setSavingMerge] = useState(false);
+  const [historyDialogOpen, setHistoryDialogOpen] = useState(false);
+  const [historyField, setHistoryField] = useState<Field | null>(null);
+  const [restoringHistory, setRestoringHistory] = useState(false);
 
   const geometryHistoryRef = useRef<GeometryHistoryEntry[]>([]);
   const geometryHistoryIndexRef = useRef(-1);
@@ -374,6 +380,12 @@ export default function FarmDetailsPage() {
       const createdField =
         await createField(field);
 
+      await createFieldHistorySnapshot(
+        createdField,
+        "CREATE",
+        "Versão inicial do talhão"
+      );
+
       setFields((current) => [
         createdField,
         ...current,
@@ -422,6 +434,15 @@ export default function FarmDetailsPage() {
     field: Field
   ) {
     try {
+      const currentField = fields.find((item) => item.id === field.id);
+      if (currentField) {
+        await createFieldHistorySnapshot(
+          currentField,
+          "UPDATE",
+          "Estado anterior à alteração dos dados"
+        );
+      }
+
       const updatedField =
         await updateField(field);
 
@@ -517,6 +538,15 @@ export default function FarmDetailsPage() {
 
     try {
       setSavingGeometry(true);
+      const persistedField = fields.find((item) => item.id === selectedField.id);
+      if (persistedField) {
+        await createFieldHistorySnapshot(
+          persistedField,
+          "GEOMETRY",
+          "Estado anterior à edição dos limites"
+        );
+      }
+
       const updatedField = await updateField({
         ...selectedField,
         geometry: editableGeometry,
@@ -965,6 +995,11 @@ export default function FarmDetailsPage() {
     }
 
     try {
+      await createFieldHistorySnapshot(
+        field,
+        "DELETE",
+        "Última versão antes da eliminação"
+      );
       await deleteField(field.id);
 
       setFields((current) =>
@@ -1099,6 +1134,59 @@ export default function FarmDetailsPage() {
         </div>
       </section>
     );
+  }
+
+  function handleOpenFieldHistory(field: Field) {
+    setHistoryField(field);
+    setHistoryDialogOpen(true);
+  }
+
+  function handleCloseFieldHistory() {
+    if (restoringHistory) return;
+    setHistoryDialogOpen(false);
+    setHistoryField(null);
+  }
+
+  async function handleRestoreFieldHistory(version: FieldHistory) {
+    if (!historyField) return;
+
+    const confirmed = window.confirm(
+      `Restaurar a versão de ${new Date(version.created_at).toLocaleString("pt-PT")}?`
+    );
+    if (!confirmed) return;
+
+    try {
+      setRestoringHistory(true);
+      await createFieldHistorySnapshot(
+        historyField,
+        "RESTORE",
+        "Estado anterior ao restauro de uma versão"
+      );
+
+      const restoredField = await updateField({
+        ...historyField,
+        name: version.field_name,
+        crop: version.crop,
+        area: Number(version.area),
+        status: version.status,
+        geometry: version.geometry,
+      });
+
+      setFields((current) =>
+        current.map((item) => item.id === restoredField.id ? restoredField : item)
+      );
+      setSelectedField(restoredField);
+      setHistoryField(restoredField);
+      setHistoryDialogOpen(false);
+      setFocusFieldId(null);
+      window.setTimeout(() => setFocusFieldId(restoredField.id), 0);
+      alert("Versão restaurada com sucesso.");
+    } catch (error) {
+      console.error("FIELD HISTORY RESTORE ERROR:", error);
+      alert("Não foi possível restaurar esta versão.");
+    } finally {
+      setRestoringHistory(false);
+    }
   }
 
   function handleExportAllFields() {
@@ -1624,6 +1712,14 @@ export default function FarmDetailsPage() {
         onCancel={handleCancelSplitPreview}
       />
 
+      <FieldHistoryDialog
+        open={historyDialogOpen}
+        field={historyField}
+        restoring={restoringHistory}
+        onClose={handleCloseFieldHistory}
+        onRestore={handleRestoreFieldHistory}
+      />
+
       {/* PAINEL GIS DO TALHÃO */}
       <FieldDetailsPanel
         field={selectedField}
@@ -1655,6 +1751,7 @@ export default function FarmDetailsPage() {
         onMerge={handleStartMergeField}
         onExport={handleExportField}
         onExportKML={handleExportFieldKML}
+        onHistory={handleOpenFieldHistory}
       />
     </>
   );

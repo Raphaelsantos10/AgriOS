@@ -3,6 +3,7 @@ import {
   Bot,
   Boxes,
   CloudSun,
+  ClipboardCheck,
   Home,
   Map,
   MapPinned,
@@ -30,6 +31,11 @@ const items = [
     icon: Map,
     text: "Talhões",
     path: "/talhoes",
+  },
+  {
+    icon: ClipboardCheck,
+    text: "Missões",
+    path: "/missoes",
   },
   {
     icon: Tractor,
