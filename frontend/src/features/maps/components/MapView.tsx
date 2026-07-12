@@ -35,8 +35,10 @@ interface Props {
 }
 
 type MeasurementMode = "distance" | "area" | null;
+type GeometryEditTool = "vertices" | "move";
 
 const LAYER_PREFERENCES_KEY = "agrios.map.layer-preferences.v1";
+const GEOMETRY_CLIPBOARD_KEY = "agrios.map.geometry-clipboard.v1";
 
 const DEFAULT_LAYER_PREFERENCES: MapLayerPreferences = {
   baseMap: "osm",
@@ -94,6 +96,13 @@ export default function MapView({
   const onGeometryChangeRef = useRef(onGeometryChange);
   const onGeometryCommitRef = useRef(onGeometryCommit);
   const draggedVertexRef = useRef<number | null>(null);
+  const editToolRef = useRef<GeometryEditTool>("vertices");
+  const moveStartRef = useRef<{
+    lng: number;
+    lat: number;
+    ring: number[][];
+  } | null>(null);
+  const snapEnabledRef = useRef(true);
   const fieldsRef = useRef<Field[]>(fields);
   const onFieldSelectRef = useRef(onFieldSelect);
   const onPolygonCreatedRef = useRef(onPolygonCreated);
@@ -107,6 +116,8 @@ export default function MapView({
   const [mapLoaded, setMapLoaded] = useState(false);
   const [view3D, setView3D] = useState(false);
   const [measurementMode, setMeasurementMode] = useState<MeasurementMode>(null);
+  const [editTool, setEditTool] = useState<GeometryEditTool>("vertices");
+  const [snapEnabled, setSnapEnabled] = useState(true);
   const [measurementPoints, setMeasurementPoints] = useState<[number, number][]>([]);
   const [splitPoints, setSplitPoints] = useState<[number, number][]>([]);
   const [layersOpen, setLayersOpen] = useState(false);
@@ -132,6 +143,14 @@ export default function MapView({
   useEffect(() => {
     editGeometryModeRef.current = editGeometryMode;
   }, [editGeometryMode]);
+
+  useEffect(() => {
+    editToolRef.current = editTool;
+  }, [editTool]);
+
+  useEffect(() => {
+    snapEnabledRef.current = snapEnabled;
+  }, [snapEnabled]);
 
   useEffect(() => {
     editableGeometryRef.current = editableGeometry;
@@ -1545,6 +1564,7 @@ export default function MapView({
     }
 
     function handleVertexMouseDown(event: maplibregl.MapLayerMouseEvent) {
+      if (editToolRef.current !== "vertices") return;
       const index = Number(event.features?.[0]?.properties?.index);
       if (!Number.isInteger(index)) return;
       event.preventDefault();
@@ -1553,20 +1573,77 @@ export default function MapView({
       activeMap.getCanvas().style.cursor = "grabbing";
     }
 
+    function findSnapCoordinate(
+      coordinate: [number, number]
+    ): [number, number] {
+      if (!snapEnabledRef.current) {
+        return coordinate;
+      }
+
+      let nearest: [number, number] | null = null;
+      let nearestDistance = 2.5;
+
+      fieldsRef.current.forEach((field) => {
+        const ring = field.geometry?.coordinates[0] ?? [];
+        ring.slice(0, -1).forEach((candidate) => {
+          const distance = turf.distance(
+            turf.point(coordinate),
+            turf.point(candidate),
+            { units: "meters" }
+          );
+
+          if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearest = [candidate[0], candidate[1]];
+          }
+        });
+      });
+
+      return nearest ?? coordinate;
+    }
+
+    function handleFieldMouseDown(event: maplibregl.MapLayerMouseEvent) {
+      if (editToolRef.current !== "move") return;
+      const ring = getRing();
+      if (ring.length < 3) return;
+      event.preventDefault();
+      moveStartRef.current = {
+        lng: event.lngLat.lng,
+        lat: event.lngLat.lat,
+        ring,
+      };
+      activeMap.dragPan.disable();
+      activeMap.getCanvas().style.cursor = "grabbing";
+    }
+
     function handleMouseMove(event: maplibregl.MapMouseEvent) {
       const index = draggedVertexRef.current;
-      if (index === null) return;
-      const ring = getRing();
-      if (!ring[index]) return;
-      ring[index] = [event.lngLat.lng, event.lngLat.lat];
-      publishGeometry(ring);
+      if (index !== null) {
+        const ring = getRing();
+        if (!ring[index]) return;
+        ring[index] = findSnapCoordinate([event.lngLat.lng, event.lngLat.lat]);
+        publishGeometry(ring);
+        return;
+      }
+
+      const moveStart = moveStartRef.current;
+      if (!moveStart) return;
+
+      const deltaLng = event.lngLat.lng - moveStart.lng;
+      const deltaLat = event.lngLat.lat - moveStart.lat;
+      const movedRing = moveStart.ring.map(([lng, lat]) => [
+        lng + deltaLng,
+        lat + deltaLat,
+      ]);
+      publishGeometry(movedRing);
     }
 
     function handleMouseUp() {
-      if (draggedVertexRef.current === null) return;
+      if (draggedVertexRef.current === null && !moveStartRef.current) return;
       draggedVertexRef.current = null;
+      moveStartRef.current = null;
       activeMap.dragPan.enable();
-      activeMap.getCanvas().style.cursor = "default";
+      activeMap.getCanvas().style.cursor = editToolRef.current === "move" ? "move" : "default";
 
       const geometry = editableGeometryRef.current;
 
@@ -1578,6 +1655,7 @@ export default function MapView({
     }
 
     function handleMidpointClick(event: maplibregl.MapLayerMouseEvent) {
+      if (editToolRef.current !== "vertices") return;
       const index = Number(event.features?.[0]?.properties?.index);
       if (!Number.isInteger(index)) return;
       const ring = getRing();
@@ -1590,6 +1668,7 @@ export default function MapView({
     }
 
     function handleVertexContextMenu(event: maplibregl.MapLayerMouseEvent) {
+      if (editToolRef.current !== "vertices") return;
       event.preventDefault();
       const index = Number(event.features?.[0]?.properties?.index);
       const ring = getRing();
@@ -1605,11 +1684,12 @@ export default function MapView({
       }
     }
 
-    function handleVertexEnter() { activeMap.getCanvas().style.cursor = "grab"; }
+    function handleVertexEnter() { if (editToolRef.current === "vertices") activeMap.getCanvas().style.cursor = "grab"; }
     function handleVertexLeave() { if (draggedVertexRef.current === null) activeMap.getCanvas().style.cursor = "default"; }
     function handleMidpointEnter() { activeMap.getCanvas().style.cursor = "copy"; }
     function handleMidpointLeave() { activeMap.getCanvas().style.cursor = "default"; }
 
+    activeMap.on("mousedown", "edit-field-fill", handleFieldMouseDown);
     activeMap.on("mousedown", "edit-vertices", handleVertexMouseDown);
     activeMap.on("mousemove", handleMouseMove);
     activeMap.on("mouseup", handleMouseUp);
@@ -1622,7 +1702,9 @@ export default function MapView({
 
     return () => {
       draggedVertexRef.current = null;
+      moveStartRef.current = null;
       activeMap.dragPan.enable();
+      activeMap.off("mousedown", "edit-field-fill", handleFieldMouseDown);
       activeMap.off("mousedown", "edit-vertices", handleVertexMouseDown);
       activeMap.off("mousemove", handleMouseMove);
       activeMap.off("mouseup", handleMouseUp);
@@ -1634,6 +1716,60 @@ export default function MapView({
       activeMap.off("mouseleave", "edit-midpoints", handleMidpointLeave);
     };
   }, [editGeometryMode, editableGeometry, mapLoaded]);
+
+  function publishExternalGeometry(geometry: PolygonGeometry) {
+    try {
+      const polygon = turf.polygon(geometry.coordinates);
+      const area = turf.area(polygon) / 10000;
+      editableGeometryRef.current = geometry;
+      onGeometryChangeRef.current?.(geometry, area);
+      onGeometryCommitRef.current?.(geometry, area);
+    } catch (error) {
+      console.error("GEOMETRY TOOL ERROR:", error);
+      alert("Não foi possível aplicar esta transformação à geometria.");
+    }
+  }
+
+  function rotateEditableGeometry(angle: number) {
+    const geometry = editableGeometryRef.current;
+    if (!geometry) return;
+    const polygon = turf.polygon(geometry.coordinates);
+    const rotated = turf.transformRotate(polygon, angle, {
+      pivot: turf.centroid(polygon).geometry.coordinates,
+    });
+    publishExternalGeometry({
+      type: "Polygon",
+      coordinates: rotated.geometry.coordinates,
+    });
+  }
+
+  function copyEditableGeometry() {
+    const geometry = editableGeometryRef.current;
+    if (!geometry) return;
+    window.localStorage.setItem(
+      GEOMETRY_CLIPBOARD_KEY,
+      JSON.stringify(geometry)
+    );
+  }
+
+  function pasteEditableGeometry() {
+    const saved = window.localStorage.getItem(GEOMETRY_CLIPBOARD_KEY);
+    if (!saved) {
+      alert("Ainda não existe uma geometria copiada.");
+      return;
+    }
+
+    try {
+      const geometry = JSON.parse(saved) as PolygonGeometry;
+      if (geometry.type !== "Polygon" || !Array.isArray(geometry.coordinates)) {
+        throw new Error("Geometria inválida");
+      }
+      publishExternalGeometry(geometry);
+    } catch (error) {
+      console.error("GEOMETRY PASTE ERROR:", error);
+      alert("A geometria copiada não é válida.");
+    }
+  }
 
   function finishDrawing() {
     if (points.length < 3) {
@@ -2014,10 +2150,60 @@ export default function MapView({
       )}
 
       {editGeometryMode && (
-        <div className="absolute left-4 top-4 z-10 w-72 rounded-2xl border border-blue-200 bg-white/95 p-4 shadow-2xl backdrop-blur">
-          <p className="font-bold text-slate-900">Editar limites</p>
-          <p className="mt-1 text-xs leading-5 text-slate-500">
-            Arraste os pontos azuis. Clique nos pontos brancos para adicionar um vértice. Use o botão direito num ponto azul para removê-lo.
+        <div className="absolute left-4 top-4 z-10 w-80 rounded-2xl border border-blue-200 bg-white/95 p-4 shadow-2xl backdrop-blur">
+          <div>
+            <p className="font-bold text-slate-900">Ferramentas GIS</p>
+            <p className="mt-1 text-xs leading-5 text-slate-500">
+              Edite vértices, mova o polígono inteiro, use encaixe e aplique rotações precisas.
+            </p>
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setEditTool("vertices")}
+              className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                editTool === "vertices"
+                  ? "bg-blue-700 text-white"
+                  : "border border-slate-200 text-slate-700 hover:bg-slate-100"
+              }`}
+            >
+              Editar vértices
+            </button>
+            <button
+              type="button"
+              onClick={() => setEditTool("move")}
+              className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                editTool === "move"
+                  ? "bg-blue-700 text-white"
+                  : "border border-slate-200 text-slate-700 hover:bg-slate-100"
+              }`}
+            >
+              Mover talhão
+            </button>
+          </div>
+
+          <label className="mt-3 flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700">
+            Encaixe inteligente (2,5 m)
+            <input
+              type="checkbox"
+              checked={snapEnabled}
+              onChange={(event) => setSnapEnabled(event.target.checked)}
+              className="h-4 w-4 accent-blue-700"
+            />
+          </label>
+
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <button type="button" onClick={() => rotateEditableGeometry(-5)} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100">Rodar -5°</button>
+            <button type="button" onClick={() => rotateEditableGeometry(5)} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100">Rodar +5°</button>
+            <button type="button" onClick={copyEditableGeometry} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100">Copiar geometria</button>
+            <button type="button" onClick={pasteEditableGeometry} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100">Colar geometria</button>
+          </div>
+
+          <p className="mt-3 rounded-xl bg-blue-50 px-3 py-2 text-xs leading-5 text-blue-800">
+            {editTool === "vertices"
+              ? "Arraste pontos azuis; clique nos brancos para adicionar; botão direito remove."
+              : "Clique dentro do polígono e arraste para deslocar todo o talhão."}
           </p>
         </div>
       )}
