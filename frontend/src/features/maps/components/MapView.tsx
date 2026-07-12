@@ -20,9 +20,14 @@ interface Props {
   focusFieldId?: string | null;
   editGeometryMode?: boolean;
   editableGeometry?: PolygonGeometry | null;
+  splitMode?: boolean;
+  splitFieldGeometry?: PolygonGeometry | null;
+  splitPreview?: PolygonGeometry[] | null;
   onGeometryChange?: (geometry: PolygonGeometry, area: number) => void;
   onGeometryCommit?: (geometry: PolygonGeometry, area: number) => void;
   onFieldSelect?: (field: Field | null) => void;
+  onSplitLineCreated?: (coordinates: [number, number][]) => void;
+  onSplitCancel?: () => void;
   onPolygonCreated?: (
     geometry: PolygonGeometry,
     area: number
@@ -68,8 +73,13 @@ export default function MapView({
   focusFieldId = null,
   editGeometryMode = false,
   editableGeometry = null,
+  splitMode = false,
+  splitFieldGeometry = null,
+  splitPreview = null,
   onGeometryChange,
   onGeometryCommit,
+  onSplitLineCreated,
+  onSplitCancel,
   onFieldSelect,
   onPolygonCreated,
 }: Props) {
@@ -88,6 +98,8 @@ export default function MapView({
   const onFieldSelectRef = useRef(onFieldSelect);
   const onPolygonCreatedRef = useRef(onPolygonCreated);
   const measurementModeRef = useRef<MeasurementMode>(null);
+  const splitModeRef = useRef(splitMode);
+  const onSplitLineCreatedRef = useRef(onSplitLineCreated);
 
   const terrainAvailableRef = useRef(true);
 
@@ -96,6 +108,7 @@ export default function MapView({
   const [view3D, setView3D] = useState(false);
   const [measurementMode, setMeasurementMode] = useState<MeasurementMode>(null);
   const [measurementPoints, setMeasurementPoints] = useState<[number, number][]>([]);
+  const [splitPoints, setSplitPoints] = useState<[number, number][]>([]);
   const [layersOpen, setLayersOpen] = useState(false);
   const [layerPreferences, setLayerPreferences] = useState<MapLayerPreferences>(loadLayerPreferences);
 
@@ -106,6 +119,15 @@ export default function MapView({
   useEffect(() => {
     measurementModeRef.current = measurementMode;
   }, [measurementMode]);
+
+  useEffect(() => {
+    splitModeRef.current = splitMode;
+    if (!splitMode) queueMicrotask(() => setSplitPoints([]));
+  }, [splitMode]);
+
+  useEffect(() => {
+    onSplitLineCreatedRef.current = onSplitLineCreated;
+  }, [onSplitLineCreated]);
 
   useEffect(() => {
     editGeometryModeRef.current = editGeometryMode;
@@ -615,6 +637,68 @@ export default function MapView({
         });
       }
 
+      if (!map.getSource("split-tool")) {
+        map.addSource("split-tool", {
+          type: "geojson",
+          data: EMPTY_COLLECTION,
+        });
+      }
+
+      if (!map.getLayer("split-preview-fill")) {
+        map.addLayer({
+          id: "split-preview-fill",
+          type: "fill",
+          source: "split-tool",
+          filter: ["==", ["get", "kind"], "preview"],
+          paint: {
+            "fill-color": ["match", ["get", "part"], 0, "#2563eb", "#7c3aed"],
+            "fill-opacity": 0.38,
+          },
+        });
+      }
+
+      if (!map.getLayer("split-preview-line")) {
+        map.addLayer({
+          id: "split-preview-line",
+          type: "line",
+          source: "split-tool",
+          filter: ["==", ["get", "kind"], "preview"],
+          paint: {
+            "line-color": ["match", ["get", "part"], 0, "#1d4ed8", "#6d28d9"],
+            "line-width": 4,
+          },
+        });
+      }
+
+      if (!map.getLayer("split-cut-line")) {
+        map.addLayer({
+          id: "split-cut-line",
+          type: "line",
+          source: "split-tool",
+          filter: ["==", ["get", "kind"], "cut"],
+          paint: {
+            "line-color": "#dc2626",
+            "line-width": 4,
+            "line-dasharray": [2, 1],
+          },
+        });
+      }
+
+      if (!map.getLayer("split-cut-points")) {
+        map.addLayer({
+          id: "split-cut-points",
+          type: "circle",
+          source: "split-tool",
+          filter: ["==", ["get", "kind"], "cut-point"],
+          paint: {
+            "circle-radius": 6,
+            "circle-color": "#dc2626",
+            "circle-stroke-color": "#ffffff",
+            "circle-stroke-width": 2,
+          },
+        });
+      }
+
       if (!map.getSource("measurement")) {
         map.addSource("measurement", {
           type: "geojson",
@@ -665,7 +749,7 @@ export default function MapView({
       }
 
       map.on("click", "fields-fill", (event) => {
-        if (drawingModeRef.current || editGeometryModeRef.current || measurementModeRef.current) {
+        if (drawingModeRef.current || editGeometryModeRef.current || measurementModeRef.current || splitModeRef.current) {
           return;
         }
 
@@ -685,7 +769,7 @@ export default function MapView({
       });
 
       map.on("click", (event) => {
-        if (drawingModeRef.current || editGeometryModeRef.current || measurementModeRef.current) {
+        if (drawingModeRef.current || editGeometryModeRef.current || measurementModeRef.current || splitModeRef.current) {
           return;
         }
 
@@ -702,7 +786,7 @@ export default function MapView({
       });
 
       map.on("mouseenter", "fields-fill", () => {
-        if (!drawingModeRef.current && !editGeometryModeRef.current && !measurementModeRef.current) {
+        if (!drawingModeRef.current && !editGeometryModeRef.current && !measurementModeRef.current && !splitModeRef.current) {
           map.getCanvas().style.cursor = "pointer";
         }
       });
@@ -1203,6 +1287,14 @@ export default function MapView({
     function handleMapClick(
       event: maplibregl.MapMouseEvent
     ) {
+      if (splitModeRef.current) {
+        setSplitPoints((current) => [
+          ...current,
+          [event.lngLat.lng, event.lngLat.lat],
+        ]);
+        return;
+      }
+
       if (measurementModeRef.current) {
         setMeasurementPoints((current) => [
           ...current,
@@ -1230,6 +1322,50 @@ export default function MapView({
       map.off("click", handleMapClick);
     };
   }, [mapLoaded]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapLoaded) return;
+
+    const source = map.getSource("split-tool") as maplibregl.GeoJSONSource | undefined;
+    if (!source) return;
+
+    const features: GeoJSON.Feature[] = [];
+
+    if (splitMode && splitFieldGeometry) {
+      features.push({
+        type: "Feature",
+        properties: { kind: "preview", part: -1 },
+        geometry: splitFieldGeometry,
+      });
+    }
+
+    if (splitPoints.length >= 2) {
+      features.push({
+        type: "Feature",
+        properties: { kind: "cut" },
+        geometry: { type: "LineString", coordinates: splitPoints },
+      });
+    }
+
+    splitPoints.forEach((coordinate, index) => {
+      features.push({
+        type: "Feature",
+        properties: { kind: "cut-point", index },
+        geometry: { type: "Point", coordinates: coordinate },
+      });
+    });
+
+    splitPreview?.forEach((geometry, index) => {
+      features.push({
+        type: "Feature",
+        properties: { kind: "preview", part: index },
+        geometry,
+      });
+    });
+
+    source.setData({ type: "FeatureCollection", features });
+  }, [mapLoaded, splitMode, splitFieldGeometry, splitPreview, splitPoints]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -1572,6 +1708,27 @@ export default function MapView({
     setMeasurementPoints([]);
   }
 
+  function finishSplitLine() {
+    if (splitPoints.length < 2) {
+      alert("Marque pelo menos dois pontos para definir a linha de corte.");
+      return;
+    }
+    onSplitLineCreatedRef.current?.(splitPoints);
+  }
+
+  function undoSplitPoint() {
+    setSplitPoints((current) => current.slice(0, -1));
+  }
+
+  function clearSplitLine() {
+    setSplitPoints([]);
+  }
+
+  function cancelSplitMode() {
+    setSplitPoints([]);
+    onSplitCancel?.();
+  }
+
   function centralizeFarm() {
     const map = mapRef.current;
 
@@ -1691,7 +1848,7 @@ export default function MapView({
         <button
           type="button"
           onClick={() => startMeasurement("distance")}
-          disabled={drawingMode || editGeometryMode}
+          disabled={drawingMode || editGeometryMode || splitMode}
           className={`rounded-lg px-3 py-2 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-40 ${
             measurementMode === "distance"
               ? "bg-amber-500 text-white"
@@ -1705,7 +1862,7 @@ export default function MapView({
         <button
           type="button"
           onClick={() => startMeasurement("area")}
-          disabled={drawingMode || editGeometryMode}
+          disabled={drawingMode || editGeometryMode || splitMode}
           className={`rounded-lg px-3 py-2 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-40 ${
             measurementMode === "area"
               ? "bg-amber-500 text-white"
@@ -1733,6 +1890,28 @@ export default function MapView({
         onChange={setLayerPreferences}
         onReset={() => setLayerPreferences(DEFAULT_LAYER_PREFERENCES)}
       />
+
+      {splitMode && (
+        <div className="absolute left-4 top-4 z-20 w-80 rounded-2xl border border-red-200 bg-white/95 p-4 shadow-2xl backdrop-blur">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="font-bold text-slate-900">Dividir talhão</p>
+              <p className="mt-1 text-xs leading-5 text-slate-500">
+                Clique no mapa para desenhar uma linha que atravesse completamente o talhão.
+              </p>
+            </div>
+            <button type="button" onClick={cancelSplitMode} className="rounded-lg px-2 py-1 text-sm font-bold text-slate-400 hover:bg-slate-100 hover:text-slate-700">✕</button>
+          </div>
+          <div className="mt-3 rounded-xl bg-red-50 px-3 py-2">
+            <p className="text-sm font-semibold text-red-800">Pontos da linha: {splitPoints.length}</p>
+          </div>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            <button type="button" onClick={undoSplitPoint} disabled={splitPoints.length === 0} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-40">Desfazer</button>
+            <button type="button" onClick={clearSplitLine} disabled={splitPoints.length === 0} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-40">Limpar</button>
+            <button type="button" onClick={finishSplitLine} disabled={splitPoints.length < 2} className="rounded-xl bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-40">Pré-visualizar</button>
+          </div>
+        </div>
+      )}
 
       {measurementMode && (
         <div className="absolute left-4 top-4 z-10 w-72 rounded-2xl border border-amber-200 bg-white/95 p-4 shadow-2xl backdrop-blur">

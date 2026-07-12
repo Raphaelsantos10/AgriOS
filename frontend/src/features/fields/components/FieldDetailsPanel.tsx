@@ -13,6 +13,7 @@ import {
   Trash2,
   Undo2,
   Redo2,
+  Scissors,
   X,
 } from "lucide-react";
 
@@ -27,6 +28,7 @@ interface Props {
   onCenter: (field: Field) => void;
   onDelete: (field: Field) => void;
   onDuplicate: (field: Field) => void;
+  onSplit: (field: Field) => void;
   onExport: (field: Field) => void;
   onExportKML: (field: Field) => void;
   isEditingGeometry?: boolean;
@@ -148,6 +150,7 @@ export default function FieldDetailsPanel({
   onCenter,
   onDelete,
   onDuplicate,
+  onSplit,
   onExport,
   onExportKML,
   isEditingGeometry = false,
@@ -524,6 +527,16 @@ export default function FieldDetailsPanel({
             >
               <Copy size={18} />
               Duplicar talhão
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onSplit(field)}
+              disabled={!field.geometry}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-5 py-3 font-semibold text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Scissors size={18} />
+              Dividir talhão
             </button>
 
             <button

@@ -26,6 +26,8 @@ import {
   exportFieldsAsKML,
 } from "../../maps/utils/kml";
 import GeoJSONImportDialog from "../../maps/components/GeoJSONImportDialog";
+import SplitFieldDialog from "../../maps/components/SplitFieldDialog";
+import { splitPolygonByLine } from "../../maps/utils/splitPolygon";
 import type { ImportedFieldCandidate } from "../../maps/utils/geojsonImport";
 
 import FieldDrawer from "../../fields/components/FieldDrawer";
@@ -162,6 +164,13 @@ export default function FarmDetailsPage() {
   const [importingGeoJSON, setImportingGeoJSON] = useState(false);
   const [canUndoGeometry, setCanUndoGeometry] = useState(false);
   const [canRedoGeometry, setCanRedoGeometry] = useState(false);
+  const [splitMode, setSplitMode] = useState(false);
+  const [splitField, setSplitField] = useState<Field | null>(null);
+  const [splitGeometries, setSplitGeometries] = useState<[PolygonGeometry, PolygonGeometry] | null>(null);
+  const [splitAreas, setSplitAreas] = useState<[number, number] | null>(null);
+  const [splitFirstName, setSplitFirstName] = useState("");
+  const [splitSecondName, setSplitSecondName] = useState("");
+  const [savingSplit, setSavingSplit] = useState(false);
 
   const geometryHistoryRef = useRef<GeometryHistoryEntry[]>([]);
   const geometryHistoryIndexRef = useRef(-1);
@@ -664,6 +673,152 @@ export default function FarmDetailsPage() {
   }
 
   /*
+   * DIVIDIR TALHÃO
+   */
+  function resetSplitState(keepMode = false) {
+    setSplitGeometries(null);
+    setSplitAreas(null);
+    setSplitFirstName("");
+    setSplitSecondName("");
+
+    if (!keepMode) {
+      setSplitMode(false);
+      setSplitField(null);
+    }
+  }
+
+  function handleStartSplitField(field: Field) {
+    if (!field.geometry) {
+      alert("Este talhão não possui limites válidos para dividir.");
+      return;
+    }
+
+    setDrawingMode(false);
+    setEditGeometryMode(false);
+    setFieldDrawerOpen(false);
+    setEditingField(null);
+    setSelectedField(field);
+    setSplitField(field);
+    setSplitMode(true);
+    setSplitGeometries(null);
+    setSplitAreas(null);
+    setSplitFirstName(`${field.name} A`);
+    setSplitSecondName(`${field.name} B`);
+    setFocusFieldId(null);
+
+    window.setTimeout(() => setFocusFieldId(field.id), 0);
+  }
+
+  function handleSplitLineCreated(coordinates: [number, number][]) {
+    if (!splitField?.geometry) {
+      return;
+    }
+
+    try {
+      const result = splitPolygonByLine(splitField.geometry, coordinates);
+      setSplitGeometries(result.geometries);
+      setSplitAreas(result.areas);
+    } catch (error) {
+      console.error("FIELD SPLIT PREVIEW ERROR:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Não foi possível dividir o talhão com esta linha."
+      );
+    }
+  }
+
+  function handleCancelSplitPreview() {
+    setSplitGeometries(null);
+    setSplitAreas(null);
+  }
+
+  function handleCancelSplitMode() {
+    resetSplitState();
+  }
+
+  async function handleSaveSplit() {
+    if (
+      !farmId ||
+      !splitField ||
+      !splitGeometries ||
+      !splitAreas
+    ) {
+      return;
+    }
+
+    const firstName = splitFirstName.trim();
+    const secondName = splitSecondName.trim();
+
+    if (!firstName || !secondName || firstName.toLowerCase() === secondName.toLowerCase()) {
+      alert("Defina dois nomes diferentes para os novos talhões.");
+      return;
+    }
+
+    const createdIds: string[] = [];
+
+    try {
+      setSavingSplit(true);
+
+      const firstField = await createField({
+        farm_id: farmId,
+        name: firstName,
+        crop: splitField.crop,
+        area: splitAreas[0],
+        status: splitField.status,
+        geometry: splitGeometries[0],
+      });
+      createdIds.push(firstField.id);
+
+      const secondField = await createField({
+        farm_id: farmId,
+        name: secondName,
+        crop: splitField.crop,
+        area: splitAreas[1],
+        status: splitField.status,
+        geometry: splitGeometries[1],
+      });
+      createdIds.push(secondField.id);
+
+      await deleteField(splitField.id);
+
+      setFields((current) => [
+        firstField,
+        secondField,
+        ...current.filter((field) => field.id !== splitField.id),
+      ]);
+      setSelectedField(firstField);
+      resetSplitState();
+      setFocusFieldId(null);
+      window.setTimeout(() => setFocusFieldId(firstField.id), 0);
+    } catch (error) {
+      console.error("FIELD SPLIT SAVE ERROR:", error);
+
+      for (const createdId of createdIds) {
+        try {
+          await deleteField(createdId);
+        } catch (rollbackError) {
+          console.error("FIELD SPLIT ROLLBACK ERROR:", rollbackError);
+        }
+      }
+
+      try {
+        const refreshedFields = await getFieldsByFarm(farmId);
+        setFields(refreshedFields);
+        setSelectedField(
+          refreshedFields.find((field) => field.id === splitField.id) ?? null
+        );
+      } catch (refreshError) {
+        console.error("FIELD SPLIT REFRESH ERROR:", refreshError);
+      }
+
+      alert("Não foi possível concluir a divisão. O talhão original foi preservado.");
+    } finally {
+      setSavingSplit(false);
+    }
+  }
+
+  /*
    * APAGAR TALHÃO
    */
   async function handleDeleteField(
@@ -726,7 +881,7 @@ export default function FarmDetailsPage() {
   function handleFieldSelect(
     field: Field | null
   ) {
-    if (drawingMode) {
+    if (drawingMode || splitMode) {
       return;
     }
 
@@ -982,9 +1137,11 @@ export default function FarmDetailsPage() {
                 </h2>
 
                 <p className="mt-1 text-slate-500">
-                  {drawingMode
-                    ? "Modo de desenho ativo. Marque os limites do novo talhão."
-                    : selectedField
+                  {splitMode
+                    ? "Modo de divisão ativo. Desenhe uma linha que atravesse o talhão."
+                    : drawingMode
+                      ? "Modo de desenho ativo. Marque os limites do novo talhão."
+                      : selectedField
                       ? `Talhão selecionado: ${selectedField.name}`
                       : "Selecione um talhão no mapa para visualizar os seus detalhes."}
                 </p>
@@ -997,6 +1154,7 @@ export default function FarmDetailsPage() {
                   disabled={
                     drawingMode ||
                     editGeometryMode ||
+                    splitMode ||
                     !fields.some((field) => field.geometry)
                   }
                   className="flex items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 font-semibold text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
@@ -1011,6 +1169,7 @@ export default function FarmDetailsPage() {
                   disabled={
                     drawingMode ||
                     editGeometryMode ||
+                    splitMode ||
                     !fields.some((field) => field.geometry)
                   }
                   className="flex items-center justify-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-4 py-3 font-semibold text-violet-700 transition hover:bg-violet-100 disabled:cursor-not-allowed disabled:opacity-50"
@@ -1022,7 +1181,7 @@ export default function FarmDetailsPage() {
                 <button
                   type="button"
                   onClick={() => setImportDialogOpen(true)}
-                  disabled={drawingMode || editGeometryMode}
+                  disabled={drawingMode || editGeometryMode || splitMode}
                   className="flex items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 font-semibold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Upload size={18} />
@@ -1032,7 +1191,7 @@ export default function FarmDetailsPage() {
                 <button
                   type="button"
                   onClick={handleStartDrawing}
-                  disabled={drawingMode || editGeometryMode}
+                  disabled={drawingMode || editGeometryMode || splitMode}
                   className="flex items-center justify-center gap-2 rounded-xl bg-green-700 px-4 py-3 font-semibold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Plus size={18} />
@@ -1060,6 +1219,11 @@ export default function FarmDetailsPage() {
                 }
                 editGeometryMode={editGeometryMode}
                 editableGeometry={editableGeometry}
+                splitMode={splitMode}
+                splitFieldGeometry={splitField?.geometry ?? null}
+                splitPreview={splitGeometries}
+                onSplitLineCreated={handleSplitLineCreated}
+                onSplitCancel={handleCancelSplitMode}
                 onGeometryChange={handleGeometryChange}
                 onGeometryCommit={handleGeometryCommit}
                 onFieldSelect={
@@ -1302,6 +1466,20 @@ export default function FarmDetailsPage() {
         onImport={handleImportGeoJSON}
       />
 
+      <SplitFieldDialog
+        open={Boolean(splitGeometries && splitAreas)}
+        field={splitField}
+        geometries={splitGeometries}
+        areas={splitAreas}
+        firstName={splitFirstName}
+        secondName={splitSecondName}
+        saving={savingSplit}
+        onFirstNameChange={setSplitFirstName}
+        onSecondNameChange={setSplitSecondName}
+        onSave={handleSaveSplit}
+        onCancel={handleCancelSplitPreview}
+      />
+
       {/* PAINEL GIS DO TALHÃO */}
       <FieldDetailsPanel
         field={selectedField}
@@ -1329,6 +1507,7 @@ export default function FarmDetailsPage() {
           handleDeleteField
         }
         onDuplicate={handleDuplicateField}
+        onSplit={handleStartSplitField}
         onExport={handleExportField}
         onExportKML={handleExportFieldKML}
       />
