@@ -27,7 +27,9 @@ import {
 } from "../../maps/utils/kml";
 import GeoJSONImportDialog from "../../maps/components/GeoJSONImportDialog";
 import SplitFieldDialog from "../../maps/components/SplitFieldDialog";
+import MergeFieldDialog from "../../maps/components/MergeFieldDialog";
 import { splitPolygonByLine } from "../../maps/utils/splitPolygon";
+import { mergePolygonGeometries } from "../../maps/utils/mergePolygons";
 import type { ImportedFieldCandidate } from "../../maps/utils/geojsonImport";
 
 import FieldDrawer from "../../fields/components/FieldDrawer";
@@ -171,6 +173,11 @@ export default function FarmDetailsPage() {
   const [splitFirstName, setSplitFirstName] = useState("");
   const [splitSecondName, setSplitSecondName] = useState("");
   const [savingSplit, setSavingSplit] = useState(false);
+  const [mergeDialogOpen, setMergeDialogOpen] = useState(false);
+  const [mergeSourceField, setMergeSourceField] = useState<Field | null>(null);
+  const [mergeTargetFieldId, setMergeTargetFieldId] = useState("");
+  const [mergeName, setMergeName] = useState("");
+  const [savingMerge, setSavingMerge] = useState(false);
 
   const geometryHistoryRef = useRef<GeometryHistoryEntry[]>([]);
   const geometryHistoryIndexRef = useRef(-1);
@@ -815,6 +822,130 @@ export default function FarmDetailsPage() {
       alert("Não foi possível concluir a divisão. O talhão original foi preservado.");
     } finally {
       setSavingSplit(false);
+    }
+  }
+
+  /*
+   * UNIR TALHÕES
+   */
+  function handleStartMergeField(field: Field) {
+    if (!field.geometry) {
+      alert("Este talhão não possui limites válidos para unir.");
+      return;
+    }
+
+    const candidates = fields.filter(
+      (candidate) => candidate.id !== field.id && candidate.geometry
+    );
+
+    if (candidates.length === 0) {
+      alert("Não existem outros talhões com limites válidos para unir.");
+      return;
+    }
+
+    setMergeSourceField(field);
+    setMergeTargetFieldId("");
+    setMergeName(`${field.name} +`);
+    setMergeDialogOpen(true);
+  }
+
+  function handleCloseMergeDialog() {
+    if (savingMerge) return;
+    setMergeDialogOpen(false);
+    setMergeSourceField(null);
+    setMergeTargetFieldId("");
+    setMergeName("");
+  }
+
+  async function handleSaveMerge() {
+    if (!farmId || !mergeSourceField?.geometry) return;
+
+    const targetField = fields.find(
+      (field) => field.id === mergeTargetFieldId
+    );
+
+    if (!targetField?.geometry) {
+      alert("Selecione um segundo talhão válido.");
+      return;
+    }
+
+    const name = mergeName.trim();
+    if (!name) {
+      alert("Defina o nome do novo talhão.");
+      return;
+    }
+
+    let createdField: Field | null = null;
+
+    try {
+      setSavingMerge(true);
+      const result = mergePolygonGeometries(
+        mergeSourceField.geometry,
+        targetField.geometry
+      );
+
+      createdField = await createField({
+        farm_id: farmId,
+        name,
+        crop:
+          mergeSourceField.crop === targetField.crop
+            ? mergeSourceField.crop
+            : `${mergeSourceField.crop} / ${targetField.crop}`,
+        area: result.area,
+        status:
+          mergeSourceField.status === "critical" || targetField.status === "critical"
+            ? "critical"
+            : mergeSourceField.status === "attention" || targetField.status === "attention"
+              ? "attention"
+              : "healthy",
+        geometry: result.geometry,
+      });
+
+      await deleteField(mergeSourceField.id);
+      await deleteField(targetField.id);
+
+      setFields((current) => [
+        createdField as Field,
+        ...current.filter(
+          (field) =>
+            field.id !== mergeSourceField.id && field.id !== targetField.id
+        ),
+      ]);
+      setSelectedField(createdField);
+      setFocusFieldId(null);
+      setMergeDialogOpen(false);
+      setMergeSourceField(null);
+      setMergeTargetFieldId("");
+      setMergeName("");
+      window.setTimeout(() => setFocusFieldId(createdField?.id ?? null), 0);
+    } catch (error) {
+      console.error("FIELD MERGE ERROR:", error);
+
+      if (createdField) {
+        try {
+          await deleteField(createdField.id);
+        } catch (rollbackError) {
+          console.error("FIELD MERGE ROLLBACK ERROR:", rollbackError);
+        }
+      }
+
+      try {
+        const refreshedFields = await getFieldsByFarm(farmId);
+        setFields(refreshedFields);
+        setSelectedField(
+          refreshedFields.find((field) => field.id === mergeSourceField.id) ?? null
+        );
+      } catch (refreshError) {
+        console.error("FIELD MERGE REFRESH ERROR:", refreshError);
+      }
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Não foi possível unir os talhões."
+      );
+    } finally {
+      setSavingMerge(false);
     }
   }
 
@@ -1466,6 +1597,19 @@ export default function FarmDetailsPage() {
         onImport={handleImportGeoJSON}
       />
 
+      <MergeFieldDialog
+        open={mergeDialogOpen}
+        sourceField={mergeSourceField}
+        fields={fields}
+        selectedFieldId={mergeTargetFieldId}
+        name={mergeName}
+        saving={savingMerge}
+        onSelectedFieldIdChange={setMergeTargetFieldId}
+        onNameChange={setMergeName}
+        onSave={handleSaveMerge}
+        onClose={handleCloseMergeDialog}
+      />
+
       <SplitFieldDialog
         open={Boolean(splitGeometries && splitAreas)}
         field={splitField}
@@ -1508,6 +1652,7 @@ export default function FarmDetailsPage() {
         }
         onDuplicate={handleDuplicateField}
         onSplit={handleStartSplitField}
+        onMerge={handleStartMergeField}
         onExport={handleExportField}
         onExportKML={handleExportFieldKML}
       />

@@ -14,6 +14,7 @@ import {
   Undo2,
   Redo2,
   Scissors,
+  GitMerge,
   X,
 } from "lucide-react";
 
@@ -29,6 +30,7 @@ interface Props {
   onDelete: (field: Field) => void;
   onDuplicate: (field: Field) => void;
   onSplit: (field: Field) => void;
+  onMerge: (field: Field) => void;
   onExport: (field: Field) => void;
   onExportKML: (field: Field) => void;
   isEditingGeometry?: boolean;
@@ -151,6 +153,7 @@ export default function FieldDetailsPanel({
   onDelete,
   onDuplicate,
   onSplit,
+  onMerge,
   onExport,
   onExportKML,
   isEditingGeometry = false,
@@ -537,6 +540,16 @@ export default function FieldDetailsPanel({
             >
               <Scissors size={18} />
               Dividir talhão
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onMerge(field)}
+              disabled={!field.geometry}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-200 bg-indigo-50 px-5 py-3 font-semibold text-indigo-700 transition hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <GitMerge size={18} />
+              Unir talhões
             </button>
 
             <button
