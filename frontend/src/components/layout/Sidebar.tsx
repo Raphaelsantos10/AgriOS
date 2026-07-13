@@ -4,6 +4,7 @@ import {
   Boxes,
   CloudSun,
   ClipboardCheck,
+  CalendarDays,
   Home,
   Map,
   MapPinned,
@@ -38,6 +39,11 @@ const items = [
     path: "/missoes",
   },
   {
+    icon: CalendarDays,
+    text: "Calendário",
+    path: "/calendario",
+  },
+  {
     icon: Tractor,
     text: "Máquinas",
     path: "/maquinas",
@@ -69,8 +75,8 @@ const items = [
   },
   {
     icon: BarChart3,
-    text: "Relatórios",
-    path: "/relatorios",
+    text: "Analytics",
+    path: "/analytics",
   },
   {
     icon: Settings,
