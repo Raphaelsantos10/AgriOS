@@ -1,8 +1,9 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import Layout from "./layout";
+import AppErrorBoundary from "../components/errors/AppErrorBoundary";
 import PageLoader from "../components/ui/PageLoader";
+import Layout from "./layout";
 
 const Dashboard = lazy(() => import("../features/dashboard/pages/Dashboard"));
 const FarmsPage = lazy(() => import("../features/farms/pages/FarmsPage"));
@@ -18,25 +19,31 @@ const AgriculturalCalendarPage = lazy(
 const AnalyticsPage = lazy(
   () => import("../features/analytics/pages/AnalyticsPage"),
 );
+const NotFoundPage = lazy(
+  () => import("../features/system/pages/NotFoundPage"),
+);
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Layout>
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/exploracoes" element={<FarmsPage />} />
-            <Route path="/exploracoes/:farmId" element={<FarmDetailsPage />} />
-            <Route path="/missoes" element={<MissionsPage />} />
-            <Route
-              path="/calendario"
-              element={<AgriculturalCalendarPage />}
-            />
-            <Route path="/analytics" element={<AnalyticsPage />} />
-          </Routes>
-        </Suspense>
-      </Layout>
-    </BrowserRouter>
+    <AppErrorBoundary>
+      <BrowserRouter>
+        <Layout>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/exploracoes" element={<FarmsPage />} />
+              <Route path="/exploracoes/:farmId" element={<FarmDetailsPage />} />
+              <Route path="/missoes" element={<MissionsPage />} />
+              <Route
+                path="/calendario"
+                element={<AgriculturalCalendarPage />}
+              />
+              <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
+        </Layout>
+      </BrowserRouter>
+    </AppErrorBoundary>
   );
 }
