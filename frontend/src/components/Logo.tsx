@@ -1,8 +1,16 @@
-export default function Logo() {
+import FarphaLogo from "./brand/FarphaLogo";
+
+type LogoProps = {
+  compact?: boolean;
+  className?: string;
+};
+
+export default function Logo({ compact = false, className = "" }: LogoProps) {
   return (
-    <div>
-      <h1>🌾 AgriOS</h1>
-      <p>Smart Farming Platform</p>
-    </div>
+    <FarphaLogo
+      compact={compact}
+      eager
+      className={className || (compact ? "h-10 w-10" : "h-16 w-auto")}
+    />
   );
 }

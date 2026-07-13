@@ -27,3 +27,11 @@
   --farpha-text-muted: #9db0a4;
   --farpha-border: #273a2d;
 }
+
+:root {
+  --farpha-sidebar: #020c09;
+  --farpha-sidebar-surface: #061610;
+  --farpha-accent: #b6e83e;
+  --farpha-accent-strong: #92c925;
+  --farpha-gold-bright: #d4ad3a;
+}

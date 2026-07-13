@@ -1,3 +1,5 @@
+import FarphaLogo from "../brand/FarphaLogo";
+
 export default function PageLoader() {
   return (
     <div
@@ -6,15 +8,19 @@ export default function PageLoader() {
       aria-live="polite"
       aria-label="A carregar página"
     >
-      <div className="flex flex-col items-center gap-4">
-        <div className="relative h-12 w-12">
-          <div className="absolute inset-0 rounded-full border-4 border-green-100" />
-          <div className="absolute inset-0 animate-spin rounded-full border-4 border-transparent border-t-green-700" />
+      <div className="flex flex-col items-center gap-5 text-center">
+        <div className="relative">
+          <span className="absolute inset-2 animate-ping rounded-full bg-[#b6e83e]/20" />
+          <FarphaLogo
+            compact
+            eager
+            className="relative h-20 w-20 rounded-3xl object-cover shadow-[0_0_34px_rgba(182,232,62,0.20)]"
+          />
         </div>
 
-        <div className="text-center">
-          <p className="font-semibold text-slate-800">A carregar módulo</p>
-          <p className="mt-1 text-sm text-slate-500">
+        <div>
+          <p className="font-semibold text-[#173321]">A carregar módulo FARPHA</p>
+          <p className="mt-1 text-sm text-[#718078]">
             A preparar os dados da plataforma…
           </p>
         </div>

@@ -13,3 +13,42 @@ body,
   width:100%;
   height:100%;
 }
+body {
+  min-width: 320px;
+  background: var(--farpha-background);
+  color: var(--farpha-text);
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(167, 226, 46, 0.35);
+  color: #123524;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #9aaba0 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+  background-color: #9aaba0;
+}
