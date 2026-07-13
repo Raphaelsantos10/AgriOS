@@ -1,0 +1,29 @@
+:root {
+  --farpha-brand-50: #f2f8f4;
+  --farpha-brand-100: #ddede2;
+  --farpha-brand-500: #377d57;
+  --farpha-brand-600: #276545;
+  --farpha-brand-700: #214f39;
+  --farpha-brand-900: #123524;
+  --farpha-lime: #a7e22e;
+  --farpha-gold: #b8903c;
+  --farpha-background: #f5f8f6;
+  --farpha-surface: #ffffff;
+  --farpha-surface-muted: #eef3f0;
+  --farpha-text: #1b2a21;
+  --farpha-text-muted: #66756c;
+  --farpha-border: #dce5df;
+  --farpha-success: #2e8b57;
+  --farpha-warning: #d99a2b;
+  --farpha-danger: #c84a4a;
+  --farpha-info: #2e7db2;
+}
+
+[data-theme="farpha-dark"] {
+  --farpha-background: #08120c;
+  --farpha-surface: #101c14;
+  --farpha-surface-muted: #17261c;
+  --farpha-text: #eef7f1;
+  --farpha-text-muted: #9db0a4;
+  --farpha-border: #273a2d;
+}
