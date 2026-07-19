@@ -1,35 +1,138 @@
-# FARPHA / AgriOS
+# 🌱 FARPHA
 
-Plataforma inteligente de gestão agrícola.
+## Enterprise Smart Agriculture Platform
 
-## Estrutura oficial
+> Intelligence • GIS • AI • Automation • Precision Agriculture
+
+---
+
+## 📖 Sobre
+
+A FARPHA é uma plataforma inteligente para gestão agrícola que integra Inteligência Artificial, GIS, Agricultura de Precisão, Automação, IoT e análise de dados numa única solução.
+
+O objetivo é fornecer aos produtores agrícolas uma plataforma moderna para gerir explorações, monitorizar culturas, automatizar processos e tomar decisões baseadas em dados.
+
+---
+
+## ✨ Principais funcionalidades
+
+- 🌾 Gestão de Explorações
+- 📍 Gestão de Talhões (GIS)
+- 🛰️ Agricultura de Precisão
+- 🤖 Inteligência Artificial
+- 📊 Analytics
+- 📅 Calendário Agrícola
+- 🚜 Gestão de Máquinas
+- 💧 Irrigação Inteligente
+- 🔥 Monitorização de Incêndios
+- 📈 Dashboard Executivo
+- ⚙️ Centro de Operações
+- 🔄 Automações
+- 🌦️ Meteorologia
+- 🌍 Digital Twin
+
+---
+
+## 🛠 Tecnologias
+
+### Frontend
+
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- React Query
+
+### Backend
+
+- Supabase
+
+### GIS
+
+- MapLibre GL
+- Turf.js
+
+### UI
+
+- Lucide Icons
+- Framer Motion
+
+---
+
+## 📂 Estrutura do Projeto
 
 ```text
-AgriOS/
-├── frontend/   # Aplicação React + TypeScript + Vite
-├── backend/    # Serviços de backend
-├── database/   # Migrações e scripts de base de dados
-├── design/     # Identidade visual e recursos de design
-├── docs/       # Documentação, arquitetura e histórico de sprints
-└── mobile/     # Aplicação móvel (futura)
+AgriOS
+│
+├── frontend
+├── backend
+├── database
+├── docs
+├── design
+└── mobile
 ```
 
-## Executar o frontend
+---
+
+## 🚀 Como executar
+
+### Clonar
 
 ```bash
-cd frontend
-copy .env.example .env.local
+git clone https://github.com/Raphaelsantos10/AgriOS.git
+```
+
+### Entrar no frontend
+
+```bash
+cd AgriOS/frontend
+```
+
+### Instalar
+
+```bash
 npm install
+```
+
+### Executar
+
+```bash
 npm run dev
 ```
 
-No Linux/macOS, use `cp .env.example .env.local`. Preencha as credenciais do Supabase no `.env.local`.
+---
 
-## Build
+## 🗺️ Roadmap
 
-```bash
-cd frontend
-npm run build
-```
+- ✅ Dashboard Inteligente
+- ✅ GIS
+- ✅ Analytics
+- ✅ Centro de Operações
+- ✅ Automation Engine
+- 🔄 IA Agrícola
+- 🔄 Digital Twin
+- 🔄 IoT
+- 🔄 Satélites
+- 🔄 Drones
+- 🔄 Aplicação Mobile
 
-Não copie `node_modules` nem `dist` entre computadores. Essas pastas são recriadas localmente.
+---
+
+## 📷 Capturas de Ecrã
+
+> Em breve.
+
+---
+
+## 👨‍💻 Autor
+
+Raphael Soares
+
+Portugal 🇵🇹
+
+---
+
+## 📄 Licença
+
+MIT
