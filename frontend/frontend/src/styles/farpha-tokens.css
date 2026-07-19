@@ -1,0 +1,47 @@
+:root {
+  --farpha-brand-50: #f3f8f4;
+  --farpha-brand-100: #dcece1;
+  --farpha-brand-300: #8fc5a1;
+  --farpha-brand-500: #377d57;
+  --farpha-brand-600: #276545;
+  --farpha-brand-700: #214f39;
+  --farpha-brand-900: #123524;
+  --farpha-lime: #a7e22e;
+  --farpha-lime-soft: #eaf8c6;
+  --farpha-gold: #b8903c;
+  --farpha-background: #f4f7f5;
+  --farpha-surface: #ffffff;
+  --farpha-surface-muted: #eef3f0;
+  --farpha-surface-raised: #ffffff;
+  --farpha-text: #17251c;
+  --farpha-text-muted: #66756c;
+  --farpha-border: #d9e3dc;
+  --farpha-border-strong: #bccbc1;
+  --farpha-success: #2e8b57;
+  --farpha-warning: #d99a2b;
+  --farpha-danger: #c84a4a;
+  --farpha-info: #2e7db2;
+  --farpha-sidebar: #020c09;
+  --farpha-sidebar-surface: #061610;
+  --farpha-accent: #b6e83e;
+  --farpha-accent-strong: #92c925;
+  --farpha-gold-bright: #d4ad3a;
+  --farpha-radius-sm: 10px;
+  --farpha-radius-md: 14px;
+  --farpha-radius-lg: 18px;
+  --farpha-radius-xl: 24px;
+  --farpha-shadow-sm: 0 1px 2px rgba(12, 28, 18, 0.05), 0 4px 16px rgba(12, 28, 18, 0.04);
+  --farpha-shadow-md: 0 12px 32px rgba(12, 28, 18, 0.10);
+  --farpha-focus: 0 0 0 4px rgba(167, 226, 46, 0.22);
+}
+
+[data-theme="farpha-dark"] {
+  --farpha-background: #08120c;
+  --farpha-surface: #101c14;
+  --farpha-surface-muted: #17261c;
+  --farpha-surface-raised: #142219;
+  --farpha-text: #eef7f1;
+  --farpha-text-muted: #9db0a4;
+  --farpha-border: #273a2d;
+  --farpha-border-strong: #3c5143;
+}

@@ -1,10 +1,22 @@
+# Dependencies
 node_modules/
+**/node_modules/
+
+# Builds
 dist/
+**/dist/
+
+# Environment
 .env
 .env.local
 .env.*.local
-*.log
-.DS_Store
+!.env.example
+
+# Editors / OS
 .vscode/
 .idea/
-coverage/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
