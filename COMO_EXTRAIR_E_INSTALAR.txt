@@ -1,5 +1,5 @@
-FARPHA — SPRINT 36
-TESTES DOS FLUXOS CRÍTICOS
+FARPHA — SPRINT 37
+HISTÓRICO GIS E TRATAMENTO DE ERROS
 
 ============================================================
 1. ONDE GUARDAR E EXTRAIR
@@ -25,14 +25,14 @@ O caminho AgriOS\AgriOS está errado.
 Antes de extrair, abra o Git Bash e execute uma linha de cada vez:
 
 cd ~/Documents/Projetos
-mv AgriOS AgriOS_backup_sprint35
+mv AgriOS AgriOS_backup_sprint36
 
 Agora extraia o ZIP pelo Explorador do Windows dentro da pasta Projetos.
 
 Também pode extrair diretamente pelo Git Bash com:
 
 cd ~/Documents/Projetos
-unzip ~/Downloads/FARPHA_Sprint_36_Fluxos_Criticos.zip
+unzip ~/Downloads/FARPHA_Sprint_37_Historico_GIS_Erros.zip
 
 Confirme que a nova pasta existe:
 
@@ -45,7 +45,11 @@ ls ~/Documents/Projetos/AgriOS
 O ficheiro .env.local não é incluído no ZIP por segurança.
 Se ele existia na Sprint 34, copie-o para a nova versão:
 
-cp ~/Documents/Projetos/AgriOS_backup_sprint35/frontend/.env.local ~/Documents/Projetos/AgriOS/frontend/.env.local
+cp ~/Documents/Projetos/AgriOS_backup_sprint36/frontend/.env.local ~/Documents/Projetos/AgriOS/frontend/.env.local
+
+Recupere também a ligação ao GitHub:
+
+cp -r ~/Documents/Projetos/AgriOS_backup_sprint36/.git ~/Documents/Projetos/AgriOS/.git
 
 Não envie nem publique esse ficheiro no GitHub.
 
@@ -85,7 +89,7 @@ npm run dev
 6. RESULTADOS ESPERADOS
 ============================================================
 
-npm run test  -> 17 testes aprovados
+npm run test  -> 27 testes aprovados
 npm run lint  -> sem erros
 npm run build -> build concluído
 npm run dev   -> servidor local iniciado
@@ -106,14 +110,14 @@ O comando pwd deve terminar em /Documents/Projetos/AgriOS/frontend
 e o comando ls deve mostrar package.json.
 
 ============================================================
-8. O QUE A SPRINT 36 ALTEROU
+8. O QUE A SPRINT 37 ALTEROU
 ============================================================
 
-- Testes de listar, consultar, criar, editar e remover explorações.
-- Testes de listar, consultar, criar, editar e remover talhões.
-- Testes da geometria, área e estado dos talhões.
-- Testes de propagação de erros do Supabase.
-- Total acumulado de 17 testes automatizados.
+- Testes de criação e consulta do histórico GIS dos talhões.
+- Testes de notas, estado vazio e ordenação cronológica.
+- Testes de falhas do Supabase no histórico.
+- Testes da normalização e propagação de erros dos repositórios.
+- Total acumulado de 27 testes automatizados.
 - Supabase, autenticação, rotas e banco preservados.
 
 O ZIP contém a pasta AgriOS completa na raiz.
@@ -125,6 +129,6 @@ node_modules, dist, .git e .env.local não são incluídos.
 
 Depois de validar a aplicação, leia na raiz:
 
-ATUALIZAR_GITHUB_SPRINT_36.txt
+ATUALIZAR_GITHUB_SPRINT_37.txt
 
 Esse ficheiro contém os comandos de commit, pull e push desta sprint.

@@ -1,0 +1,22 @@
+FARPHA — SPRINT 37
+
+Caminho final:
+C:\Users\Utilizador\Documents\Projetos\AgriOS
+
+Antes de extrair:
+cd ~/Documents/Projetos
+mv AgriOS AgriOS_backup_sprint36
+
+Depois de extrair, recupere o Supabase e o histórico Git:
+cp ~/Documents/Projetos/AgriOS_backup_sprint36/frontend/.env.local ~/Documents/Projetos/AgriOS/frontend/.env.local
+cp -r ~/Documents/Projetos/AgriOS_backup_sprint36/.git ~/Documents/Projetos/AgriOS/.git
+
+Instale e execute:
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run test
+npm run lint
+npm run build
+npm run dev
+
+Resultado esperado: 27 testes aprovados.

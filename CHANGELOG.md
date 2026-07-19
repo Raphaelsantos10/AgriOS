@@ -45,3 +45,12 @@
 - Cobertura da propagação de erros do Supabase para a aplicação.
 - Total acumulado de 17 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 37 — Histórico GIS e tratamento de erros
+
+- Testes de criação e consulta de snapshots do histórico dos talhões.
+- Cobertura da normalização de notas e do estado vazio.
+- Cobertura de falhas do Supabase no histórico GIS.
+- Testes da camada comum de resultados e erros dos repositórios.
+- Total acumulado de 27 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.
