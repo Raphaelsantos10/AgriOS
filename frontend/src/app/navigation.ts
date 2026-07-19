@@ -1,15 +1,22 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  Activity,
   BarChart3,
   Bot,
   CalendarDays,
   CloudSun,
   ClipboardCheck,
+  ListChecks,
   Gauge,
+  Layers3,
   MapPinned,
   RadioTower,
+  Satellite,
   Settings,
+  Stethoscope,
+  Sprout,
   Tractor,
+  Workflow,
 } from "lucide-react";
 
 export type NavigationItem = {
@@ -33,6 +40,11 @@ export const navigationGroups: NavigationGroup[] = [
         path: "/",
         icon: Gauge,
       },
+      {
+        label: "Operações Inteligentes",
+        path: "/centro-operacoes",
+        icon: Activity,
+      },
     ],
   },
   {
@@ -49,9 +61,19 @@ export const navigationGroups: NavigationGroup[] = [
         icon: ClipboardCheck,
       },
       {
+        label: "Ordens de Trabalho",
+        path: "/ordens",
+        icon: ListChecks,
+      },
+      {
         label: "Calendário",
         path: "/calendario",
         icon: CalendarDays,
+      },
+      {
+        label: "Culturas",
+        path: "/culturas",
+        icon: Sprout,
       },
     ],
   },
@@ -64,10 +86,19 @@ export const navigationGroups: NavigationGroup[] = [
         icon: BarChart3,
       },
       {
+        label: "Digital Twin",
+        path: "/digital-twin",
+        icon: Layers3,
+      },
+      {
+        label: "Agricultura de Precisão",
+        path: "/precisao",
+        icon: Satellite,
+      },
+      {
         label: "FARPHA Intelligence",
         path: "/intelligence",
         icon: Bot,
-        disabled: true,
       },
     ],
   },
@@ -78,19 +109,16 @@ export const navigationGroups: NavigationGroup[] = [
         label: "Clima",
         path: "/clima",
         icon: CloudSun,
-        disabled: true,
       },
       {
         label: "Sensores",
         path: "/sensores",
         icon: RadioTower,
-        disabled: true,
       },
       {
         label: "Máquinas",
         path: "/maquinas",
         icon: Tractor,
-        disabled: true,
       },
     ],
   },
@@ -98,10 +126,19 @@ export const navigationGroups: NavigationGroup[] = [
     label: "Sistema",
     items: [
       {
+        label: "Automações",
+        path: "/automacoes",
+        icon: Workflow,
+      },
+      {
+        label: "Diagnóstico",
+        path: "/diagnostico",
+        icon: Stethoscope,
+      },
+      {
         label: "Definições",
         path: "/configuracoes",
         icon: Settings,
-        disabled: true,
       },
     ],
   },

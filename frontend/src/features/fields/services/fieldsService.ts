@@ -1,61 +1,26 @@
-import { supabase } from "../../../services/supabase";
+import { unwrapRepositoryResult } from "../../../repositories/core/types";
+import {
+  fieldRepository,
+  type CreateFieldInput,
+} from "../../../repositories/fields/fieldRepository";
 import type { Field } from "../types/field";
 
-export async function getFieldsByFarm(farmId: string) {
-  const { data, error } = await supabase
-    .from("fields")
-    .select("*")
-    .eq("farm_id", farmId)
-    .order("created_at", { ascending: false });
-
-  if (error) throw error;
-
-  return data as Field[];
+export async function getFieldsByFarm(farmId: string): Promise<Field[]> {
+  return unwrapRepositoryResult(await fieldRepository.listByFarm(farmId));
 }
 
-export async function createField(field: Omit<Field, "id" | "created_at">) {
-  const { data, error } = await supabase
-    .from("fields")
-    .insert({
-      farm_id: field.farm_id,
-      name: field.name,
-      crop: field.crop,
-      area: field.area,
-      status: field.status,
-      geometry: field.geometry,
-    })
-    .select()
-    .single();
-
-  if (error) throw error;
-
-  return data as Field;
+export async function getFieldById(fieldId: string): Promise<Field> {
+  return unwrapRepositoryResult(await fieldRepository.getById(fieldId));
 }
 
-export async function updateField(field: Field) {
-  const { data, error } = await supabase
-    .from("fields")
-    .update({
-      name: field.name,
-      crop: field.crop,
-      area: field.area,
-      status: field.status,
-      geometry: field.geometry,
-    })
-    .eq("id", field.id)
-    .select()
-    .single();
-
-  if (error) throw error;
-
-  return data as Field;
+export async function createField(field: CreateFieldInput): Promise<Field> {
+  return unwrapRepositoryResult(await fieldRepository.create(field));
 }
 
-export async function deleteField(fieldId: string) {
-  const { error } = await supabase
-    .from("fields")
-    .delete()
-    .eq("id", fieldId);
+export async function updateField(field: Field): Promise<Field> {
+  return unwrapRepositoryResult(await fieldRepository.update(field));
+}
 
-  if (error) throw error;
+export async function deleteField(fieldId: string): Promise<void> {
+  unwrapRepositoryResult(await fieldRepository.remove(fieldId));
 }

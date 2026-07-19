@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import * as turf from "@turf/turf";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   ArrowLeft,
@@ -106,6 +106,7 @@ function geometriesAreEqual(
 }
 
 export default function FarmDetailsPage() {
+  const navigate = useNavigate();
   const { farmId } = useParams<{
     farmId: string;
   }>();
@@ -1752,6 +1753,22 @@ export default function FarmDetailsPage() {
         onExport={handleExportField}
         onExportKML={handleExportFieldKML}
         onHistory={handleOpenFieldHistory}
+        onEnvironment={(field) => {
+          if (!farmId) return;
+          navigate(`/exploracoes/${farmId}/talhoes/${field.id}/ambiente`);
+        }}
+        onSuitability={(field) => {
+          if (!farmId) return;
+          navigate(`/exploracoes/${farmId}/talhoes/${field.id}/aptidao`);
+        }}
+        onIrrigation={(field) => {
+          if (!farmId) return;
+          navigate(`/exploracoes/${farmId}/talhoes/${field.id}/irrigacao`);
+        }}
+        onFire={(field) => {
+          if (!farmId) return;
+          navigate(`/exploracoes/${farmId}/talhoes/${field.id}/incendio`);
+        }}
       />
     </>
   );

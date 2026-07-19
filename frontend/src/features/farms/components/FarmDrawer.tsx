@@ -284,7 +284,7 @@ function FarmDrawerContent({
                   onChange={(event) =>
                     setName(event.target.value)
                   }
-                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-green-600 focus:ring-4 focus:ring-green-100"
+                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 caret-green-700 outline-none transition placeholder:text-slate-400 focus:border-green-600 focus:ring-4 focus:ring-green-100"
                   placeholder="Ex.: Quinta Vale Verde"
                 />
               </div>
@@ -299,7 +299,7 @@ function FarmDrawerContent({
                   onChange={(event) =>
                     setOwner(event.target.value)
                   }
-                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-green-600 focus:ring-4 focus:ring-green-100"
+                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 caret-green-700 outline-none transition placeholder:text-slate-400 focus:border-green-600 focus:ring-4 focus:ring-green-100"
                   placeholder="Ex.: Raphael Soares"
                 />
               </div>
@@ -317,7 +317,7 @@ function FarmDrawerContent({
                   type="number"
                   min="0"
                   step="0.01"
-                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-green-600 focus:ring-4 focus:ring-green-100"
+                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 caret-green-700 outline-none transition placeholder:text-slate-400 focus:border-green-600 focus:ring-4 focus:ring-green-100"
                   placeholder="Ex.: 11.5"
                 />
               </div>
@@ -332,7 +332,7 @@ function FarmDrawerContent({
                   onChange={(event) =>
                     setCrop(event.target.value)
                   }
-                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-green-600 focus:ring-4 focus:ring-green-100"
+                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-green-600 focus:ring-4 focus:ring-green-100"
                 >
                   <option>Milho</option>
                   <option>Trigo</option>
@@ -416,7 +416,7 @@ function FarmDrawerContent({
                   }
                   type="number"
                   step="any"
-                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-green-600"
+                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 caret-green-700 outline-none focus:border-green-600"
                 />
               </div>
 
@@ -434,7 +434,7 @@ function FarmDrawerContent({
                   }
                   type="number"
                   step="any"
-                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-green-600"
+                  className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 caret-green-700 outline-none focus:border-green-600"
                 />
               </div>
             </div>

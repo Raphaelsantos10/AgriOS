@@ -16,6 +16,9 @@ import {
   Scissors,
   GitMerge,
   History,
+  Flame,
+  MountainSnow,
+  WandSparkles,
   X,
 } from "lucide-react";
 
@@ -35,6 +38,10 @@ interface Props {
   onExport: (field: Field) => void;
   onExportKML: (field: Field) => void;
   onHistory: (field: Field) => void;
+  onEnvironment: (field: Field) => void;
+  onSuitability: (field: Field) => void;
+  onIrrigation: (field: Field) => void;
+  onFire: (field: Field) => void;
   isEditingGeometry?: boolean;
   isSavingGeometry?: boolean;
   canUndoGeometry?: boolean;
@@ -159,6 +166,10 @@ export default function FieldDetailsPanel({
   onExport,
   onExportKML,
   onHistory,
+  onEnvironment,
+  onSuitability,
+  onIrrigation,
+  onFire,
   isEditingGeometry = false,
   isSavingGeometry = false,
   canUndoGeometry = false,
@@ -562,6 +573,42 @@ export default function FieldDetailsPanel({
             >
               <History size={18} />
               Histórico do talhão
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onEnvironment(field)}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-3 font-semibold text-emerald-700 transition hover:bg-emerald-100"
+            >
+              <MountainSnow size={18} />
+              Perfil ambiental
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onSuitability(field)}
+              className="flex items-center justify-center gap-2 rounded-2xl border border-lime-200 bg-lime-50 px-4 py-3 text-sm font-bold text-lime-800 transition hover:bg-lime-100"
+            >
+              <WandSparkles size={18} />
+              Analisar aptidão
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onIrrigation(field)}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-sky-200 bg-sky-50 px-5 py-3 font-semibold text-sky-700 transition hover:bg-sky-100"
+            >
+              <Droplets size={18} />
+              Rega inteligente
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onFire(field)}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-orange-200 bg-orange-50 px-5 py-3 font-semibold text-orange-700 transition hover:bg-orange-100"
+            >
+              <Flame size={18} />
+              Risco de incêndio
             </button>
 
             <button
