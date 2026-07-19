@@ -1,0 +1,25 @@
+FARPHA / AgriOS — Sprint 34: Estabilização do GIS
+
+1. No Windows, abra:
+   C:\Users\Utilizador\Documents\Projetos
+
+2. Renomeie a pasta atual AgriOS para:
+   AgriOS_backup_sprint33
+
+3. Extraia este ZIP diretamente em:
+   C:\Users\Utilizador\Documents\Projetos
+
+4. O resultado correto deve ser:
+   C:\Users\Utilizador\Documents\Projetos\AgriOS
+
+5. Abra o Git Bash e execute:
+   cd ~/Documents/Projetos/AgriOS/frontend
+   npm install
+   npm run dev
+
+6. Para validar:
+   npm run lint
+   npm run build
+
+Não extraia dentro da pasta AgriOS antiga, para evitar AgriOS\AgriOS.
+O ficheiro frontend/.env.local foi preservado.

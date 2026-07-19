@@ -1,0 +1,130 @@
+FARPHA — SPRINT 36
+TESTES DOS FLUXOS CRÍTICOS
+
+============================================================
+1. ONDE GUARDAR E EXTRAIR
+============================================================
+
+Guarde o ZIP na pasta Downloads do Windows.
+
+Extraia diretamente dentro de:
+
+C:\Users\Utilizador\Documents\Projetos
+
+O resultado correto deve ser exatamente:
+
+C:\Users\Utilizador\Documents\Projetos\AgriOS
+
+ATENÇÃO: não extraia o ZIP dentro da pasta AgriOS antiga.
+O caminho AgriOS\AgriOS está errado.
+
+============================================================
+2. PROTEGER A SPRINT ANTERIOR — GIT BASH
+============================================================
+
+Antes de extrair, abra o Git Bash e execute uma linha de cada vez:
+
+cd ~/Documents/Projetos
+mv AgriOS AgriOS_backup_sprint35
+
+Agora extraia o ZIP pelo Explorador do Windows dentro da pasta Projetos.
+
+Também pode extrair diretamente pelo Git Bash com:
+
+cd ~/Documents/Projetos
+unzip ~/Downloads/FARPHA_Sprint_36_Fluxos_Criticos.zip
+
+Confirme que a nova pasta existe:
+
+ls ~/Documents/Projetos/AgriOS
+
+============================================================
+3. RECUPERAR A CONFIGURAÇÃO LOCAL DO SUPABASE
+============================================================
+
+O ficheiro .env.local não é incluído no ZIP por segurança.
+Se ele existia na Sprint 34, copie-o para a nova versão:
+
+cp ~/Documents/Projetos/AgriOS_backup_sprint35/frontend/.env.local ~/Documents/Projetos/AgriOS/frontend/.env.local
+
+Não envie nem publique esse ficheiro no GitHub.
+
+============================================================
+4. INSTALAR E VALIDAR — GIT BASH
+============================================================
+
+Execute uma linha de cada vez:
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run test
+npm run lint
+npm run build
+npm run dev
+
+Quando aparecer o endereço local, normalmente:
+
+http://localhost:5173
+
+segure Ctrl e clique no endereço para abrir a FARPHA.
+
+Para parar o servidor, volte ao Git Bash e pressione:
+
+Ctrl+C
+
+============================================================
+5. COMANDO RÁPIDO PARA OS PRÓXIMOS DIAS
+============================================================
+
+Depois da primeira instalação, para abrir novamente use apenas:
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm run dev
+
+============================================================
+6. RESULTADOS ESPERADOS
+============================================================
+
+npm run test  -> 17 testes aprovados
+npm run lint  -> sem erros
+npm run build -> build concluído
+npm run dev   -> servidor local iniciado
+
+O aviso sobre o tamanho do bundle GIS não impede o funcionamento.
+
+============================================================
+7. SE O COMANDO NPM NÃO ENCONTRAR PACKAGE.JSON
+============================================================
+
+Isso significa que o Git Bash está na pasta errada. Execute novamente:
+
+cd ~/Documents/Projetos/AgriOS/frontend
+pwd
+ls
+
+O comando pwd deve terminar em /Documents/Projetos/AgriOS/frontend
+e o comando ls deve mostrar package.json.
+
+============================================================
+8. O QUE A SPRINT 36 ALTEROU
+============================================================
+
+- Testes de listar, consultar, criar, editar e remover explorações.
+- Testes de listar, consultar, criar, editar e remover talhões.
+- Testes da geometria, área e estado dos talhões.
+- Testes de propagação de erros do Supabase.
+- Total acumulado de 17 testes automatizados.
+- Supabase, autenticação, rotas e banco preservados.
+
+O ZIP contém a pasta AgriOS completa na raiz.
+node_modules, dist, .git e .env.local não são incluídos.
+
+============================================================
+9. ATUALIZAR O GITHUB
+============================================================
+
+Depois de validar a aplicação, leia na raiz:
+
+ATUALIZAR_GITHUB_SPRINT_36.txt
+
+Esse ficheiro contém os comandos de commit, pull e push desta sprint.
