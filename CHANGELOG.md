@@ -54,3 +54,13 @@
 - Testes da camada comum de resultados e erros dos repositórios.
 - Total acumulado de 27 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 38 — Operações avançadas do GIS
+
+- Testes da união de talhões adjacentes e sobrepostos.
+- Rejeição da união de talhões separados.
+- Testes da divisão de um talhão em dois polígonos válidos.
+- Verificação da conservação aproximada da área após a divisão.
+- Rejeição de linhas de corte incompletas ou externas.
+- Total acumulado de 33 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.
