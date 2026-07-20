@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "smoke:prod": "node scripts/smoke-production-build.mjs",
     "test": "vitest run",
-    "validate": "npm run check:toolchain && npm run test && npm run lint && npm run build && npm run smoke:prod",
+    "validate": "npm run check:toolchain && npm run test && npm run lint && npm run build && npm run verify:dist && npm run smoke:prod",
+    "verify:dist": "node scripts/verify-build-manifest.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

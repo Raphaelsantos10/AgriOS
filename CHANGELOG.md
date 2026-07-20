@@ -165,3 +165,13 @@
 - Smoke test atualizado para rejeitar builds sem rastreabilidade.
 - Mantidas cinco rotas, seis assets, auditoria, 43 testes, lint e build.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 49 — Integridade do artefato
+
+- Verificação automática do manifesto antes do smoke test e do upload.
+- Deteção de ficheiros ausentes ou inesperados no dist.
+- Comparação do tamanho e hash SHA-256 de cada ficheiro.
+- Verificação da contagem e do tamanho total do artefato.
+- Novo comando npm run verify:dist integrado ao validate e FARPHA CI.
+- Mantidos identidade, cinco rotas, seis assets, auditoria e 43 testes.
+- Supabase, autenticação, rotas e base de dados preservados.
