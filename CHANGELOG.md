@@ -102,3 +102,13 @@
 - Verificação integrada no npm run build, npm run validate e FARPHA CI.
 - Mantidos os 43 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 43 — Governança de dependências
+
+- Bloqueio de atualizações principais automáticas do TypeScript e @types/node.
+- Verificação local da compatibilidade entre TypeScript e typescript-eslint.
+- Alinhamento obrigatório entre Node 24 e @types/node 24.
+- Novo comando npm run check:toolchain integrado na validação completa.
+- Mensagens claras para atualizações incompatíveis no desenvolvimento e no CI.
+- Mantidos os 43 testes e a proteção de tamanho dos bundles.
+- Supabase, autenticação, rotas e base de dados preservados.
