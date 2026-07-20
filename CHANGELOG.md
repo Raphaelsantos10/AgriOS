@@ -175,3 +175,14 @@
 - Novo comando npm run verify:dist integrado ao validate e FARPHA CI.
 - Mantidos identidade, cinco rotas, seis assets, auditoria e 43 testes.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 50 — Automação de release
+
+- Workflow FARPHA Release acionado por tags versionadas.
+- Tag validada contra a versão 2.1.0 do package.json.
+- Auditoria e validação completa obrigatórias antes do empacotamento.
+- Artefato de release identificado pela versão e conservado por 30 dias.
+- Processo com permissões de leitura e sem publicação automática de código.
+- Novo comando npm run check:release.
+- Mantidas todas as proteções acumuladas e os 43 testes.
+- Supabase, autenticação, rotas e base de dados preservados.

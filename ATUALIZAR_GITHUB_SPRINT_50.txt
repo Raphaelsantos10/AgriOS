@@ -1,0 +1,16 @@
+FARPHA — ATUALIZAÇÃO DO GITHUB — SPRINT 50
+
+Depois de validar a aplicação, execute no Git Bash:
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "ci: Sprint 50 - automatizar releases versionadas"
+git pull --rebase origin main
+git push origin main
+
+Depois abra:
+https://github.com/Raphaelsantos10/AgriOS/actions
+
+Confirme FARPHA CI e FARPHA Security verdes.
+Não crie a tag antes dessas duas verificações terminarem.

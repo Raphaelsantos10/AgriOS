@@ -1,9 +1,9 @@
-FARPHA — GUIA ATUAL — SPRINT 50
+FARPHA — SPRINT 50 — AUTOMAÇÃO DE RELEASE
 
 Caminho final:
 C:\Users\Utilizador\Documents\Projetos\AgriOS
 
-Cole no Git Bash:
+INSTALAÇÃO COMPLETA NO GIT BASH:
 
 cd ~/Documents/Projetos
 mv AgriOS AgriOS_backup_sprint49
@@ -17,13 +17,9 @@ npm run audit:prod
 npm run validate
 npm run dev
 
-Depois de validar, pressione Ctrl+C e publique:
+Resultado esperado:
+- Release aprovada: v2.1.0 corresponde ao FARPHA 2.1.0
+- found 0 vulnerabilities
+- Toolchain, 43 testes, lint, build, integridade e smoke test aprovados
 
-cd ~/Documents/Projetos/AgriOS
-git status
-git add .
-git commit -m "ci: Sprint 50 - automatizar releases versionadas"
-git pull --rebase origin main
-git push origin main
-
-Somente depois de FARPHA CI e FARPHA Security verdes, consulte CRIAR_RELEASE_V2_1_0.txt.
+Depois de confirmar a aplicação, pressione Ctrl+C e use ATUALIZAR_GITHUB_SPRINT_50.txt.

@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build && node scripts/create-build-info.mjs && node scripts/create-build-manifest.mjs && node scripts/check-build-size.mjs",
     "audit:prod": "npm audit --omit=dev --audit-level=high",
+    "check:release": "node scripts/check-release-version.mjs",
     "check:toolchain": "node scripts/check-toolchain-compatibility.mjs",
     "lint": "eslint .",
     "smoke:prod": "node scripts/smoke-production-build.mjs",
