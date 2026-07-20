@@ -123,3 +123,13 @@
 - Resultado atual: zero vulnerabilidades nas dependências de produção.
 - Mantidos os 43 testes, a proteção da toolchain e o limite dos bundles.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 45 — Artefato de produção verificável
+
+- Manifesto automático do build com hashes SHA-256.
+- Inventário, tamanho individual e tamanho total dos ficheiros de produção.
+- Upload do frontend/dist nas execuções verdes da branch main.
+- Artefatos identificados pelo SHA do commit e conservados durante 14 dias.
+- Upload restrito a pushes e execuções manuais para controlar armazenamento.
+- Mantidos auditoria, toolchain, 43 testes, lint e limite dos bundles.
+- Supabase, autenticação, rotas e base de dados preservados.

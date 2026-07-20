@@ -43,3 +43,13 @@ jobs:
 
       - name: Executar validação completa
         run: npm run validate
+
+      - name: Guardar build de produção
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: farpha-production-${{ github.sha }}
+          path: frontend/dist
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 9

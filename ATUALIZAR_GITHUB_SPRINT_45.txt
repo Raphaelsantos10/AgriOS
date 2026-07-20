@@ -1,0 +1,16 @@
+FARPHA — ATUALIZAÇÃO DO GITHUB — SPRINT 45
+
+Depois de validar a aplicação, execute no Git Bash:
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "ci: Sprint 45 - gerar artefato de producao verificavel"
+git pull --rebase origin main
+git push origin main
+
+Depois abra:
+https://github.com/Raphaelsantos10/AgriOS/actions
+
+Confirme FARPHA CI e FARPHA Security verdes.
+Abra a execução FARPHA CI e descarregue o artefato farpha-production na secção Artifacts.
