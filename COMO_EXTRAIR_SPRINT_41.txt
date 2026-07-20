@@ -1,37 +1,38 @@
-FARPHA — GUIA ATUAL — SPRINT 41
+FARPHA — SPRINT 41 — SEGURANÇA AUTOMATIZADA
 
-Caminho final do projeto:
+Caminho final:
 C:\Users\Utilizador\Documents\Projetos\AgriOS
 
-No Git Bash, faça uma cópia da Sprint 40:
+1. ANTES DE EXTRAIR, NO GIT BASH:
 
 cd ~/Documents/Projetos
 mv AgriOS AgriOS_backup_sprint40
 
-Extraia FARPHA_Sprint_41_Seguranca_Automatizada.zip dentro de:
+2. EXTRAIA O ZIP FARPHA_Sprint_41_Seguranca_Automatizada.zip EM:
 
 C:\Users\Utilizador\Documents\Projetos
 
-O resultado deve ser:
-C:\Users\Utilizador\Documents\Projetos\AgriOS\frontend
+O ZIP já contém a pasta AgriOS. Não crie outra pasta AgriOS dentro dela.
 
-Recupere o ambiente e o repositório Git:
+3. RECUPERE AS CONFIGURAÇÕES LOCAIS E O HISTÓRICO GIT:
 
 cp ~/Documents/Projetos/AgriOS_backup_sprint40/frontend/.env.local ~/Documents/Projetos/AgriOS/frontend/.env.local
 cp -r ~/Documents/Projetos/AgriOS_backup_sprint40/.git ~/Documents/Projetos/AgriOS/.git
 
-Se existir configuração na raiz:
+Se também usa um .env.local na raiz, execute:
 
 cp ~/Documents/Projetos/AgriOS_backup_sprint40/.env.local ~/Documents/Projetos/AgriOS/.env.local
 
-Instale, valide e execute:
+4. INSTALE E VALIDE:
 
 cd ~/Documents/Projetos/AgriOS/frontend
 npm install
 npm run validate
 npm run dev
 
-Publique a Sprint 41:
+Resultado esperado: 43 testes aprovados, lint sem erros e build concluído.
+
+5. PUBLIQUE NO GITHUB:
 
 cd ~/Documents/Projetos/AgriOS
 git status
@@ -40,5 +41,11 @@ git commit -m "security: Sprint 41 - automatizar analise e dependencias"
 git pull --rebase origin main
 git push origin main
 
-No GitHub, confirme FARPHA CI e FARPHA Security em Actions.
-Não apague AgriOS_backup_sprint40 antes de concluir todas as verificações.
+6. CONFIRME NO GITHUB:
+
+Actions > FARPHA CI
+Actions > FARPHA Security
+Security > Code scanning
+Insights > Dependency graph > Dependabot
+
+Não apague AgriOS_backup_sprint40 antes de confirmar que a aplicação e o GitHub funcionam.

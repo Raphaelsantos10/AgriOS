@@ -83,3 +83,13 @@
 - Novo comando npm run validate.
 - Permissões mínimas e cancelamento de execuções obsoletas.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 41 — Segurança automatizada
+
+- Análise CodeQL para JavaScript e TypeScript em pushes e pull requests.
+- Verificação de segurança semanal e execução manual pelo GitHub Actions.
+- Atualizações semanais do npm e GitHub Actions pelo Dependabot.
+- Agrupamento e limites para atualizações automáticas controladas.
+- Política de comunicação responsável de vulnerabilidades em SECURITY.md.
+- Mantidos os 43 testes, lint e build da integração contínua.
+- Supabase, autenticação, rotas e base de dados preservados.
