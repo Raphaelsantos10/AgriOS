@@ -1,4 +1,4 @@
-FARPHA — GUIA ATUAL — SPRINT 69
+FARPHA — GUIA ATUAL — SPRINT 70
 
 Caminho final:
 C:\Users\Utilizador\Documents\Projetos\AgriOS
@@ -8,9 +8,9 @@ Cole no Git Bash:
 cd ~
 taskkill //F //IM node.exe 2>/dev/null || true
 cd ~/Documents/Projetos
-BACKUP="AgriOS_backup_sprint68_$(date +%Y%m%d_%H%M%S)"
+BACKUP="AgriOS_backup_sprint69_$(date +%Y%m%d_%H%M%S)"
 mv AgriOS "$BACKUP"
-unzip -o ~/Downloads/FARPHA_Sprint_69_PWA_Mobile_Offline.zip
+unzip -o ~/Downloads/FARPHA_Sprint_70_Preparacao_Producao.zip
 cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local
 cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
 cd ~/Documents/Projetos/AgriOS/frontend
@@ -24,6 +24,6 @@ Depois de validar, pressione Ctrl+C e publique:
 cd ~/Documents/Projetos/AgriOS
 git status
 git add .
-git commit -m "feat: Sprint 69 - instalar PWA e suportar offline"
+git commit -m "security: Sprint 70 - preparar producao e backups"
 git pull --rebase origin main
 git push origin main

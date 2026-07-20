@@ -415,3 +415,16 @@
 - Três novos testes automatizados da capacidade PWA.
 - Total acumulado de 100 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 70 — Preparação para produção
+
+- Central de prontidão com verificações e bloqueios transparentes.
+- Matriz de permissões proposta para quatro perfis.
+- Autenticação, RLS e backup remoto exigidos antes da liberação.
+- Exportação e restauração validada dos dados locais FARPHA.
+- Cabeçalhos de segurança fornecidos para hospedagem compatível.
+- Build verificado contra segredos administrativos e chaves privadas.
+- Manuais finais de produção, backup e recuperação adicionados.
+- Três novos testes automatizados de permissões, backup e prontidão.
+- Total acumulado de 103 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.

@@ -12,8 +12,9 @@
     "lint": "eslint .",
     "smoke:prod": "node scripts/smoke-production-build.mjs",
     "test": "vitest run",
-    "validate": "npm run check:toolchain && npm run test && npm run lint && npm run build && npm run verify:pwa && npm run verify:dist && npm run smoke:prod",
+    "validate": "npm run check:toolchain && npm run test && npm run lint && npm run build && npm run verify:pwa && npm run verify:security && npm run verify:dist && npm run smoke:prod",
     "verify:pwa": "node scripts/verify-pwa.mjs",
+    "verify:security": "node scripts/check-production-security.mjs",
     "verify:dist": "node scripts/verify-build-manifest.mjs",
     "preview": "vite preview"
   },

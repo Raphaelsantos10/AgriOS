@@ -27,6 +27,7 @@ const TraceabilityPage = lazy(() => import("../features/traceability/pages/Trace
 const ProductivityDashboardPage = lazy(() => import("../features/productivity/pages/ProductivityDashboardPage"));
 const WeatherPage = lazy(() => import("../features/weather/pages/WeatherPage"));
 const RecommendationsPage = lazy(() => import("../features/recommendations/pages/RecommendationsPage"));
+const ProductionReadinessPage = lazy(() => import("../features/system/pages/ProductionReadinessPage"));
 const AgriculturalCalendarPage = lazy(
   () => import("../features/calendar/pages/AgriculturalCalendarPage"),
 );
@@ -88,6 +89,7 @@ export default function App() {
               <Route path="/produtividade" element={<ProductivityDashboardPage />} />
               <Route path="/clima" element={<WeatherPage />} />
               <Route path="/recomendacoes" element={<RecommendationsPage />} />
+              <Route path="/configuracoes" element={<ProductionReadinessPage />} />
               <Route
                 path="/calendario"
                 element={<AgriculturalCalendarPage />}
