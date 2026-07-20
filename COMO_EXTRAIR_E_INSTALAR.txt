@@ -1,15 +1,18 @@
-FARPHA — GUIA ATUAL — SPRINT 59
+FARPHA — GUIA ATUAL — SPRINT 60
 
 Caminho final:
 C:\Users\Utilizador\Documents\Projetos\AgriOS
 
 Cole no Git Bash:
 
+cd ~
+taskkill //F //IM node.exe 2>/dev/null || true
 cd ~/Documents/Projetos
-mv AgriOS AgriOS_backup_sprint58
-unzip ~/Downloads/FARPHA_Sprint_59_Custos_Agricolas.zip
-cp ~/Documents/Projetos/AgriOS_backup_sprint58/frontend/.env.local ~/Documents/Projetos/AgriOS/frontend/.env.local
-cp -r ~/Documents/Projetos/AgriOS_backup_sprint58/.git ~/Documents/Projetos/AgriOS/.git
+BACKUP="AgriOS_backup_sprint59_$(date +%Y%m%d_%H%M%S)"
+mv AgriOS "$BACKUP"
+unzip -o ~/Downloads/FARPHA_Sprint_60_Relatorio_Financeiro.zip
+cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local
+cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
 cd ~/Documents/Projetos/AgriOS/frontend
 npm install
 npm run audit:prod
@@ -21,6 +24,6 @@ Depois de validar, pressione Ctrl+C e publique:
 cd ~/Documents/Projetos/AgriOS
 git status
 git add .
-git commit -m "feat: Sprint 59 - registar custos agricolas"
+git commit -m "feat: Sprint 60 - analisar custos financeiros"
 git pull --rebase origin main
 git push origin main

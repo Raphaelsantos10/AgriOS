@@ -284,3 +284,15 @@
 - Três novos testes automatizados de cálculos e exportação.
 - Total acumulado de 70 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 60 — Relatório financeiro
+
+- Análise de custos por período, exploração, talhão e categoria.
+- Total, média, número de lançamentos e maior categoria calculados.
+- Distribuição por categoria e consolidação por talhão.
+- Detalhamento filtrado e exportação CSV do relatório.
+- Origem dos valores apresentada como registos reais do utilizador.
+- Receitas, margens e lucros não são simulados sem dados correspondentes.
+- Três novos testes automatizados dos filtros, resumo e exportação.
+- Total acumulado de 73 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.

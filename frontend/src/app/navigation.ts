@@ -72,6 +72,11 @@ export const navigationGroups: NavigationGroup[] = [
         icon: CircleDollarSign,
       },
       {
+        label: "Relatório financeiro",
+        path: "/financeiro",
+        icon: BarChart3,
+      },
+      {
         label: "Calendário",
         path: "/calendario",
         icon: CalendarDays,
