@@ -216,3 +216,13 @@
 - Três novos testes automatizados do relatório.
 - Total acumulado de 52 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 54 — Relatório ambiental do talhão
+
+- Exportação CSV do perfil ambiental completo.
+- Relevo, solo, água, clima, riscos e confiança incluídos.
+- Códigos internos traduzidos para nomes legíveis em português.
+- Campos desconhecidos identificados claramente no relatório.
+- Três novos testes automatizados da exportação.
+- Total acumulado de 55 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.

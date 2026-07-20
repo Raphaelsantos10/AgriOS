@@ -1,9 +1,9 @@
-FARPHA — GUIA ATUAL — SPRINT 54
+FARPHA — SPRINT 54 — RELATÓRIO AMBIENTAL
 
 Caminho final:
 C:\Users\Utilizador\Documents\Projetos\AgriOS
 
-Cole no Git Bash:
+INSTALAÇÃO COMPLETA NO GIT BASH:
 
 cd ~/Documents/Projetos
 mv AgriOS AgriOS_backup_sprint53
@@ -16,11 +16,12 @@ npm run audit:prod
 npm run validate
 npm run dev
 
-Depois de validar, pressione Ctrl+C e publique:
+Resultado esperado:
+- found 0 vulnerabilities
+- Toolchain e 55 testes aprovados
+- lint, build, integridade e smoke test aprovados
 
-cd ~/Documents/Projetos/AgriOS
-git status
-git add .
-git commit -m "feat: Sprint 54 - exportar perfil ambiental do talhao"
-git pull --rebase origin main
-git push origin main
+Teste manual:
+Abra uma exploração > talhão > ambiente > Exportar perfil CSV.
+
+Depois pressione Ctrl+C e use ATUALIZAR_GITHUB_SPRINT_54.txt.

@@ -1,4 +1,4 @@
-import { ArrowLeft, LoaderCircle, Save, Sprout } from "lucide-react";
+import { ArrowLeft, Download, LoaderCircle, Save, Sprout } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getFieldById } from "../../fields/services/fieldsService";
@@ -8,6 +8,7 @@ import EnvironmentProfilePanel from "../components/EnvironmentProfilePanel";
 import { getEnvironmentProfile, saveEnvironmentProfile } from "../services/environmentService";
 import type { FieldEnvironmentInput } from "../types/environment";
 import { calculateEnvironmentConfidence } from "../utils/environmentScore";
+import { downloadEnvironmentReport } from "../utils/environmentReportExport";
 
 function emptyProfile(fieldId: string, farmId: string): FieldEnvironmentInput { return { field_id: fieldId, farm_id: farmId, altitude_m: null, slope_percent: null, exposure: "unknown", soil_texture: "unknown", soil_ph: null, organic_matter_percent: null, drainage: "unknown", water_available: false, irrigation_type: "none", annual_rainfall_mm: null, average_humidity_percent: null, min_temperature_c: null, max_temperature_c: null, chill_hours: null, frost_risk: "unknown", fire_risk: "unknown", wind_exposure: "unknown", data_confidence: 5, notes: "" }; }
 
@@ -42,6 +43,17 @@ export default function FieldEnvironmentPage() {
     finally { setSaving(false); }
   }
 
+  function handleExportReport() {
+    if (!field) return;
+
+    downloadEnvironmentReport({
+      field,
+      profile: calculatedProfile,
+      generatedAt: new Date().toISOString(),
+    });
+    setMessage("Perfil ambiental exportado em CSV.");
+  }
+
   if (loading) return <div className="flex min-h-[520px] items-center justify-center gap-3 bg-[#061014] text-[#9aa9a2]"><LoaderCircle className="animate-spin text-[#9cdf28]" /> A carregar perfil ambiental…</div>;
 
   return (
@@ -52,7 +64,10 @@ export default function FieldEnvironmentPage() {
           <div className="mt-4 flex items-center gap-3"><div className="rounded-2xl bg-[#9cdf28]/10 p-3 text-[#9cdf28]"><Sprout size={25} /></div><div><p className="text-xs font-black uppercase tracking-[0.22em] text-[#9cdf28]">Environment Engine V1</p><h1 className="mt-1 text-3xl font-black">Perfil ambiental · {field?.name ?? "Talhão"}</h1></div></div>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-[#9aa9a2]">Registe solo, relevo, água, clima e riscos. Estes dados alimentarão a aptidão de culturas, rega inteligente, Fire Intelligence e FARPHA DNA.</p>
         </div>
-        <button type="button" onClick={() => void handleSave()} disabled={saving} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#5f9912] to-[#9cdf28] px-5 py-3 font-black text-[#061014] disabled:opacity-60"><Save size={18} /> {saving ? "A guardar…" : "Guardar perfil"}</button>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <button type="button" onClick={handleExportReport} disabled={!field} className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#9cdf28]/30 bg-[#9cdf28]/10 px-5 py-3 font-black text-[#dfffb0] disabled:opacity-40"><Download size={18} /> Exportar perfil CSV</button>
+          <button type="button" onClick={() => void handleSave()} disabled={saving} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#5f9912] to-[#9cdf28] px-5 py-3 font-black text-[#061014] disabled:opacity-60"><Save size={18} /> {saving ? "A guardar…" : "Guardar perfil"}</button>
+        </div>
       </header>
 
       {message && <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-[#d8e1dd]">{message}</div>}
