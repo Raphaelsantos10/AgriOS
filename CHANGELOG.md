@@ -296,3 +296,16 @@
 - Três novos testes automatizados dos filtros, resumo e exportação.
 - Total acumulado de 73 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 61 — Inventário de produtos
+
+- Cadastro de fertilizantes, sementes, fitofármacos, corretivos e outros insumos.
+- Stock inicial, stock mínimo, unidade e custo unitário controlados.
+- Entradas e saídas com validação para impedir stock negativo.
+- Fornecedor, lote, validade e observações incluídos.
+- Alertas de stock baixo e validade ultrapassada.
+- Valor estimado, pesquisa, remoção e exportação CSV.
+- Nenhum produto demonstrativo criado automaticamente.
+- Três novos testes automatizados do inventário.
+- Total acumulado de 76 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.

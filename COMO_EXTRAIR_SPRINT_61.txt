@@ -1,9 +1,11 @@
-FARPHA — GUIA ATUAL — SPRINT 61
+FARPHA — SPRINT 61 — INVENTÁRIO DE PRODUTOS
 
 Caminho final:
 C:\Users\Utilizador\Documents\Projetos\AgriOS
 
-Cole no Git Bash:
+Antes de instalar, feche o VS Code e outros terminais que estejam dentro da pasta AgriOS.
+
+INSTALAÇÃO COMPLETA NO GIT BASH:
 
 cd ~
 taskkill //F //IM node.exe 2>/dev/null || true
@@ -19,11 +21,12 @@ npm run audit:prod
 npm run validate
 npm run dev
 
-Depois de validar, pressione Ctrl+C e publique:
+Resultado esperado:
+- found 0 vulnerabilities
+- Toolchain e 76 testes aprovados
+- lint, build, integridade e smoke test aprovados
 
-cd ~/Documents/Projetos/AgriOS
-git status
-git add .
-git commit -m "feat: Sprint 61 - controlar inventario agricola"
-git pull --rebase origin main
-git push origin main
+Teste manual:
+Abra Operações > Inventário, cadastre um produto, teste Entrada, Saída e exporte o CSV.
+
+Depois pressione Ctrl+C e use ATUALIZAR_GITHUB_SPRINT_61.txt.

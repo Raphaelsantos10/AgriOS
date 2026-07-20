@@ -11,6 +11,7 @@ import {
   Gauge,
   Layers3,
   MapPinned,
+  Package,
   RadioTower,
   Satellite,
   Settings,
@@ -75,6 +76,11 @@ export const navigationGroups: NavigationGroup[] = [
         label: "Relatório financeiro",
         path: "/financeiro",
         icon: BarChart3,
+      },
+      {
+        label: "Inventário",
+        path: "/inventario",
+        icon: Package,
       },
       {
         label: "Calendário",
