@@ -31,6 +31,7 @@ const ProductionReadinessPage = lazy(() => import("../features/system/pages/Prod
 const SoilIntelligencePage = lazy(() => import("../features/soil/pages/SoilIntelligencePage"));
 const OfficialFireRiskPage = lazy(() => import("../features/fire-official/pages/OfficialFireRiskPage"));
 const IcnfCartographyPage = lazy(() => import("../features/icnf-map/pages/IcnfCartographyPage"));
+const ComplianceCenterPage = lazy(() => import("../features/compliance/pages/ComplianceCenterPage"));
 const AgriculturalCalendarPage = lazy(
   () => import("../features/calendar/pages/AgriculturalCalendarPage"),
 );
@@ -96,6 +97,7 @@ export default function App() {
               <Route path="/solo-inteligente" element={<SoilIntelligencePage />} />
               <Route path="/risco-incendio-oficial" element={<OfficialFireRiskPage />} />
               <Route path="/cartografia-incendio" element={<IcnfCartographyPage />} />
+              <Route path="/obrigacoes" element={<ComplianceCenterPage />} />
               <Route
                 path="/calendario"
                 element={<AgriculturalCalendarPage />}

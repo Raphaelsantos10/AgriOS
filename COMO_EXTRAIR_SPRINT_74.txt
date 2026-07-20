@@ -1,0 +1,37 @@
+FARPHA — SPRINT 74 — CENTRO DE OBRIGAÇÕES
+
+Caminho final:
+C:\Users\Utilizador\Documents\Projetos\AgriOS
+
+Antes de instalar, feche o VS Code e outros terminais que estejam dentro da pasta AgriOS.
+
+INSTALAÇÃO COMPLETA NO GIT BASH:
+
+cd ~
+taskkill //F //IM node.exe 2>/dev/null || true
+cd ~/Documents/Projetos
+BACKUP="AgriOS_backup_sprint73_$(date +%Y%m%d_%H%M%S)"
+mv AgriOS "$BACKUP"
+unzip -o ~/Downloads/FARPHA_Sprint_74_Centro_Obrigacoes.zip
+cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local
+cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run audit:prod
+npm run validate
+npm run preview
+
+Resultado esperado:
+- found 0 vulnerabilities
+- Toolchain e 115 testes aprovados
+- PWA, segurança, lint, build, integridade e smoke test aprovados
+
+Teste manual:
+1. Abra Sistema > Centro de Obrigações.
+2. Preencha designação e concelho sem introduzir NIF ou credenciais.
+3. Marque as opções que descrevem a exploração.
+4. Confirme que a matriz muda entre Aplicável, Confirmar e Não aplicável.
+5. Abra algumas fontes oficiais e pressione Guardar perfil.
+6. Atualize a página e confirme que o perfil foi preservado.
+
+Depois pressione Ctrl+C e use ATUALIZAR_GITHUB_SPRINT_74.txt.

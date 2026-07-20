@@ -1,4 +1,4 @@
-FARPHA — GUIA ATUAL — SPRINT 73
+FARPHA — GUIA ATUAL — SPRINT 74
 
 Caminho final:
 C:\Users\Utilizador\Documents\Projetos\AgriOS
@@ -8,9 +8,9 @@ Cole no Git Bash:
 cd ~
 taskkill //F //IM node.exe 2>/dev/null || true
 cd ~/Documents/Projetos
-BACKUP="AgriOS_backup_sprint72_$(date +%Y%m%d_%H%M%S)"
+BACKUP="AgriOS_backup_sprint73_$(date +%Y%m%d_%H%M%S)"
 mv AgriOS "$BACKUP"
-unzip -o ~/Downloads/FARPHA_Sprint_73_Cartografia_ICNF.zip
+unzip -o ~/Downloads/FARPHA_Sprint_74_Centro_Obrigacoes.zip
 cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local
 cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
 cd ~/Documents/Projetos/AgriOS/frontend
@@ -24,6 +24,6 @@ Depois de validar, pressione Ctrl+C e publique:
 cd ~/Documents/Projetos/AgriOS
 git status
 git add .
-git commit -m "feat: Sprint 73 - integrar cartografia ICNF"
+git commit -m "feat: Sprint 74 - criar centro de obrigacoes"
 git pull --rebase origin main
 git push origin main

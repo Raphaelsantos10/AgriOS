@@ -1,5 +1,15 @@
 # Changelog
 
+## Sprint 74 — Centro de Obrigações
+
+- Novo perfil orientador da exploração no menu Sistema.
+- Questionário com oito condições que personalizam a matriz inicial.
+- Nove áreas de obrigações com classificação Aplicável, Confirmar ou Não aplicável.
+- Motivo, entidade, fonte oficial e data de verificação apresentados em cada tema.
+- Perfil preservado no armazenamento e no mecanismo de backup local já existente.
+- Avisos claros de que a aplicação não substitui os portais públicos ou aconselhamento profissional.
+- Três novos testes; total acumulado de 115 testes automatizados.
+
 ## Sprint 73 — Cartografia oficial ICNF
 
 - Novo mapa temático no menu Monitorização.

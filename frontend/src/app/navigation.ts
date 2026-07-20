@@ -186,6 +186,11 @@ export const navigationGroups: NavigationGroup[] = [
     label: "Sistema",
     items: [
       {
+        label: "Centro de Obrigações",
+        path: "/obrigacoes",
+        icon: ShieldCheck,
+      },
+      {
         label: "Automações",
         path: "/automacoes",
         icon: Workflow,
