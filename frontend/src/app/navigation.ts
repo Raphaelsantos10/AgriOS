@@ -10,6 +10,7 @@ import {
   CircleDollarSign,
   ListChecks,
   Gauge,
+  Flame,
   Layers3,
   MapPinned,
   Package,
@@ -158,6 +159,11 @@ export const navigationGroups: NavigationGroup[] = [
         label: "Clima",
         path: "/clima",
         icon: CloudSun,
+      },
+      {
+        label: "Risco de incêndio",
+        path: "/risco-incendio-oficial",
+        icon: Flame,
       },
       {
         label: "Sensores",

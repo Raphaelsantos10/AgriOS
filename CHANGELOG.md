@@ -442,3 +442,17 @@
 - Três novos testes automatizados do perfil de solo.
 - Total acumulado de 106 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 72 — Risco oficial de incêndio IPMA
+
+- Previsão oficial de perigo de incêndio rural para três dias.
+- Classificações IPMA de reduzido a máximo apresentadas.
+- Exploração cadastrada ou coordenadas manuais suportadas.
+- Associação ao ponto municipal mais próximo com distância transparente.
+- Código do concelho, corrida do modelo e atualização incluídos.
+- Cache por seis horas e preservação da última previsão em caso de falha.
+- Exportação CSV com fonte oficial e metadados.
+- Formato real do endpoint IPMA verificado e suportado.
+- Três novos testes automatizados do risco oficial.
+- Total acumulado de 109 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.
