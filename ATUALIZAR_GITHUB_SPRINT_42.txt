@@ -1,0 +1,15 @@
+FARPHA — ATUALIZAÇÃO DO GITHUB — SPRINT 42
+
+Depois de validar a aplicação, execute no Git Bash:
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "perf: Sprint 42 - controlar tamanho dos bundles"
+git pull --rebase origin main
+git push origin main
+
+Depois abra:
+https://github.com/Raphaelsantos10/AgriOS/actions
+
+Confirme que FARPHA CI e FARPHA Security terminaram com um visto verde.

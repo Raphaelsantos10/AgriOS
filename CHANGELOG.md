@@ -93,3 +93,12 @@
 - Política de comunicação responsável de vulnerabilidades em SECURITY.md.
 - Mantidos os 43 testes, lint e build da integração contínua.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 42 — Performance dos bundles
+
+- Separação do bundle GIS em MapLibre, Turf e ferramentas de desenho.
+- Limite automático de 1.050 KiB por ficheiro JavaScript gerado.
+- Build interrompido quando o limite de tamanho é ultrapassado.
+- Verificação integrada no npm run build, npm run validate e FARPHA CI.
+- Mantidos os 43 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.

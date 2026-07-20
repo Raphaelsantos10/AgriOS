@@ -1,9 +1,9 @@
-FARPHA — GUIA ATUAL — SPRINT 42
+FARPHA — SPRINT 42 — PERFORMANCE DOS BUNDLES
 
 Caminho final:
 C:\Users\Utilizador\Documents\Projetos\AgriOS
 
-Cole no Git Bash:
+INSTALAÇÃO COMPLETA NO GIT BASH:
 
 cd ~/Documents/Projetos
 mv AgriOS AgriOS_backup_sprint41
@@ -15,11 +15,10 @@ npm install
 npm run validate
 npm run dev
 
-Depois de validar, pressione Ctrl+C e publique:
+Resultado esperado:
+- 43 testes aprovados
+- lint sem erros
+- build concluído
+- mensagem Limite de bundle aprovado
 
-cd ~/Documents/Projetos/AgriOS
-git status
-git add .
-git commit -m "perf: Sprint 42 - controlar tamanho dos bundles"
-git pull --rebase origin main
-git push origin main
+Depois de confirmar a aplicação, pressione Ctrl+C e use o ficheiro ATUALIZAR_GITHUB_SPRINT_42.txt.

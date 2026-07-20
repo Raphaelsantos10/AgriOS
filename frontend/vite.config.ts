@@ -10,7 +10,7 @@ export default defineConfig({
   },
 
   build: {
-    chunkSizeWarningLimit: 850,
+    chunkSizeWarningLimit: 1050,
     rolldownOptions: {
       output: {
         codeSplitting: {
@@ -20,8 +20,16 @@ export default defineConfig({
               test: /node_modules\/(react|react-dom|react-router-dom)\//,
             },
             {
-              name: "gis-vendor",
-              test: /node_modules\/(maplibre-gl|@turf|terra-draw|@watergis)\//,
+              name: "maplibre-vendor",
+              test: /node_modules\/maplibre-gl\//,
+            },
+            {
+              name: "turf-vendor",
+              test: /node_modules\/@turf\//,
+            },
+            {
+              name: "drawing-vendor",
+              test: /node_modules\/(terra-draw|@watergis)\//,
             },
             {
               name: "supabase-vendor",
