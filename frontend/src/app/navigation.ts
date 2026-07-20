@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   Activity,
   BarChart3,
+  BookOpen,
   Bot,
   CalendarDays,
   CloudSun,
@@ -81,6 +82,11 @@ export const navigationGroups: NavigationGroup[] = [
         label: "Inventário",
         path: "/inventario",
         icon: Package,
+      },
+      {
+        label: "Diário do talhão",
+        path: "/diario-talhao",
+        icon: BookOpen,
       },
       {
         label: "Calendário",

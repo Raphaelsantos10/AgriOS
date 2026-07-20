@@ -21,6 +21,7 @@ const AgriculturalCostsPage = lazy(() => import("../features/costs/pages/Agricul
 const FinancialReportPage = lazy(() => import("../features/costs/pages/FinancialReportPage"));
 const InventoryPage = lazy(() => import("../features/inventory/pages/InventoryPage"));
 const MachineryPage = lazy(() => import("../features/machinery/pages/MachineryPage"));
+const FieldDiaryPage = lazy(() => import("../features/field-diary/pages/FieldDiaryPage"));
 const AgriculturalCalendarPage = lazy(
   () => import("../features/calendar/pages/AgriculturalCalendarPage"),
 );
@@ -76,6 +77,7 @@ export default function App() {
               <Route path="/financeiro" element={<FinancialReportPage />} />
               <Route path="/inventario" element={<InventoryPage />} />
               <Route path="/maquinas" element={<MachineryPage />} />
+              <Route path="/diario-talhao" element={<FieldDiaryPage />} />
               <Route
                 path="/calendario"
                 element={<AgriculturalCalendarPage />}

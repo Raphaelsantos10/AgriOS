@@ -322,3 +322,15 @@
 - Três novos testes automatizados da gestão de máquinas.
 - Total acumulado de 79 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 63 — Diário do talhão
+
+- Registos cronológicos de operações, inspeções e observações de campo.
+- Exploração, talhão, cultura, data, atividade e responsável incluídos.
+- Fotografia opcional validada e limitada a 1 MB.
+- Pesquisa, resumo da atividade e linha temporal ordenada.
+- Remoção controlada e exportação CSV.
+- Nenhum registo demonstrativo criado automaticamente.
+- Três novos testes automatizados do diário.
+- Total acumulado de 82 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.
