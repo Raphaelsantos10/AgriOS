@@ -1,0 +1,16 @@
+FARPHA — ATUALIZAÇÃO DO GITHUB — SPRINT 44
+
+Depois de validar a aplicação, execute no Git Bash:
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "security: Sprint 44 - auditar dependencias de producao"
+git pull --rebase origin main
+git push origin main
+
+Depois abra:
+https://github.com/Raphaelsantos10/AgriOS/actions
+
+Confirme que FARPHA CI e FARPHA Security terminaram com um visto verde.
+No FARPHA CI, confirme também a etapa Auditar dependências de produção.

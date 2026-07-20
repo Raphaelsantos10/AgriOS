@@ -1,9 +1,9 @@
-FARPHA — GUIA ATUAL — SPRINT 44
+FARPHA — SPRINT 44 — AUDITORIA DE DEPENDÊNCIAS
 
 Caminho final:
 C:\Users\Utilizador\Documents\Projetos\AgriOS
 
-Cole no Git Bash:
+INSTALAÇÃO COMPLETA NO GIT BASH:
 
 cd ~/Documents/Projetos
 mv AgriOS AgriOS_backup_sprint43
@@ -16,11 +16,11 @@ npm run audit:prod
 npm run validate
 npm run dev
 
-Depois de validar, pressione Ctrl+C e publique:
+Resultado esperado:
+- found 0 vulnerabilities
+- Toolchain aprovada: TypeScript 6, Node 24 e @types/node 24
+- 43 testes aprovados
+- lint sem erros
+- build e limite de bundle aprovados
 
-cd ~/Documents/Projetos/AgriOS
-git status
-git add .
-git commit -m "security: Sprint 44 - auditar dependencias de producao"
-git pull --rebase origin main
-git push origin main
+Depois de confirmar a aplicação, pressione Ctrl+C e use ATUALIZAR_GITHUB_SPRINT_44.txt.

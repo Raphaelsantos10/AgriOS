@@ -112,3 +112,14 @@
 - Mensagens claras para atualizações incompatíveis no desenvolvimento e no CI.
 - Mantidos os 43 testes e a proteção de tamanho dos bundles.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 44 — Auditoria de dependências
+
+- Auditoria automática das dependências utilizadas em produção.
+- Bloqueio do CI para vulnerabilidades conhecidas de severidade alta ou crítica.
+- Novo comando npm run audit:prod.
+- Nova etapa de segurança executada antes dos testes, lint e build.
+- Exclusão das ferramentas de desenvolvimento da decisão sobre o risco em produção.
+- Resultado atual: zero vulnerabilidades nas dependências de produção.
+- Mantidos os 43 testes, a proteção da toolchain e o limite dos bundles.
+- Supabase, autenticação, rotas e base de dados preservados.
