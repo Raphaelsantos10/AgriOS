@@ -49,6 +49,10 @@ import {
 } from "../../fields/services/fieldsService";
 import { createFieldHistorySnapshot } from "../../fields/services/fieldHistoryService";
 import type { FieldHistory } from "../../fields/types/fieldHistory";
+import { downloadFieldIntegratedReport } from "../../fields/utils/fieldIntegratedReport";
+import { getEnvironmentProfile } from "../../environment/services/environmentService";
+import { getIrrigationEvents, getIrrigationSystem } from "../../irrigation/services/irrigationService";
+import { getLatestFireAssessment } from "../../fire/services/fireService";
 
 import type { Farm } from "../types/farm";
 
@@ -1300,6 +1304,32 @@ export default function FarmDetailsPage() {
     }
   }
 
+  async function handleExportFieldReport(field: Field) {
+    if (!farm) return;
+
+    try {
+      const [environment, irrigationSystem, irrigationEvents, fireAssessment] = await Promise.all([
+        getEnvironmentProfile(field.id).catch(() => null),
+        getIrrigationSystem(field.id).catch(() => null),
+        getIrrigationEvents(field.id).catch(() => []),
+        getLatestFireAssessment(field.id).catch(() => null),
+      ]);
+
+      downloadFieldIntegratedReport({
+        farm,
+        field,
+        environment,
+        irrigationSystem,
+        irrigationEvents,
+        fireAssessment,
+        generatedAt: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error("FIELD INTEGRATED REPORT ERROR:", error);
+      window.alert("Não foi possível gerar o relatório integrado do talhão.");
+    }
+  }
+
   return (
     <>
       <section className="space-y-6">
@@ -1794,6 +1824,7 @@ export default function FarmDetailsPage() {
         onMerge={handleStartMergeField}
         onExport={handleExportField}
         onExportKML={handleExportFieldKML}
+        onExportReport={handleExportFieldReport}
         onHistory={handleOpenFieldHistory}
         onEnvironment={(field) => {
           if (!farmId) return;

@@ -37,6 +37,7 @@ interface Props {
   onMerge: (field: Field) => void;
   onExport: (field: Field) => void;
   onExportKML: (field: Field) => void;
+  onExportReport: (field: Field) => void;
   onHistory: (field: Field) => void;
   onEnvironment: (field: Field) => void;
   onSuitability: (field: Field) => void;
@@ -165,6 +166,7 @@ export default function FieldDetailsPanel({
   onMerge,
   onExport,
   onExportKML,
+  onExportReport,
   onHistory,
   onEnvironment,
   onSuitability,
@@ -507,6 +509,15 @@ export default function FieldDetailsPanel({
           </>
         ) : (
           <>
+            <button
+              type="button"
+              onClick={() => onExportReport(field)}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-teal-200 bg-teal-50 px-5 py-3 font-semibold text-teal-700 transition hover:bg-teal-100"
+            >
+              <Download size={18} />
+              Relatório integrado CSV
+            </button>
+
             <button
               type="button"
               onClick={() => onCenter(field)}

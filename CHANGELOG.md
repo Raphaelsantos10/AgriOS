@@ -226,3 +226,15 @@
 - Três novos testes automatizados da exportação.
 - Total acumulado de 55 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 55 — Relatório integrado do talhão
+
+- Exportação CSV consolidada diretamente no painel do talhão.
+- Dados cadastrais, cultura, estado e geometria incluídos.
+- Perfil ambiental e sistema de rega reunidos no mesmo relatório.
+- Histórico operacional dos últimos 20 eventos de rega consolidado.
+- Avaliação mais recente de risco de incêndio incluída.
+- Módulos sem registos identificados sem bloquear a exportação.
+- Três novos testes automatizados do relatório.
+- Total acumulado de 58 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.

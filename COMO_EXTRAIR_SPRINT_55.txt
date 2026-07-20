@@ -1,9 +1,9 @@
-FARPHA — GUIA ATUAL — SPRINT 55
+FARPHA — SPRINT 55 — RELATÓRIO INTEGRADO DO TALHÃO
 
 Caminho final:
 C:\Users\Utilizador\Documents\Projetos\AgriOS
 
-Cole no Git Bash:
+INSTALAÇÃO COMPLETA NO GIT BASH:
 
 cd ~/Documents/Projetos
 mv AgriOS AgriOS_backup_sprint54
@@ -16,11 +16,12 @@ npm run audit:prod
 npm run validate
 npm run dev
 
-Depois de validar, pressione Ctrl+C e publique:
+Resultado esperado:
+- found 0 vulnerabilities
+- Toolchain e 58 testes aprovados
+- lint, build, integridade e smoke test aprovados
 
-cd ~/Documents/Projetos/AgriOS
-git status
-git add .
-git commit -m "feat: Sprint 55 - exportar relatorio integrado do talhao"
-git pull --rebase origin main
-git push origin main
+Teste manual:
+Abra uma exploração > selecione um talhão > Relatório integrado CSV.
+
+Depois pressione Ctrl+C e use ATUALIZAR_GITHUB_SPRINT_55.txt.
