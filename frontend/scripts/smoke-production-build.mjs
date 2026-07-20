@@ -82,8 +82,23 @@ try {
     ),
   );
 
+  const buildInfoResponse = await assertResponse(
+    "/build-info.json",
+    "application/json",
+  );
+  const buildInfo = await buildInfoResponse.json();
+
+  if (
+    buildInfo.application !== "FARPHA" ||
+    typeof buildInfo.version !== "string" ||
+    typeof buildInfo.commit !== "string" ||
+    typeof buildInfo.node !== "string"
+  ) {
+    throw new Error("build-info.json não contém a identificação obrigatória.");
+  }
+
   console.log(
-    `Smoke test aprovado: ${applicationRoutes.length} rotas e ${new Set(assetPaths).size} assets carregados.`,
+    `Smoke test aprovado: ${applicationRoutes.length} rotas, ${new Set(assetPaths).size} assets e build identificado.`,
   );
 } finally {
   await server.close();

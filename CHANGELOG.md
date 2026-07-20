@@ -154,3 +154,14 @@
 - Mesmo ponto de entrada JavaScript confirmado em todas as rotas.
 - Mantidas as verificações dos assets, auditoria, 43 testes, lint e build.
 - Supabase, autenticação e base de dados preservados.
+
+## Sprint 48 — Identidade e rastreabilidade do build
+
+- Ficheiro build-info.json gerado em cada build de produção.
+- Versão do frontend alinhada para 2.1.0.
+- Registo da versão, commit, execução, Node e ambiente do artefato.
+- Identificação incluída no manifesto SHA-256.
+- Informação do build apresentada na página de Diagnóstico.
+- Smoke test atualizado para rejeitar builds sem rastreabilidade.
+- Mantidas cinco rotas, seis assets, auditoria, 43 testes, lint e build.
+- Supabase, autenticação, rotas e base de dados preservados.

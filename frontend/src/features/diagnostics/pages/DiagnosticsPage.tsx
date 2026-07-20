@@ -1,4 +1,4 @@
-import { Activity, LoaderCircle, RefreshCw, ShieldCheck } from "lucide-react";
+import { Activity, GitCommit, LoaderCircle, RefreshCw, ShieldCheck } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import DiagnosticItem from "../components/DiagnosticItem";
@@ -12,10 +12,20 @@ const categoryLabels: Record<DiagnosticCategory, string> = {
   integration: "Integrações futuras",
 };
 
+type BuildInfo = {
+  application: string;
+  version: string;
+  commit: string;
+  runId: string | null;
+  node: string;
+  environment: "ci" | "local";
+};
+
 export default function DiagnosticsPage() {
   const [report, setReport] = useState<DiagnosticReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [buildInfo, setBuildInfo] = useState<BuildInfo | null>(null);
 
   const execute = useCallback(async () => {
     setLoading(true);
@@ -37,6 +47,21 @@ export default function DiagnosticsPage() {
 
     return () => window.clearTimeout(timeoutId);
   }, [execute]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    void fetch("/build-info.json", { signal: controller.signal })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((info: BuildInfo | null) => setBuildInfo(info))
+      .catch((buildInfoError: unknown) => {
+        if (!(buildInfoError instanceof DOMException && buildInfoError.name === "AbortError")) {
+          console.debug("BUILD INFO UNAVAILABLE:", buildInfoError);
+        }
+      });
+
+    return () => controller.abort();
+  }, []);
 
   const groups = useMemo(() => {
     if (!report) return [];
@@ -68,6 +93,18 @@ export default function DiagnosticsPage() {
           Executar diagnóstico
         </button>
       </header>
+
+      {buildInfo ? (
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-2xl border border-[#9cdf28]/20 bg-[#9cdf28]/5 px-4 py-3 text-xs text-[#b9c7c0]">
+          <span className="inline-flex items-center gap-2 font-black text-white">
+            <GitCommit size={16} className="text-[#9cdf28]" />
+            Build FARPHA {buildInfo.version}
+          </span>
+          <span>Commit: {buildInfo.commit.slice(0, 7)}</span>
+          <span>Node: {buildInfo.node}</span>
+          <span>Ambiente: {buildInfo.environment}</span>
+        </div>
+      ) : null}
 
       {loading && !report ? (
         <div className="flex min-h-[420px] items-center justify-center gap-3 rounded-3xl border border-white/10 bg-[#0b171a] text-[#9aa9a2]">

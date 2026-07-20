@@ -1,9 +1,9 @@
-FARPHA — GUIA ATUAL — SPRINT 48
+FARPHA — SPRINT 48 — IDENTIDADE DO BUILD
 
 Caminho final:
 C:\Users\Utilizador\Documents\Projetos\AgriOS
 
-Cole no Git Bash:
+INSTALAÇÃO COMPLETA NO GIT BASH:
 
 cd ~/Documents/Projetos
 mv AgriOS AgriOS_backup_sprint47
@@ -16,11 +16,11 @@ npm run audit:prod
 npm run validate
 npm run dev
 
-Depois de validar, pressione Ctrl+C e publique:
+Resultado esperado:
+- found 0 vulnerabilities
+- Toolchain e 43 testes aprovados
+- lint, build, manifesto e limite de bundle aprovados
+- mensagem Build identificado
+- mensagem Smoke test aprovado: 5 rotas, 6 assets e build identificado
 
-cd ~/Documents/Projetos/AgriOS
-git status
-git add .
-git commit -m "feat: Sprint 48 - identificar artefatos de producao"
-git pull --rebase origin main
-git push origin main
+Depois de confirmar a aplicação, pressione Ctrl+C e use ATUALIZAR_GITHUB_SPRINT_48.txt.
