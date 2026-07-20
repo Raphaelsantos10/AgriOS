@@ -64,3 +64,12 @@
 - Rejeição de linhas de corte incompletas ou externas.
 - Total acumulado de 33 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 39 — Validação dos motores agrícolas
+
+- Testes do motor de recomendação de irrigação.
+- Cobertura de calor, humidade do solo, chuva, textura e eficiência.
+- Testes do motor de aptidão de culturas.
+- Cobertura de pH, frio, água, geada, calor, drenagem e confiança.
+- Total acumulado de 43 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.
