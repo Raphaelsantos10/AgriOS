@@ -334,3 +334,15 @@
 - Três novos testes automatizados do diário.
 - Total acumulado de 82 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 64 — Produção e colheita
+
+- Registo de campanha, cultura, área e quantidades colhidas.
+- Produção bruta e comercializável em quilogramas ou toneladas.
+- Qualidade, destino e observações incluídos.
+- Perdas e produtividade por hectare calculadas automaticamente.
+- Validação, pesquisa, remoção e exportação CSV.
+- Nenhuma colheita demonstrativa criada automaticamente.
+- Três novos testes automatizados dos cálculos e exportação.
+- Total acumulado de 85 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.

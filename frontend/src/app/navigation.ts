@@ -89,6 +89,11 @@ export const navigationGroups: NavigationGroup[] = [
         icon: BookOpen,
       },
       {
+        label: "Produção e colheita",
+        path: "/colheitas",
+        icon: Sprout,
+      },
+      {
         label: "Calendário",
         path: "/calendario",
         icon: CalendarDays,

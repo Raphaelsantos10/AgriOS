@@ -1,9 +1,11 @@
-FARPHA — GUIA ATUAL — SPRINT 64
+FARPHA — SPRINT 64 — PRODUÇÃO E COLHEITA
 
 Caminho final:
 C:\Users\Utilizador\Documents\Projetos\AgriOS
 
-Cole no Git Bash:
+Antes de instalar, feche o VS Code e outros terminais que estejam dentro da pasta AgriOS.
+
+INSTALAÇÃO COMPLETA NO GIT BASH:
 
 cd ~
 taskkill //F //IM node.exe 2>/dev/null || true
@@ -19,11 +21,12 @@ npm run audit:prod
 npm run validate
 npm run dev
 
-Depois de validar, pressione Ctrl+C e publique:
+Resultado esperado:
+- found 0 vulnerabilities
+- Toolchain e 85 testes aprovados
+- lint, build, integridade e smoke test aprovados
 
-cd ~/Documents/Projetos/AgriOS
-git status
-git add .
-git commit -m "feat: Sprint 64 - registar producao e colheita"
-git pull --rebase origin main
-git push origin main
+Teste manual:
+Abra Operações > Produção e colheita, registe uma colheita e exporte o CSV.
+
+Depois pressione Ctrl+C e use ATUALIZAR_GITHUB_SPRINT_64.txt.
