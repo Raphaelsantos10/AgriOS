@@ -1,0 +1,38 @@
+FARPHA — SPRINT 69 — APLICAÇÃO MÓVEL / PWA
+
+Caminho final:
+C:\Users\Utilizador\Documents\Projetos\AgriOS
+
+Antes de instalar, feche o VS Code e outros terminais que estejam dentro da pasta AgriOS.
+
+INSTALAÇÃO COMPLETA NO GIT BASH:
+
+cd ~
+taskkill //F //IM node.exe 2>/dev/null || true
+cd ~/Documents/Projetos
+BACKUP="AgriOS_backup_sprint68_$(date +%Y%m%d_%H%M%S)"
+mv AgriOS "$BACKUP"
+unzip -o ~/Downloads/FARPHA_Sprint_69_PWA_Mobile_Offline.zip
+cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local
+cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run audit:prod
+npm run validate
+npm run preview
+
+Resultado esperado:
+- found 0 vulnerabilities
+- Toolchain e 100 testes aprovados
+- PWA, lint, build, integridade e smoke test aprovados
+
+Teste manual no computador:
+1. Abra o endereço mostrado pelo comando npm run preview.
+2. Use o botão Instalar FARPHA quando ele aparecer.
+3. Visite as páginas que pretende consultar offline.
+4. Desligue temporariamente a Internet e reabra a aplicação instalada.
+
+O primeiro acesso e a instalação precisam de uma versão de produção servida por localhost ou HTTPS.
+Supabase e novas consultas externas continuam a precisar de Internet.
+
+Depois pressione Ctrl+C e use ATUALIZAR_GITHUB_SPRINT_69.txt.

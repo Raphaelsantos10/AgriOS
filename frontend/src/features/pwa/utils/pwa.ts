@@ -1,0 +1,4 @@
+export type PwaCapability = { serviceWorker: boolean; standalone: boolean; online: boolean };
+export function getPwaCapability(input: { hasServiceWorker: boolean; displayModeStandalone: boolean; navigatorStandalone?: boolean; online: boolean }): PwaCapability { return { serviceWorker: input.hasServiceWorker, standalone: input.displayModeStandalone || Boolean(input.navigatorStandalone), online: input.online }; }
+export function offlineAvailabilityMessage(capability: PwaCapability) { if (capability.online) return "Ligação disponível"; if (!capability.serviceWorker) return "Sem ligação; este navegador não suporta o modo offline"; return "Modo offline: dados locais e páginas já visitadas continuam disponíveis"; }
+export function canOfferInstall(capability: PwaCapability, hasInstallPrompt: boolean) { return capability.serviceWorker && !capability.standalone && hasInstallPrompt; }

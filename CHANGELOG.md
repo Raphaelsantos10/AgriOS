@@ -401,3 +401,17 @@
 - Três novos testes automatizados do motor de recomendações.
 - Total acumulado de 97 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 69 — Aplicação móvel/PWA
+
+- FARPHA instalável como aplicação standalone em navegadores compatíveis.
+- Manifesto PWA e ícones oficiais em 192 e 512 pixels.
+- Estrutura principal e recursos visitados guardados para acesso offline limitado.
+- Aviso de ligação e explicação do alcance do modo offline.
+- Dados locais e última previsão guardada preservados no dispositivo.
+- Dependências externas não são simuladas quando a rede está indisponível.
+- Limpeza de caches antigos incluída.
+- Verificação PWA adicionada ao processo de validação.
+- Três novos testes automatizados da capacidade PWA.
+- Total acumulado de 100 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.
