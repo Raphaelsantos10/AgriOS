@@ -144,3 +144,13 @@
 - Novo comando npm run smoke:prod integrado ao validate e FARPHA CI.
 - Mantidos auditoria, toolchain, 43 testes, lint, manifesto e limite dos bundles.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 47 — Rotas críticas em produção
+
+- Smoke test ampliado para cinco rotas da aplicação.
+- Acesso direto verificado para operações, explorações e diagnóstico.
+- Fallback do React Router verificado com uma rota inexistente controlada.
+- Elemento React principal confirmado em todas as respostas.
+- Mesmo ponto de entrada JavaScript confirmado em todas as rotas.
+- Mantidas as verificações dos assets, auditoria, 43 testes, lint e build.
+- Supabase, autenticação e base de dados preservados.

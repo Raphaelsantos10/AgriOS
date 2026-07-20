@@ -1,0 +1,16 @@
+FARPHA — ATUALIZAÇÃO DO GITHUB — SPRINT 47
+
+Depois de validar a aplicação, execute no Git Bash:
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "test: Sprint 47 - validar rotas criticas em producao"
+git pull --rebase origin main
+git push origin main
+
+Depois abra:
+https://github.com/Raphaelsantos10/AgriOS/actions
+
+Confirme FARPHA CI e FARPHA Security verdes.
+No FARPHA CI, confirme a mensagem Smoke test aprovado: 5 rotas e 6 assets carregados.

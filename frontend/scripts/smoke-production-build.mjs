@@ -3,6 +3,13 @@ import { preview } from "vite";
 const host = "127.0.0.1";
 const port = 4173;
 const origin = `http://${host}:${port}`;
+const applicationRoutes = [
+  "/",
+  "/centro-operacoes",
+  "/exploracoes",
+  "/diagnostico",
+  "/rota-inexistente-smoke",
+];
 
 const server = await preview({
   preview: {
@@ -31,11 +38,31 @@ const assertResponse = async (path, expectedContentType) => {
 };
 
 try {
-  const indexResponse = await assertResponse("/", "text/html");
-  const html = await indexResponse.text();
+  const routePages = await Promise.all(
+    applicationRoutes.map(async (route) => ({
+      route,
+      html: await (await assertResponse(route, "text/html")).text(),
+    })),
+  );
 
-  if (!html.includes('id="root"')) {
-    throw new Error("A página de produção não contém o elemento #root.");
+  for (const { route, html } of routePages) {
+    if (!html.includes('id="root"')) {
+      throw new Error(`${route} não contém o elemento React #root.`);
+    }
+  }
+
+  const html = routePages[0].html;
+
+  const entryScript = html.match(/src="(\/assets\/[^"?#]+\.js)"/)?.[1];
+
+  if (!entryScript) {
+    throw new Error("A página inicial não contém o JavaScript principal.");
+  }
+
+  for (const { route, html: routeHtml } of routePages.slice(1)) {
+    if (!routeHtml.includes(`src="${entryScript}"`)) {
+      throw new Error(`${route} não devolveu o mesmo ponto de entrada da aplicação.`);
+    }
   }
 
   const assetPaths = [
@@ -56,7 +83,7 @@ try {
   );
 
   console.log(
-    `Smoke test aprovado: página inicial e ${new Set(assetPaths).size} assets carregados.`,
+    `Smoke test aprovado: ${applicationRoutes.length} rotas e ${new Set(assetPaths).size} assets carregados.`,
   );
 } finally {
   await server.close();
