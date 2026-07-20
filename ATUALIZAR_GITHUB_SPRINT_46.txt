@@ -1,0 +1,16 @@
+FARPHA — ATUALIZAÇÃO DO GITHUB — SPRINT 46
+
+Depois de validar a aplicação, execute no Git Bash:
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "test: Sprint 46 - validar artefato de producao"
+git pull --rebase origin main
+git push origin main
+
+Depois abra:
+https://github.com/Raphaelsantos10/AgriOS/actions
+
+Confirme FARPHA CI e FARPHA Security verdes.
+No FARPHA CI, confirme a mensagem Smoke test aprovado na validação completa.

@@ -133,3 +133,14 @@
 - Upload restrito a pushes e execuções manuais para controlar armazenamento.
 - Mantidos auditoria, toolchain, 43 testes, lint e limite dos bundles.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 46 — Smoke test de produção
+
+- Servidor de preview iniciado automaticamente após o build.
+- Verificação HTTP da página inicial do artefato de produção.
+- Confirmação do elemento React principal e dos tipos de conteúdo.
+- Carregamento verificado dos assets JavaScript e CSS referenciados.
+- Encerramento seguro do servidor de teste em sucesso ou falha.
+- Novo comando npm run smoke:prod integrado ao validate e FARPHA CI.
+- Mantidos auditoria, toolchain, 43 testes, lint, manifesto e limite dos bundles.
+- Supabase, autenticação, rotas e base de dados preservados.
