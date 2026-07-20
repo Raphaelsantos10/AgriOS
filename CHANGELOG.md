@@ -1,5 +1,14 @@
 # Changelog
 
+## Sprint 73 — Cartografia oficial ICNF
+
+- Novo mapa temático no menu Monitorização.
+- Integração WMS da perigosidade estrutural 2020–2030, áreas ardidas de 2025, pontos de água e locais críticos.
+- Controlo independente das quatro camadas e centralização pela exploração selecionada.
+- Pedidos `EPSG:4326` atualizados de acordo com a área visível do mapa.
+- Atribuição oficial e orientações sobre disponibilidade, atualidade e utilização responsável.
+- Três novos testes; total acumulado de 112 testes automatizados.
+
 ## [1.0.0-rc.1] - 2026-07-13
 
 ### Added

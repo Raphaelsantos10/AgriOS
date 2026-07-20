@@ -166,6 +166,11 @@ export const navigationGroups: NavigationGroup[] = [
         icon: Flame,
       },
       {
+        label: "Cartografia ICNF",
+        path: "/cartografia-incendio",
+        icon: MapPinned,
+      },
+      {
         label: "Sensores",
         path: "/sensores",
         icon: RadioTower,
