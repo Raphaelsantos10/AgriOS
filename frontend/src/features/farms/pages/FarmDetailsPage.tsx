@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import {
   ArrowLeft,
+  AlertTriangle,
   BarChart3,
   Brain,
   CalendarDays,
@@ -53,6 +54,11 @@ import { downloadFieldIntegratedReport } from "../../fields/utils/fieldIntegrate
 import { getEnvironmentProfile } from "../../environment/services/environmentService";
 import { getIrrigationEvents, getIrrigationSystem } from "../../irrigation/services/irrigationService";
 import { getLatestFireAssessment } from "../../fire/services/fireService";
+import {
+  buildFarmOverview,
+  downloadFarmOverviewCsv,
+  type FieldModuleCoverage,
+} from "../utils/farmOverview";
 
 import type { Farm } from "../types/farm";
 
@@ -201,6 +207,8 @@ export default function FarmDetailsPage() {
   const [historyDialogOpen, setHistoryDialogOpen] = useState(false);
   const [historyField, setHistoryField] = useState<Field | null>(null);
   const [restoringHistory, setRestoringHistory] = useState(false);
+  const [moduleCoverage, setModuleCoverage] = useState<FieldModuleCoverage[]>([]);
+  const [loadingOverview, setLoadingOverview] = useState(true);
 
   const geometryHistoryRef = useRef<GeometryHistoryEntry[]>([]);
   const geometryHistoryIndexRef = useRef(-1);
@@ -307,6 +315,39 @@ export default function FarmDetailsPage() {
       active = false;
     };
   }, [farmId]);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadModuleCoverage() {
+      if (loadingFields) return;
+      setLoadingOverview(true);
+
+      const result = await Promise.all(fields.map(async (field) => {
+        const [environment, irrigation, fire] = await Promise.all([
+          getEnvironmentProfile(field.id).catch(() => null),
+          getIrrigationSystem(field.id).catch(() => null),
+          getLatestFireAssessment(field.id).catch(() => null),
+        ]);
+
+        return {
+          fieldId: field.id,
+          environment: Boolean(environment),
+          irrigation: Boolean(irrigation),
+          fireAssessment: Boolean(fire),
+          fireRiskLevel: fire?.risk_level ?? null,
+        } satisfies FieldModuleCoverage;
+      }));
+
+      if (active) {
+        setModuleCoverage(result);
+        setLoadingOverview(false);
+      }
+    }
+
+    loadModuleCoverage();
+    return () => { active = false; };
+  }, [fields, loadingFields]);
 
   /*
    * CARREGAR TALHÕES
@@ -1330,6 +1371,10 @@ export default function FarmDetailsPage() {
     }
   }
 
+  const farmOverview = buildFarmOverview(fields, moduleCoverage);
+  const coveragePercent = (value: number) =>
+    farmOverview.totalFields ? Math.round((value / farmOverview.totalFields) * 100) : 0;
+
   return (
     <>
       <section className="space-y-6">
@@ -1418,6 +1463,68 @@ export default function FarmDetailsPage() {
             </div>
           </div>
         </div>
+
+        {/* VISÃO CONSOLIDADA */}
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-wider text-emerald-700">Sprint 56</p>
+              <h2 className="mt-1 text-2xl font-bold text-slate-900">Visão consolidada da exploração</h2>
+              <p className="mt-1 text-slate-500">
+                Cobertura baseada nos registos reais de cada talhão. Ausência de dados é identificada como parcial.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => downloadFarmOverviewCsv(farm, fields, moduleCoverage, new Date().toISOString())}
+              disabled={loadingOverview}
+              className="flex items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 font-semibold text-emerald-700 transition hover:bg-emerald-100 disabled:opacity-50"
+            >
+              <Download size={18} />
+              Exportar diagnóstico CSV
+            </button>
+          </div>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {[
+              ["Talhões acompanhados", farmOverview.totalFields, `${farmOverview.totalArea} ha`],
+              ["Perfis ambientais", farmOverview.environmentConfigured, `${coveragePercent(farmOverview.environmentConfigured)}% coberto`],
+              ["Sistemas de rega", farmOverview.irrigationConfigured, `${coveragePercent(farmOverview.irrigationConfigured)}% coberto`],
+              ["Risco avaliado", farmOverview.fireAssessed, `${coveragePercent(farmOverview.fireAssessed)}% coberto`],
+            ].map(([label, value, detail]) => (
+              <div key={label} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <p className="text-sm font-semibold text-slate-500">{label}</p>
+                <p className="mt-2 text-3xl font-bold text-slate-900">{loadingOverview ? "—" : value}</p>
+                <p className="mt-1 text-sm text-slate-500">{loadingOverview ? "A consultar dados..." : detail}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-5 grid gap-5 lg:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200 p-5">
+              <h3 className="font-bold text-slate-900">Estado dos talhões</h3>
+              <div className="mt-4 flex flex-wrap gap-3 text-sm font-bold">
+                <span className="rounded-full bg-green-100 px-3 py-1.5 text-green-700">Saudáveis: {farmOverview.healthy}</span>
+                <span className="rounded-full bg-amber-100 px-3 py-1.5 text-amber-700">Atenção: {farmOverview.attention}</span>
+                <span className="rounded-full bg-red-100 px-3 py-1.5 text-red-700">Críticos: {farmOverview.critical}</span>
+              </div>
+              <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Cadastro e cálculos: funcional · Dados ausentes: parcial · Sem dados ocultos ou apresentados como reais
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+              <h3 className="flex items-center gap-2 font-bold text-amber-900">
+                <AlertTriangle size={18} /> Prioridades operacionais
+              </h3>
+              <ul className="mt-3 space-y-2 text-sm text-amber-900">
+                {farmOverview.priorities.slice(0, 4).map((priority) => (
+                  <li key={priority}>• {priority}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
 
         {/* MAPA E PAINÉIS */}
         <div className="grid gap-6 xl:grid-cols-3">

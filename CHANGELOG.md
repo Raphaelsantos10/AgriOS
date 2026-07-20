@@ -238,3 +238,14 @@
 - Três novos testes automatizados do relatório.
 - Total acumulado de 58 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 56 — Painel consolidado da exploração
+
+- Visão geral da área, estados e cobertura operacional dos talhões.
+- Perfis ambientais, sistemas de rega e avaliações de incêndio consultados no Supabase.
+- Prioridades identificadas para estados críticos, incêndio e módulos incompletos.
+- Classificação transparente entre dados reais, valores calculados e dados ausentes.
+- Exportação CSV do diagnóstico por exploração e por talhão.
+- Três novos testes automatizados do painel e relatório.
+- Total acumulado de 61 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.
