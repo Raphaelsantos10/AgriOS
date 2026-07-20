@@ -1,9 +1,11 @@
-FARPHA — GUIA ATUAL — SPRINT 62
+FARPHA — SPRINT 62 — GESTÃO DE MÁQUINAS
 
 Caminho final:
 C:\Users\Utilizador\Documents\Projetos\AgriOS
 
-Cole no Git Bash:
+Antes de instalar, feche o VS Code e outros terminais que estejam dentro da pasta AgriOS.
+
+INSTALAÇÃO COMPLETA NO GIT BASH:
 
 cd ~
 taskkill //F //IM node.exe 2>/dev/null || true
@@ -19,11 +21,12 @@ npm run audit:prod
 npm run validate
 npm run dev
 
-Depois de validar, pressione Ctrl+C e publique:
+Resultado esperado:
+- found 0 vulnerabilities
+- Toolchain e 79 testes aprovados
+- lint, build, integridade e smoke test aprovados
 
-cd ~/Documents/Projetos/AgriOS
-git status
-git add .
-git commit -m "feat: Sprint 62 - gerir maquinas agricolas"
-git pull --rebase origin main
-git push origin main
+Teste manual:
+Abra Monitorização > Máquinas, cadastre uma máquina, registe utilização e manutenção.
+
+Depois pressione Ctrl+C e use ATUALIZAR_GITHUB_SPRINT_62.txt.

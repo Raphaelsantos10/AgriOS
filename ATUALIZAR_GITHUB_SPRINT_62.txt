@@ -1,0 +1,15 @@
+FARPHA — ATUALIZAÇÃO DO GITHUB — SPRINT 62
+
+Depois de validar a aplicação, execute no Git Bash:
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "feat: Sprint 62 - gerir maquinas agricolas"
+git pull --rebase origin main
+git push origin main
+
+Depois abra:
+https://github.com/Raphaelsantos10/AgriOS/actions
+
+Confirme FARPHA CI e FARPHA Security verdes.

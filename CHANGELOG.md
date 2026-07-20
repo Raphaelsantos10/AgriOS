@@ -309,3 +309,16 @@
 - Três novos testes automatizados do inventário.
 - Total acumulado de 76 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 62 — Gestão de máquinas
+
+- Cadastro de tratores, alfaias, colhedoras, pulverizadores e outros equipamentos.
+- Horas, combustível e custo por hora acompanhados.
+- Manutenção preventiva controlada por data e horímetro.
+- Alertas de manutenção vencida e próxima.
+- Registo de utilização e conclusão de manutenção.
+- Custo estimado, remoção e exportação CSV.
+- Nenhuma máquina demonstrativa criada automaticamente.
+- Três novos testes automatizados da gestão de máquinas.
+- Total acumulado de 79 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.
