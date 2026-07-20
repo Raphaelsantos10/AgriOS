@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Field } from "../../fields/types/field";
 import type { Farm } from "../types/farm";
-import { buildAgriculturalAlerts, buildAgriculturalAlertsCsv } from "./agriculturalAlerts";
+import { alertToWorkOrderDraft, buildAgriculturalAlerts, buildAgriculturalAlertsCsv } from "./agriculturalAlerts";
 
 const farm = { name: 'Quinta "Sul"' } as Farm;
 const fields = [{ id: "1", name: "Vale", status: "critical" }] as Field[];
@@ -26,5 +26,12 @@ describe("agriculturalAlerts", () => {
     expect(csv).toContain('"Quinta ""Sul"""');
     expect(csv).toContain('"Ação recomendada"');
     expect(csv).toContain('"Diagnóstico calculado"');
+  });
+
+  it("transforma um alerta numa tarefa operacional preenchida", () => {
+    const alert = buildAgriculturalAlerts(fields, [])[0];
+    const draft = alertToWorkOrderDraft(alert, farm, fields[0]);
+    expect(draft).toMatchObject({ farm: 'Quinta "Sul"', field: "Vale", priority: "critical", status: "planned" });
+    expect(draft.notes).toContain("Ação recomendada");
   });
 });

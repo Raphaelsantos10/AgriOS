@@ -1,6 +1,7 @@
 import type { Farm } from "../types/farm";
 import type { Field } from "../../fields/types/field";
 import type { FieldModuleCoverage } from "./farmOverview";
+import type { WorkOrderDraft, WorkOrderPriority, WorkOrderType } from "../../work-orders/types/workOrder";
 
 export type AlertSeverity = "critical" | "warning" | "info";
 export type AgriculturalAlert = {
@@ -83,4 +84,26 @@ export function downloadAgriculturalAlertsCsv(farm: Farm, alerts: AgriculturalAl
   anchor.download = `farpha-alertas-${safeName}.csv`;
   anchor.click();
   URL.revokeObjectURL(url);
+}
+
+export function alertToWorkOrderDraft(alert: AgriculturalAlert, farm: Farm, field: Field): WorkOrderDraft {
+  const typeByCategory: Record<AgriculturalAlert["category"], WorkOrderType> = {
+    Talhão: "inspection", Incêndio: "inspection", Rega: "irrigation", Ambiente: "inspection", Clima: "inspection",
+  };
+  const priorityBySeverity: Record<AlertSeverity, WorkOrderPriority> = {
+    critical: "critical", warning: "high", info: "medium",
+  };
+  return {
+    title: alert.title,
+    type: typeByCategory[alert.category],
+    farm: farm.name,
+    field: field.name,
+    crop: field.crop,
+    priority: priorityBySeverity[alert.severity],
+    status: "planned",
+    scheduledDate: new Date().toISOString().slice(0, 10),
+    assignedTo: "",
+    estimatedCost: 0,
+    notes: `Origem: ${alert.source}. Ação recomendada: ${alert.action}`,
+  };
 }

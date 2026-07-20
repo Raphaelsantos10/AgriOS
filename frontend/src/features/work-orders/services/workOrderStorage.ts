@@ -2,65 +2,19 @@ import type { WorkOrder, WorkOrderDraft, WorkOrderStatus } from "../types/workOr
 
 const STORAGE_KEY = "farpha.work-orders.v1";
 
-const seedOrders: WorkOrder[] = [
-  {
-    id: "WO-0245",
-    title: "Rega do Talhão Norte",
-    type: "irrigation",
-    farm: "Quinta do Souto",
-    field: "Talhão Norte",
-    crop: "Castanheiro",
-    priority: "high",
-    status: "planned",
-    scheduledDate: new Date().toISOString().slice(0, 10),
-    assignedTo: "João Martins",
-    estimatedCost: 85,
-    notes: "Confirmar humidade do solo antes de iniciar.",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "WO-0246",
-    title: "Inspeção fitossanitária",
-    type: "inspection",
-    farm: "Quinta do Souto",
-    field: "Talhão Sul",
-    crop: "Oliveira",
-    priority: "medium",
-    status: "in_progress",
-    scheduledDate: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
-    assignedTo: "Ana Silva",
-    estimatedCost: 45,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "WO-0247",
-    title: "Manutenção do sistema de rega",
-    type: "maintenance",
-    farm: "Herdade da Serra",
-    field: "Talhão 3",
-    priority: "critical",
-    status: "draft",
-    scheduledDate: new Date(Date.now() + 172800000).toISOString().slice(0, 10),
-    assignedTo: "Equipa Técnica",
-    estimatedCost: 260,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
+const legacyDemoIds = new Set(["WO-0245", "WO-0246", "WO-0247"]);
 
 export function listWorkOrders(): WorkOrder[] {
   const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(seedOrders));
-    return seedOrders;
-  }
+  if (!raw) return [];
   try {
-    return JSON.parse(raw) as WorkOrder[];
+    const parsed = JSON.parse(raw) as WorkOrder[];
+    const orders = parsed.filter((order) => !legacyDemoIds.has(order.id));
+    if (orders.length !== parsed.length) persist(orders);
+    return orders;
   } catch {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(seedOrders));
-    return seedOrders;
+    persist([]);
+    return [];
   }
 }
 
@@ -73,12 +27,18 @@ export function createWorkOrder(input: WorkOrderDraft): WorkOrder {
   const now = new Date().toISOString();
   const order: WorkOrder = {
     ...input,
-    id: `WO-${String(orders.length + 248).padStart(4, "0")}`,
+    id: `WO-${Date.now().toString(36).toUpperCase()}`,
     createdAt: now,
     updatedAt: now,
   };
   persist([order, ...orders]);
   return order;
+}
+
+export function deleteWorkOrder(id: string): WorkOrder[] {
+  const orders = listWorkOrders().filter((order) => order.id !== id);
+  persist(orders);
+  return orders;
 }
 
 export function updateWorkOrderStatus(id: string, status: WorkOrderStatus): WorkOrder[] {

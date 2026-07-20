@@ -260,3 +260,15 @@
 - Três novos testes automatizados da geração e exportação.
 - Total acumulado de 64 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 58 — Agenda operacional
+
+- Conversão direta de alertas agrícolas em tarefas pré-preenchidas.
+- Responsável, prazo, prioridade, estado, custos e observações acompanháveis.
+- Agenda da exploração ligada às Ordens de Trabalho.
+- Atualização de estado, remoção controlada e exportação CSV.
+- Ordens demonstrativas automáticas removidas para garantir transparência.
+- Armazenamento local identificado claramente como a persistência atual.
+- Três novos testes automatizados da conversão e exportação.
+- Total acumulado de 67 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.

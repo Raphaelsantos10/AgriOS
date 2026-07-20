@@ -60,9 +60,14 @@ import {
   type FieldModuleCoverage,
 } from "../utils/farmOverview";
 import {
+  alertToWorkOrderDraft,
   buildAgriculturalAlerts,
   downloadAgriculturalAlertsCsv,
+  type AgriculturalAlert,
 } from "../utils/agriculturalAlerts";
+import CreateWorkOrderModal from "../../work-orders/components/CreateWorkOrderModal";
+import { createWorkOrder, listWorkOrders } from "../../work-orders/services/workOrderStorage";
+import type { WorkOrder, WorkOrderDraft } from "../../work-orders/types/workOrder";
 
 import type { Farm } from "../types/farm";
 
@@ -213,6 +218,8 @@ export default function FarmDetailsPage() {
   const [restoringHistory, setRestoringHistory] = useState(false);
   const [moduleCoverage, setModuleCoverage] = useState<FieldModuleCoverage[]>([]);
   const [loadingOverview, setLoadingOverview] = useState(true);
+  const [selectedTaskAlert, setSelectedTaskAlert] = useState<AgriculturalAlert | null>(null);
+  const [farmWorkOrders, setFarmWorkOrders] = useState<WorkOrder[]>(() => listWorkOrders());
 
   const geometryHistoryRef = useRef<GeometryHistoryEntry[]>([]);
   const geometryHistoryIndexRef = useRef(-1);
@@ -1393,6 +1400,19 @@ export default function FarmDetailsPage() {
   };
   const coveragePercent = (value: number) =>
     farmOverview.totalFields ? Math.round((value / farmOverview.totalFields) * 100) : 0;
+  const currentFarmOrders = farmWorkOrders.filter((order) => order.farm === farm.name);
+  const selectedAlertField = selectedTaskAlert
+    ? fields.find((field) => field.id === selectedTaskAlert.fieldId) ?? null
+    : null;
+  const taskInitialDraft = selectedTaskAlert && selectedAlertField
+    ? alertToWorkOrderDraft(selectedTaskAlert, farm, selectedAlertField)
+    : undefined;
+
+  function handleCreateAlertTask(draft: WorkOrderDraft) {
+    createWorkOrder(draft);
+    setFarmWorkOrders(listWorkOrders());
+    setSelectedTaskAlert(null);
+  }
 
   return (
     <>
@@ -1587,6 +1607,13 @@ export default function FarmDetailsPage() {
                       <p className="text-xs font-bold uppercase tracking-wide">{alert.category} · {alert.fieldName}</p>
                       <h3 className="mt-1 font-bold">{alert.title}</h3>
                       <p className="mt-1 text-sm">{alert.action}</p>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedTaskAlert(alert)}
+                        className="mt-3 rounded-lg bg-white/80 px-3 py-2 text-xs font-bold shadow-sm transition hover:bg-white"
+                      >
+                        Criar tarefa deste alerta
+                      </button>
                     </div>
                     <span className="shrink-0 rounded-full bg-white/70 px-2.5 py-1 text-xs font-bold">Origem: {alert.source}</span>
                   </div>
@@ -1731,8 +1758,13 @@ export default function FarmDetailsPage() {
               </h2>
 
               <p className="mt-4 text-slate-500">
-                Nenhuma tarefa cadastrada.
+                {currentFarmOrders.length === 0
+                  ? "Nenhuma tarefa cadastrada."
+                  : `${currentFarmOrders.filter((order) => order.status !== "completed" && order.status !== "cancelled").length} tarefa(s) aberta(s) nesta exploração.`}
               </p>
+              <button type="button" onClick={() => navigate("/ordens")} className="mt-4 text-sm font-bold text-green-700 hover:text-green-800">
+                Abrir agenda operacional →
+              </button>
             </div>
 
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -2022,6 +2054,13 @@ export default function FarmDetailsPage() {
           if (!farmId) return;
           navigate(`/exploracoes/${farmId}/talhoes/${field.id}/incendio`);
         }}
+      />
+      <CreateWorkOrderModal
+        key={selectedTaskAlert?.id ?? "no-alert-task"}
+        open={Boolean(selectedTaskAlert)}
+        onClose={() => setSelectedTaskAlert(null)}
+        onCreate={handleCreateAlertTask}
+        initialDraft={taskInitialDraft}
       />
     </>
   );

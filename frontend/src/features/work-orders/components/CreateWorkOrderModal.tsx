@@ -20,8 +20,8 @@ const initialState: WorkOrderDraft = {
   notes: "",
 };
 
-export default function CreateWorkOrderModal({ open, onClose, onCreate }: { open: boolean; onClose: () => void; onCreate: (draft: WorkOrderDraft) => void }) {
-  const [form, setForm] = useState(initialState);
+export default function CreateWorkOrderModal({ open, onClose, onCreate, initialDraft }: { open: boolean; onClose: () => void; onCreate: (draft: WorkOrderDraft) => void; initialDraft?: Partial<WorkOrderDraft> }) {
+  const [form, setForm] = useState(() => ({ ...initialState, ...initialDraft }));
   const [error, setError] = useState("");
 
   if (!open) return null;
