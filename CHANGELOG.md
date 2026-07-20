@@ -196,3 +196,13 @@
 - Três novos testes da geração do relatório.
 - Total acumulado de 46 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 52 — Relatório de aptidão de culturas
+
+- Exportação CSV da classificação de culturas por talhão.
+- Pontuações atuais, cenário com rega e ganho potencial incluídos.
+- Confiança, pontos fortes, alertas e fatores conhecidos incluídos.
+- Exportação respeita a pesquisa e o cenário selecionado.
+- Três novos testes automatizados do relatório.
+- Total acumulado de 49 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.

@@ -1,4 +1,4 @@
-import { ArrowLeft, Droplets, Leaf, LoaderCircle, ShieldAlert, Sparkles } from "lucide-react";
+import { ArrowLeft, Download, Droplets, Leaf, LoaderCircle, ShieldAlert, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getCrops } from "../../crops/services/cropService";
@@ -9,6 +9,7 @@ import { getFieldById } from "../../fields/services/fieldsService";
 import type { Field } from "../../fields/types/field";
 import type { CropSuitabilityResult } from "../types/suitability";
 import { calculateCropSuitability } from "../utils/calculateSuitability";
+import { downloadSuitabilityReport } from "../utils/suitabilityReportExport";
 
 function scoreLabel(score: number) {
   if (score >= 85) return "Muito alta";
@@ -29,6 +30,7 @@ export default function CropSuitabilityPage() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [withIrrigation, setWithIrrigation] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -54,6 +56,18 @@ export default function CropSuitabilityPage() {
     .map((crop) => calculateCropSuitability(crop, environment))
     .sort((a, b) => (withIrrigation ? b.scoreWithIrrigation - a.scoreWithIrrigation : b.score - a.score)), [crops, environment, query, withIrrigation]);
 
+  function handleExportReport() {
+    if (!field || !results.length) return;
+
+    downloadSuitabilityReport({
+      field,
+      results,
+      withIrrigation,
+      generatedAt: new Date().toISOString(),
+    });
+    setMessage(`Relatório exportado com ${results.length} culturas.`);
+  }
+
   if (loading) return <div className="flex min-h-[520px] items-center justify-center gap-3 bg-[#061014] text-[#9aa9a2]"><LoaderCircle className="animate-spin text-[#9cdf28]" /> A calcular aptidão agrícola…</div>;
 
   return (
@@ -65,8 +79,13 @@ export default function CropSuitabilityPage() {
           <h1 className="mt-2 text-3xl font-black">O que plantar em {field?.name ?? "este talhão"}?</h1>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-[#9aa9a2]">Comparação preliminar entre o perfil ambiental do talhão e os requisitos do catálogo de culturas. Não substitui análise agronómica ou laboratorial.</p>
         </div>
-        <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold"><Droplets className="text-sky-400" size={18} /><span>Simular rega</span><input type="checkbox" checked={withIrrigation} onChange={(event) => setWithIrrigation(event.target.checked)} className="h-4 w-4 accent-[#9cdf28]" /></label>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold"><Droplets className="text-sky-400" size={18} /><span>Simular rega</span><input type="checkbox" checked={withIrrigation} onChange={(event) => setWithIrrigation(event.target.checked)} className="h-4 w-4 accent-[#9cdf28]" /></label>
+          <button type="button" onClick={handleExportReport} disabled={!results.length} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#9cdf28] px-4 py-3 text-sm font-black text-[#061014] disabled:opacity-40"><Download size={18} /> Exportar relatório CSV</button>
+        </div>
       </header>
+
+      {message ? <div className="mt-5 rounded-2xl border border-[#9cdf28]/20 bg-[#9cdf28]/8 p-4 text-sm text-[#dfffb0]">{message}</div> : null}
 
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         <Metric icon={Sparkles} label="Culturas analisadas" value={String(results.length)} />
