@@ -6,6 +6,7 @@ import {
   CalendarDays,
   CloudSun,
   ClipboardCheck,
+  CircleDollarSign,
   ListChecks,
   Gauge,
   Layers3,
@@ -64,6 +65,11 @@ export const navigationGroups: NavigationGroup[] = [
         label: "Ordens de Trabalho",
         path: "/ordens",
         icon: ListChecks,
+      },
+      {
+        label: "Custos agrícolas",
+        path: "/custos",
+        icon: CircleDollarSign,
       },
       {
         label: "Calendário",

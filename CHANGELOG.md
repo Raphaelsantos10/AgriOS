@@ -272,3 +272,15 @@
 - Três novos testes automatizados da conversão e exportação.
 - Total acumulado de 67 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 59 — Custos agrícolas
+
+- Novo módulo para custos de mão de obra, água, combustível, produtos e máquinas.
+- Quantidade, unidade e preço unitário com total automático.
+- Resumos financeiros e filtro por categoria.
+- Remoção controlada e exportação CSV dos lançamentos.
+- Nenhum custo demonstrativo criado automaticamente.
+- Persistência local identificada claramente como a origem atual.
+- Três novos testes automatizados de cálculos e exportação.
+- Total acumulado de 70 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.

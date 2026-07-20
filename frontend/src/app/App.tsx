@@ -17,6 +17,7 @@ const MissionsPage = lazy(
 const WorkOrdersPage = lazy(
   () => import("../features/work-orders/pages/WorkOrdersPage"),
 );
+const AgriculturalCostsPage = lazy(() => import("../features/costs/pages/AgriculturalCostsPage"));
 const AgriculturalCalendarPage = lazy(
   () => import("../features/calendar/pages/AgriculturalCalendarPage"),
 );
@@ -68,6 +69,7 @@ export default function App() {
               <Route path="/exploracoes/:farmId" element={<FarmDetailsPage />} />
               <Route path="/missoes" element={<MissionsPage />} />
               <Route path="/ordens" element={<WorkOrdersPage />} />
+              <Route path="/custos" element={<AgriculturalCostsPage />} />
               <Route
                 path="/calendario"
                 element={<AgriculturalCalendarPage />}
