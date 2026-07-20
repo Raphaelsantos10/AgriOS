@@ -25,6 +25,8 @@ const FieldDiaryPage = lazy(() => import("../features/field-diary/pages/FieldDia
 const HarvestPage = lazy(() => import("../features/harvest/pages/HarvestPage"));
 const TraceabilityPage = lazy(() => import("../features/traceability/pages/TraceabilityPage"));
 const ProductivityDashboardPage = lazy(() => import("../features/productivity/pages/ProductivityDashboardPage"));
+const WeatherPage = lazy(() => import("../features/weather/pages/WeatherPage"));
+const RecommendationsPage = lazy(() => import("../features/recommendations/pages/RecommendationsPage"));
 const AgriculturalCalendarPage = lazy(
   () => import("../features/calendar/pages/AgriculturalCalendarPage"),
 );
@@ -84,6 +86,8 @@ export default function App() {
               <Route path="/colheitas" element={<HarvestPage />} />
               <Route path="/rastreabilidade" element={<TraceabilityPage />} />
               <Route path="/produtividade" element={<ProductivityDashboardPage />} />
+              <Route path="/clima" element={<WeatherPage />} />
+              <Route path="/recomendacoes" element={<RecommendationsPage />} />
               <Route
                 path="/calendario"
                 element={<AgriculturalCalendarPage />}

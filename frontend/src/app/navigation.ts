@@ -139,6 +139,11 @@ export const navigationGroups: NavigationGroup[] = [
         path: "/intelligence",
         icon: Bot,
       },
+      {
+        label: "Recomendações",
+        path: "/recomendacoes",
+        icon: Bot,
+      },
     ],
   },
   {

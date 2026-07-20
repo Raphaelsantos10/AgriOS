@@ -5,6 +5,7 @@ import type {
   DiagnosticReport,
   DiagnosticStatus,
 } from "../types/diagnostics";
+import { fetchWeatherForecast } from "../../weather/services/weatherService";
 
 type TableCheck = {
   id: string;
@@ -200,12 +201,19 @@ function pendingIntegration(
   };
 }
 
+async function checkWeatherIntegration(): Promise<DiagnosticItem> {
+  const startedAt = performance.now(); const checkedAt = nowIso();
+  try { const forecast = await fetchWeatherForecast(41.1579, -8.6291); return { id: "weather-api", label: "Meteorologia", description: "Previsões e alertas meteorológicos externos.", category: "integration", status: "operational", latencyMs: Math.round(performance.now() - startedAt), details: `${forecast.days.length} dias recebidos da ${forecast.source}.`, checkedAt }; }
+  catch (error) { return { id: "weather-api", label: "Meteorologia", description: "Previsões e alertas meteorológicos externos.", category: "integration", status: "warning", latencyMs: Math.round(performance.now() - startedAt), details: errorMessage(error), checkedAt }; }
+}
+
 export async function runDiagnostics(): Promise<DiagnosticReport> {
   const startedAt = nowIso();
   const startedPerformance = performance.now();
 
-  const [supabaseResult, ...databaseResults] = await Promise.all([
+  const [supabaseResult, weatherResult, ...databaseResults] = await Promise.all([
     checkSupabaseConnection(),
+    checkWeatherIntegration(),
     ...tableChecks.map(checkTable),
   ]);
 
@@ -217,11 +225,7 @@ export async function runDiagnostics(): Promise<DiagnosticReport> {
       "Storage",
       "Fotografias, documentos e anexos da exploração.",
     ),
-    pendingIntegration(
-      "weather-api",
-      "Meteorologia",
-      "Previsões e alertas meteorológicos externos.",
-    ),
+    weatherResult,
     pendingIntegration(
       "satellite",
       "Satélite",

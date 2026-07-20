@@ -373,3 +373,31 @@
 - Três novos testes automatizados do dashboard de produtividade.
 - Total acumulado de 91 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 67 — Previsão meteorológica integrada
+
+- Previsão real de sete dias por exploração ou coordenadas manuais.
+- Open-Meteo integrada sem necessidade de chave de API.
+- Temperatura, chuva, probabilidade, rajadas e ET₀ apresentadas.
+- Alertas de geada, calor, chuva forte, vento e procura hídrica elevada.
+- Recomendações operacionais e avisos de incerteza incluídos.
+- Exportação CSV com localização, fonte e momento da consulta.
+- Diagnóstico da integração meteorológica atualizado.
+- Nenhuma previsão fictícia criada automaticamente.
+- Três novos testes automatizados dos alertas meteorológicos.
+- Total acumulado de 94 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 68 — Recomendações automáticas
+
+- Motor explicável que cruza clima, perfil ambiental, diário e colheitas.
+- Recomendações para geada, calor, chuva, vento, solo, drenagem e perdas.
+- Evidências, prioridades e confiança dos dados apresentadas.
+- Dados em falta identificados com orientação para os completar.
+- Previsão meteorológica guardada e reutilizada somente na exploração correspondente.
+- Exportação CSV das recomendações e respetivas evidências.
+- Nenhuma operação agrícola executada automaticamente.
+- Arquitetura preparada para IPMA, SoilGrids e ICNF.
+- Três novos testes automatizados do motor de recomendações.
+- Total acumulado de 97 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.
