@@ -428,3 +428,17 @@
 - Três novos testes automatizados de permissões, backup e prontidão.
 - Total acumulado de 103 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 71 — Solo Inteligente
+
+- SoilGrids integrado por exploração ou coordenadas manuais.
+- Oito propriedades do solo em três profundidades.
+- Média, intervalo Q0.05–Q0.95, unidade e incerteza apresentadas.
+- Conversão orientada pelos metadados devolvidos pelo fornecedor.
+- Cache de 30 dias por ponto e limite de cinco chamadas por minuto.
+- Exportação CSV com fonte, coordenadas e momento da consulta.
+- Indisponibilidade da API beta tratada sem resultados fictícios.
+- Aviso explícito de que estimativas não substituem análise laboratorial.
+- Três novos testes automatizados do perfil de solo.
+- Total acumulado de 106 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.

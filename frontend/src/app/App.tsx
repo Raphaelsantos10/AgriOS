@@ -28,6 +28,7 @@ const ProductivityDashboardPage = lazy(() => import("../features/productivity/pa
 const WeatherPage = lazy(() => import("../features/weather/pages/WeatherPage"));
 const RecommendationsPage = lazy(() => import("../features/recommendations/pages/RecommendationsPage"));
 const ProductionReadinessPage = lazy(() => import("../features/system/pages/ProductionReadinessPage"));
+const SoilIntelligencePage = lazy(() => import("../features/soil/pages/SoilIntelligencePage"));
 const AgriculturalCalendarPage = lazy(
   () => import("../features/calendar/pages/AgriculturalCalendarPage"),
 );
@@ -90,6 +91,7 @@ export default function App() {
               <Route path="/clima" element={<WeatherPage />} />
               <Route path="/recomendacoes" element={<RecommendationsPage />} />
               <Route path="/configuracoes" element={<ProductionReadinessPage />} />
+              <Route path="/solo-inteligente" element={<SoilIntelligencePage />} />
               <Route
                 path="/calendario"
                 element={<AgriculturalCalendarPage />}

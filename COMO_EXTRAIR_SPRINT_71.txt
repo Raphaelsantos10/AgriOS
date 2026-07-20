@@ -1,0 +1,38 @@
+FARPHA — SPRINT 71 — SOLO INTELIGENTE
+
+Caminho final:
+C:\Users\Utilizador\Documents\Projetos\AgriOS
+
+Antes de instalar, feche o VS Code e outros terminais que estejam dentro da pasta AgriOS.
+
+INSTALAÇÃO COMPLETA NO GIT BASH:
+
+cd ~
+taskkill //F //IM node.exe 2>/dev/null || true
+cd ~/Documents/Projetos
+BACKUP="AgriOS_backup_sprint70_$(date +%Y%m%d_%H%M%S)"
+mv AgriOS "$BACKUP"
+unzip -o ~/Downloads/FARPHA_Sprint_71_Solo_Inteligente.zip
+cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local
+cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run audit:prod
+npm run validate
+npm run preview
+
+Resultado esperado:
+- found 0 vulnerabilities
+- Toolchain e 106 testes aprovados
+- PWA, segurança, lint, build, integridade e smoke test aprovados
+
+Teste manual:
+1. Abra Inteligência > Solo Inteligente.
+2. Escolha uma exploração ou introduza coordenadas.
+3. Pressione Consultar solo.
+4. Se a API beta estiver pausada, o FARPHA mostrará a indisponibilidade real.
+5. Quando existir resultado, confira profundidades, intervalos e exportação CSV.
+
+É necessária ligação à Internet na primeira consulta. Resultados válidos ficam em cache por 30 dias.
+
+Depois pressione Ctrl+C e use ATUALIZAR_GITHUB_SPRINT_71.txt.
