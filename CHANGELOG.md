@@ -346,3 +346,30 @@
 - Três novos testes automatizados dos cálculos e exportação.
 - Total acumulado de 85 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 65 — Rastreabilidade agrícola
+
+- Linha temporal unificada com evidências do Diário do Talhão e de Produção e Colheita.
+- Preparação do solo, plantação, cuidados culturais, rega e colheita acompanhadas.
+- Cobertura do ciclo e etapas sem evidência indicadas com transparência.
+- Filtros por exploração, talhão, cultura e intervalo de datas.
+- Origem, responsável e detalhes preservados em cada evento.
+- Exportação CSV do histórico filtrado.
+- Atividade de preparação do solo adicionada ao Diário do Talhão.
+- Nenhum registo demonstrativo criado automaticamente.
+- Três novos testes automatizados da rastreabilidade.
+- Total acumulado de 88 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 66 — Dashboard de produtividade
+
+- Comparação de resultados por cultura, exploração/talhão e campanha.
+- Produtividade média agregada de forma ponderada pela área colhida.
+- Produção bruta e comercializável, perdas, área e número de registos apresentados.
+- Ranking ordenado e barras comparativas dos resultados.
+- Filtros por exploração, cultura, campanha e intervalo de datas.
+- Exportação CSV da dimensão e filtros atuais.
+- Nenhum registo demonstrativo criado automaticamente.
+- Três novos testes automatizados do dashboard de produtividade.
+- Total acumulado de 91 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.

@@ -100,6 +100,11 @@ export const navigationGroups: NavigationGroup[] = [
         icon: ShieldCheck,
       },
       {
+        label: "Produtividade",
+        path: "/produtividade",
+        icon: BarChart3,
+      },
+      {
         label: "Calendário",
         path: "/calendario",
         icon: CalendarDays,

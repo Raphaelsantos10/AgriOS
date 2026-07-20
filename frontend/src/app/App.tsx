@@ -24,6 +24,7 @@ const MachineryPage = lazy(() => import("../features/machinery/pages/MachineryPa
 const FieldDiaryPage = lazy(() => import("../features/field-diary/pages/FieldDiaryPage"));
 const HarvestPage = lazy(() => import("../features/harvest/pages/HarvestPage"));
 const TraceabilityPage = lazy(() => import("../features/traceability/pages/TraceabilityPage"));
+const ProductivityDashboardPage = lazy(() => import("../features/productivity/pages/ProductivityDashboardPage"));
 const AgriculturalCalendarPage = lazy(
   () => import("../features/calendar/pages/AgriculturalCalendarPage"),
 );
@@ -82,6 +83,7 @@ export default function App() {
               <Route path="/diario-talhao" element={<FieldDiaryPage />} />
               <Route path="/colheitas" element={<HarvestPage />} />
               <Route path="/rastreabilidade" element={<TraceabilityPage />} />
+              <Route path="/produtividade" element={<ProductivityDashboardPage />} />
               <Route
                 path="/calendario"
                 element={<AgriculturalCalendarPage />}
