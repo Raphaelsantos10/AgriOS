@@ -1,6 +1,6 @@
 import type { FieldDiaryActivity, FieldDiaryEntry } from "../types/fieldDiary";
 
-export const diaryActivityLabels: Record<FieldDiaryActivity, string> = { inspection: "Inspeção", planting: "Plantação", irrigation: "Rega", fertilization: "Fertilização", spraying: "Pulverização", pruning: "Poda", harvest: "Colheita", maintenance: "Manutenção", observation: "Observação", other: "Outra" };
+export const diaryActivityLabels: Record<FieldDiaryActivity, string> = { soil_preparation: "Preparação do solo", inspection: "Inspeção", planting: "Plantação", irrigation: "Rega", fertilization: "Fertilização", spraying: "Pulverização", pruning: "Poda", harvest: "Colheita", maintenance: "Manutenção", observation: "Observação", other: "Outra" };
 export function sortFieldDiary(entries: FieldDiaryEntry[]) { return [...entries].sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt)); }
 export function summarizeFieldDiary(entries: FieldDiaryEntry[]) { return { entries: entries.length, fields: new Set(entries.map((entry) => `${entry.farm}::${entry.field}`)).size, photos: entries.filter((entry) => Boolean(entry.photoDataUrl)).length, latestDate: sortFieldDiary(entries)[0]?.date ?? null }; }
 const escapeCsv = (value: string | number) => `"${String(value).replaceAll('"', '""')}"`;

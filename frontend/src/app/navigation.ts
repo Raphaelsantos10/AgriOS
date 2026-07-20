@@ -15,6 +15,7 @@ import {
   Package,
   RadioTower,
   Satellite,
+  ShieldCheck,
   Settings,
   Stethoscope,
   Sprout,
@@ -92,6 +93,11 @@ export const navigationGroups: NavigationGroup[] = [
         label: "Produção e colheita",
         path: "/colheitas",
         icon: Sprout,
+      },
+      {
+        label: "Rastreabilidade",
+        path: "/rastreabilidade",
+        icon: ShieldCheck,
       },
       {
         label: "Calendário",

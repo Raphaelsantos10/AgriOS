@@ -1,4 +1,4 @@
-export type FieldDiaryActivity = "inspection" | "planting" | "irrigation" | "fertilization" | "spraying" | "pruning" | "harvest" | "maintenance" | "observation" | "other";
+export type FieldDiaryActivity = "soil_preparation" | "inspection" | "planting" | "irrigation" | "fertilization" | "spraying" | "pruning" | "harvest" | "maintenance" | "observation" | "other";
 
 export type FieldDiaryEntry = {
   id: string;
