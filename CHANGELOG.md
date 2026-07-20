@@ -186,3 +186,13 @@
 - Novo comando npm run check:release.
 - Mantidas todas as proteções acumuladas e os 43 testes.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 51 — Plano de rega exportável
+
+- Exportação CSV da recomendação do Smart Irrigation Engine.
+- Dados do talhão, cultura, sistema, condições, volume e duração incluídos.
+- Prioridade, confiança, motivos e alertas incluídos no plano.
+- Compatibilidade UTF-8 e Excel em português.
+- Três novos testes da geração do relatório.
+- Total acumulado de 46 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.

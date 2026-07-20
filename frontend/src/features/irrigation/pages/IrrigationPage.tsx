@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   Droplets,
+  Download,
   Gauge,
   History,
   LoaderCircle,
@@ -28,6 +29,7 @@ import type {
   WaterSourceType,
 } from "../types/irrigation";
 import { calculateIrrigationRecommendation } from "../utils/irrigationCalculator";
+import { downloadIrrigationPlan } from "../utils/irrigationPlanExport";
 
 const methodLabels: Record<IrrigationMethod, string> = {
   drip: "Gota-a-gota",
@@ -180,6 +182,20 @@ export default function IrrigationPage() {
     }
   }
 
+  function handleExportPlan() {
+    if (!field || !recommendation) return;
+
+    downloadIrrigationPlan({
+      field,
+      system,
+      recommendation,
+      soilMoisturePercent: soilMoisture,
+      forecastRainMm: forecastRain,
+      generatedAt: new Date().toISOString(),
+    });
+    setMessage("Plano de rega exportado em CSV.");
+  }
+
   if (loading) {
     return <div className="flex min-h-[520px] items-center justify-center gap-3 bg-[#061014] text-[#9aa9a2]"><LoaderCircle className="animate-spin text-sky-400" /> A carregar irrigação…</div>;
   }
@@ -232,7 +248,7 @@ export default function IrrigationPage() {
 
         <aside className="h-fit rounded-3xl border border-sky-400/20 bg-gradient-to-b from-sky-400/10 to-[#0b171a] p-5 2xl:sticky 2xl:top-6">
           <div className="flex items-center gap-3"><div className="rounded-2xl bg-sky-400 p-3 text-[#061014]"><Droplets size={24} /></div><div><p className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">Recomendação FARPHA</p><h2 className="text-xl font-black">Plano de rega</h2></div></div>
-          {recommendation && <><div className="mt-6 grid grid-cols-2 gap-3"><Metric label="Necessidade" value={`${recommendation.estimatedWaterNeedMm} mm`} /><Metric label="Volume" value={`${recommendation.estimatedVolumeM3} m³`} /><Metric label="Duração" value={recommendation.recommendedMinutes ? `${recommendation.recommendedMinutes} min` : "Configurar"} /><Metric label="Confiança" value={`${recommendation.confidence}%`} /></div><div className="mt-5 rounded-2xl border border-white/10 bg-[#071215] p-4"><p className="text-xs font-black uppercase tracking-[0.15em] text-[#819188]">Melhor janela</p><p className="mt-2 text-2xl font-black text-[#9cdf28]">{recommendation.bestWindow}</p><p className="mt-2 text-sm text-[#aab8b1]">Prioridade: <strong className="uppercase text-white">{recommendation.priority}</strong></p></div><div className="mt-5 space-y-2 text-xs leading-5 text-[#aab8b1]">{recommendation.reasons.map((reason) => <p key={reason}>• {reason}</p>)}</div>{recommendation.warnings.length > 0 && <div className="mt-5 rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4 text-xs leading-5 text-amber-100">{recommendation.warnings.join(" ")}</div>}<button type="button" onClick={() => void handleRegisterIrrigation()} disabled={saving || !recommendation.needsIrrigation} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-[#9cdf28] px-5 py-3 font-black text-[#061014] disabled:cursor-not-allowed disabled:opacity-40"><Play size={18} /> Registar rega recomendada</button>{!recommendation.needsIrrigation && <p className="mt-3 text-center text-xs text-[#819188]">Neste momento não foi identificada necessidade relevante de rega.</p>}</>}
+          {recommendation && <><div className="mt-6 grid grid-cols-2 gap-3"><Metric label="Necessidade" value={`${recommendation.estimatedWaterNeedMm} mm`} /><Metric label="Volume" value={`${recommendation.estimatedVolumeM3} m³`} /><Metric label="Duração" value={recommendation.recommendedMinutes ? `${recommendation.recommendedMinutes} min` : "Configurar"} /><Metric label="Confiança" value={`${recommendation.confidence}%`} /></div><div className="mt-5 rounded-2xl border border-white/10 bg-[#071215] p-4"><p className="text-xs font-black uppercase tracking-[0.15em] text-[#819188]">Melhor janela</p><p className="mt-2 text-2xl font-black text-[#9cdf28]">{recommendation.bestWindow}</p><p className="mt-2 text-sm text-[#aab8b1]">Prioridade: <strong className="uppercase text-white">{recommendation.priority}</strong></p></div><div className="mt-5 space-y-2 text-xs leading-5 text-[#aab8b1]">{recommendation.reasons.map((reason) => <p key={reason}>• {reason}</p>)}</div>{recommendation.warnings.length > 0 && <div className="mt-5 rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4 text-xs leading-5 text-amber-100">{recommendation.warnings.join(" ")}</div>}<button type="button" onClick={() => void handleRegisterIrrigation()} disabled={saving || !recommendation.needsIrrigation} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-[#9cdf28] px-5 py-3 font-black text-[#061014] disabled:cursor-not-allowed disabled:opacity-40"><Play size={18} /> Registar rega recomendada</button><button type="button" onClick={handleExportPlan} className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-sky-300/30 bg-sky-300/10 px-5 py-3 font-black text-sky-100 transition hover:bg-sky-300/15"><Download size={18} /> Exportar plano CSV</button>{!recommendation.needsIrrigation && <p className="mt-3 text-center text-xs text-[#819188]">Neste momento não foi identificada necessidade relevante de rega.</p>}</>}
         </aside>
       </div>
       <style>{`.input{width:100%;border:1px solid rgba(255,255,255,.10);background:#071215;border-radius:.75rem;padding:.75rem 1rem;color:#fff;outline:none}.input:focus{border-color:rgba(56,189,248,.65)}.input option{background:#071215}`}</style>
