@@ -73,3 +73,13 @@
 - Cobertura de pH, frio, água, geada, calor, drenagem e confiança.
 - Total acumulado de 43 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 40 — Integração contínua
+
+- Workflow GitHub Actions para push na main e pull requests.
+- Validação automática de 43 testes, lint e build.
+- Node.js 24 fixado para desenvolvimento e CI.
+- Instalação determinística com npm ci e cache de dependências.
+- Novo comando npm run validate.
+- Permissões mínimas e cancelamento de execuções obsoletas.
+- Supabase, autenticação, rotas e base de dados preservados.

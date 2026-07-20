@@ -1,0 +1,16 @@
+FARPHA — ATUALIZAÇÃO DO GITHUB — SPRINT 40
+
+Depois de validar a aplicação, execute no Git Bash:
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "ci: Sprint 40 - automatizar testes lint e build"
+git pull --rebase origin main
+git push origin main
+
+Depois abra:
+https://github.com/Raphaelsantos10/AgriOS/actions
+
+Confirme que o workflow FARPHA CI terminou com um visto verde.
+Se a execução falhar, abra-a e envie uma captura de ecrã do passo vermelho.

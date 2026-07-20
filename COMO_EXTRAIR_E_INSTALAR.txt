@@ -1,5 +1,5 @@
-FARPHA — SPRINT 39
-VALIDAÇÃO DOS MOTORES AGRÍCOLAS
+FARPHA — SPRINT 40
+INTEGRAÇÃO CONTÍNUA
 
 ============================================================
 1. ONDE GUARDAR E EXTRAIR
@@ -25,14 +25,14 @@ O caminho AgriOS\AgriOS está errado.
 Antes de extrair, abra o Git Bash e execute uma linha de cada vez:
 
 cd ~/Documents/Projetos
-mv AgriOS AgriOS_backup_sprint38
+mv AgriOS AgriOS_backup_sprint39
 
 Agora extraia o ZIP pelo Explorador do Windows dentro da pasta Projetos.
 
 Também pode extrair diretamente pelo Git Bash com:
 
 cd ~/Documents/Projetos
-unzip ~/Downloads/FARPHA_Sprint_39_Motores_Agricolas.zip
+unzip ~/Downloads/FARPHA_Sprint_40_Integracao_Continua.zip
 
 Confirme que a nova pasta existe:
 
@@ -45,11 +45,11 @@ ls ~/Documents/Projetos/AgriOS
 O ficheiro .env.local não é incluído no ZIP por segurança.
 Se ele existia na Sprint 34, copie-o para a nova versão:
 
-cp ~/Documents/Projetos/AgriOS_backup_sprint38/frontend/.env.local ~/Documents/Projetos/AgriOS/frontend/.env.local
+cp ~/Documents/Projetos/AgriOS_backup_sprint39/frontend/.env.local ~/Documents/Projetos/AgriOS/frontend/.env.local
 
 Recupere também a ligação ao GitHub:
 
-cp -r ~/Documents/Projetos/AgriOS_backup_sprint38/.git ~/Documents/Projetos/AgriOS/.git
+cp -r ~/Documents/Projetos/AgriOS_backup_sprint39/.git ~/Documents/Projetos/AgriOS/.git
 
 Não envie nem publique esse ficheiro no GitHub.
 
@@ -61,9 +61,7 @@ Execute uma linha de cada vez:
 
 cd ~/Documents/Projetos/AgriOS/frontend
 npm install
-npm run test
-npm run lint
-npm run build
+npm run validate
 npm run dev
 
 Quando aparecer o endereço local, normalmente:
@@ -89,9 +87,7 @@ npm run dev
 6. RESULTADOS ESPERADOS
 ============================================================
 
-npm run test  -> 43 testes aprovados
-npm run lint  -> sem erros
-npm run build -> build concluído
+npm run validate -> 43 testes, lint e build aprovados
 npm run dev   -> servidor local iniciado
 
 O aviso sobre o tamanho do bundle GIS não impede o funcionamento.
@@ -110,15 +106,14 @@ O comando pwd deve terminar em /Documents/Projetos/AgriOS/frontend
 e o comando ls deve mostrar package.json.
 
 ============================================================
-8. O QUE A SPRINT 39 ALTEROU
+8. O QUE A SPRINT 40 ALTEROU
 ============================================================
 
-- Testes de necessidade, volume e duração de rega.
-- Cobertura de chuva, textura do solo e sistema de irrigação.
-- Testes de aptidão por pH, frio, água, geada, calor e drenagem.
-- Validação do cenário de melhoria com irrigação.
-- Cobertura da confiança e fatores explicáveis.
-- Total acumulado de 43 testes automatizados.
+- GitHub Actions para pushes na main e pull requests.
+- Execução automática de 43 testes, lint e build.
+- Node.js 24 fixado para desenvolvimento e CI.
+- Instalação determinística com npm ci e cache.
+- Novo comando único npm run validate.
 - Supabase, autenticação, rotas e banco preservados.
 
 O ZIP contém a pasta AgriOS completa na raiz.
@@ -130,6 +125,6 @@ node_modules, dist, .git e .env.local não são incluídos.
 
 Depois de validar a aplicação, leia na raiz:
 
-ATUALIZAR_GITHUB_SPRINT_39.txt
+ATUALIZAR_GITHUB_SPRINT_40.txt
 
 Esse ficheiro contém os comandos de commit, pull e push desta sprint.
