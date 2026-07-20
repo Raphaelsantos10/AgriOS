@@ -7,6 +7,9 @@ export type FieldModuleCoverage = {
   irrigation: boolean;
   fireAssessment: boolean;
   fireRiskLevel: string | null;
+  irrigationActive?: boolean | null;
+  reservoirLevelPercent?: number | null;
+  climateComplete?: boolean;
 };
 
 export type FarmOverview = {

@@ -249,3 +249,14 @@
 - Três novos testes automatizados do painel e relatório.
 - Total acumulado de 61 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 57 — Central de alertas agrícolas
+
+- Alertas consolidados de talhões, incêndio, rega, ambiente e clima.
+- Severidades críticas, de atenção e informativas ordenadas automaticamente.
+- Reservatório baixo, rega inativa e dados incompletos identificados.
+- Ação recomendada e origem transparentes em cada alerta.
+- Exportação CSV completa da central de alertas.
+- Três novos testes automatizados da geração e exportação.
+- Total acumulado de 64 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.

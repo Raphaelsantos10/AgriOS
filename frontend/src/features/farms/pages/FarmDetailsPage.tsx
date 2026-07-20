@@ -59,6 +59,10 @@ import {
   downloadFarmOverviewCsv,
   type FieldModuleCoverage,
 } from "../utils/farmOverview";
+import {
+  buildAgriculturalAlerts,
+  downloadAgriculturalAlertsCsv,
+} from "../utils/agriculturalAlerts";
 
 import type { Farm } from "../types/farm";
 
@@ -336,6 +340,15 @@ export default function FarmDetailsPage() {
           irrigation: Boolean(irrigation),
           fireAssessment: Boolean(fire),
           fireRiskLevel: fire?.risk_level ?? null,
+          irrigationActive: irrigation?.active ?? null,
+          reservoirLevelPercent: irrigation?.reservoir_level_percent ?? null,
+          climateComplete: Boolean(
+            environment &&
+            environment.annual_rainfall_mm !== null &&
+            environment.average_humidity_percent !== null &&
+            environment.min_temperature_c !== null &&
+            environment.max_temperature_c !== null
+          ),
         } satisfies FieldModuleCoverage;
       }));
 
@@ -1372,6 +1385,12 @@ export default function FarmDetailsPage() {
   }
 
   const farmOverview = buildFarmOverview(fields, moduleCoverage);
+  const agriculturalAlerts = buildAgriculturalAlerts(fields, moduleCoverage);
+  const alertTotals = {
+    critical: agriculturalAlerts.filter((alert) => alert.severity === "critical").length,
+    warning: agriculturalAlerts.filter((alert) => alert.severity === "warning").length,
+    info: agriculturalAlerts.filter((alert) => alert.severity === "info").length,
+  };
   const coveragePercent = (value: number) =>
     farmOverview.totalFields ? Math.round((value / farmOverview.totalFields) * 100) : 0;
 
@@ -1524,6 +1543,60 @@ export default function FarmDetailsPage() {
               </ul>
             </div>
           </div>
+        </section>
+
+        {/* ALERTAS AGRÍCOLAS */}
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-wider text-orange-700">Sprint 57</p>
+              <h2 className="mt-1 text-2xl font-bold text-slate-900">Central de alertas agrícolas</h2>
+              <p className="mt-1 text-slate-500">Rega, incêndio, clima, ambiente e estado operacional num único local.</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => downloadAgriculturalAlertsCsv(farm, agriculturalAlerts, new Date().toISOString())}
+              disabled={loadingOverview}
+              className="flex items-center justify-center gap-2 rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 font-semibold text-orange-700 transition hover:bg-orange-100 disabled:opacity-50"
+            >
+              <Download size={18} /> Exportar alertas CSV
+            </button>
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-3 text-sm font-bold">
+            <span className="rounded-full bg-red-100 px-3 py-1.5 text-red-700">Críticos: {alertTotals.critical}</span>
+            <span className="rounded-full bg-amber-100 px-3 py-1.5 text-amber-700">Atenção: {alertTotals.warning}</span>
+            <span className="rounded-full bg-blue-100 px-3 py-1.5 text-blue-700">Informativos: {alertTotals.info}</span>
+          </div>
+
+          <div className="mt-5 space-y-3">
+            {loadingOverview ? (
+              <p className="rounded-2xl bg-slate-50 p-5 text-slate-500">A consultar os dados operacionais...</p>
+            ) : agriculturalAlerts.length === 0 ? (
+              <p className="rounded-2xl bg-green-50 p-5 font-semibold text-green-800">Sem alertas ativos. Continue a monitorização.</p>
+            ) : agriculturalAlerts.slice(0, 8).map((alert) => {
+              const classes = alert.severity === "critical"
+                ? "border-red-200 bg-red-50 text-red-900"
+                : alert.severity === "warning"
+                  ? "border-amber-200 bg-amber-50 text-amber-900"
+                  : "border-blue-200 bg-blue-50 text-blue-900";
+              return (
+                <article key={alert.id} className={`rounded-2xl border p-4 ${classes}`}>
+                  <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-wide">{alert.category} · {alert.fieldName}</p>
+                      <h3 className="mt-1 font-bold">{alert.title}</h3>
+                      <p className="mt-1 text-sm">{alert.action}</p>
+                    </div>
+                    <span className="shrink-0 rounded-full bg-white/70 px-2.5 py-1 text-xs font-bold">Origem: {alert.source}</span>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+          {agriculturalAlerts.length > 8 && (
+            <p className="mt-3 text-sm text-slate-500">Mais {agriculturalAlerts.length - 8} alerta(s) disponíveis no CSV.</p>
+          )}
         </section>
 
         {/* MAPA E PAINÉIS */}
