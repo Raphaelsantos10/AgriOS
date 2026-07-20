@@ -206,3 +206,13 @@
 - Três novos testes automatizados do relatório.
 - Total acumulado de 49 testes automatizados.
 - Supabase, autenticação, rotas e base de dados preservados.
+
+## Sprint 53 — Relatório de risco de incêndio
+
+- Exportação CSV completa do Fire Intelligence por talhão.
+- Risco, confiança, condições meteorológicas e vegetação incluídos.
+- Fatores transparentes, recomendações e notas operacionais incluídos.
+- Aviso de prioridade das autoridades e do número 112.
+- Três novos testes automatizados do relatório.
+- Total acumulado de 52 testes automatizados.
+- Supabase, autenticação, rotas e base de dados preservados.

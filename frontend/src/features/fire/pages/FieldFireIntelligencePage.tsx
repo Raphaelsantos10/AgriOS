@@ -2,6 +2,7 @@ import {
   AlertTriangle,
   ArrowLeft,
   CheckCircle2,
+  Download,
   Flame,
   LoaderCircle,
   RefreshCw,
@@ -22,6 +23,7 @@ import {
   saveFireAssessment,
 } from "../services/fireService";
 import type { FireRiskAssessment } from "../types/fire";
+import { downloadFireRiskReport } from "../utils/fireRiskReportExport";
 
 const levelLabels = {
   low: "Baixo",
@@ -128,6 +130,19 @@ export default function FieldFireIntelligencePage() {
     }
   }
 
+  function handleExportReport() {
+    if (!field) return;
+
+    downloadFireRiskReport({
+      field,
+      input,
+      assessment,
+      notes,
+      generatedAt: new Date().toISOString(),
+    });
+    setMessage("Relatório de risco de incêndio exportado em CSV.");
+  }
+
   if (loading) {
     return <div className="flex min-h-[520px] items-center justify-center gap-3 bg-[#061014] text-[#9aa9a2]"><LoaderCircle className="animate-spin text-orange-400" /> A carregar Fire Intelligence…</div>;
   }
@@ -143,7 +158,10 @@ export default function FieldFireIntelligencePage() {
           </div>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-[#9aa9a2]">Avaliação preliminar baseada em condições locais informadas. Ocorrências e instruções oficiais devem ser confirmadas junto da Proteção Civil.</p>
         </div>
-        <button type="button" onClick={() => void handleSave()} disabled={saving} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-300 px-5 py-3 font-black text-[#201006] disabled:opacity-60"><Save size={18} /> {saving ? "A guardar…" : "Guardar avaliação"}</button>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <button type="button" onClick={handleExportReport} disabled={!field} className="inline-flex items-center justify-center gap-2 rounded-xl border border-orange-300/30 bg-orange-300/10 px-5 py-3 font-black text-orange-100 disabled:opacity-40"><Download size={18} /> Exportar relatório CSV</button>
+          <button type="button" onClick={() => void handleSave()} disabled={saving} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-300 px-5 py-3 font-black text-[#201006] disabled:opacity-60"><Save size={18} /> {saving ? "A guardar…" : "Guardar avaliação"}</button>
+        </div>
       </header>
 
       {message && <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-[#d8e1dd]">{message}</div>}

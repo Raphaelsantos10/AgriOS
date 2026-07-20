@@ -1,9 +1,9 @@
-FARPHA — GUIA ATUAL — SPRINT 53
+FARPHA — SPRINT 53 — RELATÓRIO DE RISCO DE INCÊNDIO
 
 Caminho final:
 C:\Users\Utilizador\Documents\Projetos\AgriOS
 
-Cole no Git Bash:
+INSTALAÇÃO COMPLETA NO GIT BASH:
 
 cd ~/Documents/Projetos
 mv AgriOS AgriOS_backup_sprint52
@@ -16,11 +16,12 @@ npm run audit:prod
 npm run validate
 npm run dev
 
-Depois de validar, pressione Ctrl+C e publique:
+Resultado esperado:
+- found 0 vulnerabilities
+- Toolchain e 52 testes aprovados
+- lint, build, integridade e smoke test aprovados
 
-cd ~/Documents/Projetos/AgriOS
-git status
-git add .
-git commit -m "feat: Sprint 53 - exportar relatorio de risco de incendio"
-git pull --rebase origin main
-git push origin main
+Teste manual:
+Abra uma exploração > talhão > incêndio > Exportar relatório CSV.
+
+Depois pressione Ctrl+C e use ATUALIZAR_GITHUB_SPRINT_53.txt.
