@@ -1,5 +1,14 @@
 # Changelog
 
+## Sprint 81 — Fiscal, laboral e seguros
+
+- Agenda local de obrigações e verificações fiscais, laborais, contributivas e de segurança.
+- Prazo, periodicidade, entidade, responsável, comprovativo e fonte oficial.
+- Apólices, coberturas, validade e alertas de expiração em 30 dias.
+- Modelos orientadores que exigem confirmação do enquadramento pelo agricultor.
+- Ligações oficiais para Finanças, Segurança Social Direta e ACT sem comunicação automática.
+- Três novos testes; total acumulado de 136 testes automatizados.
+
 ## Sprint 80 — IFAP e PEPAC
 
 - Pedido Único, parcelário, comprovativos e compromissos por campanha.

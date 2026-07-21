@@ -1,9 +1,6 @@
-FARPHA — GUIA ATUAL — SPRINT 81
+FARPHA — SPRINT 81 — FISCAL, LABORAL E SEGUROS
 
-Caminho final:
-C:\Users\Utilizador\Documents\Projetos\AgriOS
-
-Cole no Git Bash:
+Feche VS Code e terminais dentro de AgriOS. Cole este bloco completo no Git Bash:
 
 cd ~
 taskkill //F //IM node.exe 2>/dev/null || true
@@ -19,11 +16,4 @@ npm run audit:prod
 npm run validate
 npm run preview
 
-Depois de validar, pressione Ctrl+C e publique:
-
-cd ~/Documents/Projetos/AgriOS
-git status
-git add .
-git commit -m "feat: Sprint 81 - gerir obrigacoes fiscais e laborais"
-git pull --rebase origin main
-git push origin main
+Esperado: zero vulnerabilidades e 136 testes aprovados. Teste em Sistema > Fiscal, laboral e seguros apenas com dados fictícios. Para parar, pressione Ctrl+C.

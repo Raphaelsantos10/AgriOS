@@ -1,0 +1,7 @@
+import type { FiscalLabourObligation,InsurancePolicy } from "../types/fiscalLabour";
+const days=(date:string,today:string)=>Math.ceil((Date.parse(`${date}T12:00:00Z`)-Date.parse(`${today}T12:00:00Z`))/86400000);
+export type ObligationTiming="completed"|"not_applicable"|"confirm_date"|"overdue"|"due_soon"|"scheduled";
+export function obligationTiming(v:Pick<FiscalLabourObligation,"status"|"dueDate">,today:string):ObligationTiming{if(v.status==="completed")return"completed";if(v.status==="not_applicable")return"not_applicable";if(!v.dueDate)return"confirm_date";const d=days(v.dueDate,today);return d<0?"overdue":d<=30?"due_soon":"scheduled"}
+export type PolicyTiming="cancelled"|"confirm_expiry"|"expired"|"expiring"|"valid";
+export function policyTiming(v:Pick<InsurancePolicy,"status"|"expiryDate">,today:string):PolicyTiming{if(v.status==="cancelled")return"cancelled";if(!v.expiryDate)return"confirm_expiry";const d=days(v.expiryDate,today);return d<0?"expired":d<=30?"expiring":"valid"}
+export function summarizeFiscalLabour(obligations:FiscalLabourObligation[],policies:InsurancePolicy[],today:string){return{pending:obligations.filter(v=>v.status==="pending"||v.status==="confirm").length,overdue:obligations.filter(v=>obligationTiming(v,today)==="overdue").length,dueSoon:obligations.filter(v=>obligationTiming(v,today)==="due_soon").length,insuranceAttention:policies.filter(v=>["expired","expiring","confirm_expiry"].includes(policyTiming(v,today))).length}}

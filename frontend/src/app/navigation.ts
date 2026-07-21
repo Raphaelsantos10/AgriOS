@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   Activity,
   BarChart3,
+  BriefcaseBusiness,
   BookOpen,
   Bot,
   Beaker,
@@ -208,6 +209,11 @@ export const navigationGroups: NavigationGroup[] = [
         label: "IFAP e PEPAC",
         path: "/ifap-pepac",
         icon: LandPlot,
+      },
+      {
+        label: "Fiscal, laboral e seguros",
+        path: "/fiscal-laboral",
+        icon: BriefcaseBusiness,
       },
       {
         label: "Cofre Documental",

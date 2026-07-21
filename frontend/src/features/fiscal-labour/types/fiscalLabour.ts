@@ -1,0 +1,4 @@
+export type ObligationStatus = "confirm" | "pending" | "completed" | "not_applicable";
+export type ObligationCategory = "tax" | "social_security" | "employment" | "insurance" | "safety" | "other";
+export type FiscalLabourObligation = { id:string; category:ObligationCategory; title:string; authority:string; dueDate:string; recurrence:"once"|"monthly"|"quarterly"|"annual"|"other"; responsible:string; evidenceReference:string; status:ObligationStatus; sourceUrl:string; notes:string; createdAt:string; completedAt:string };
+export type InsurancePolicy = { id:string; type:"work_accident"|"civil_liability"|"vehicle"|"crop"|"other"; insurer:string; policyNumber:string; startDate:string; expiryDate:string; coveredPeople:string; proofReference:string; status:"active"|"cancelled"; notes:string; createdAt:string };
