@@ -34,6 +34,7 @@ const IcnfCartographyPage = lazy(() => import("../features/icnf-map/pages/IcnfCa
 const ComplianceCenterPage = lazy(() => import("../features/compliance/pages/ComplianceCenterPage"));
 const ComplianceDocumentsPage = lazy(() => import("../features/compliance/pages/ComplianceDocumentsPage"));
 const TreatmentsPage = lazy(() => import("../features/treatments/pages/TreatmentsPage"));
+const WaterEnvironmentPage = lazy(() => import("../features/water-environment/pages/WaterEnvironmentPage"));
 const AgriculturalCalendarPage = lazy(
   () => import("../features/calendar/pages/AgriculturalCalendarPage"),
 );
@@ -102,6 +103,7 @@ export default function App() {
               <Route path="/obrigacoes" element={<ComplianceCenterPage />} />
               <Route path="/documentos-conformidade" element={<ComplianceDocumentsPage />} />
               <Route path="/tratamentos-agricolas" element={<TreatmentsPage />} />
+              <Route path="/agua-ambiente" element={<WaterEnvironmentPage />} />
               <Route
                 path="/calendario"
                 element={<AgriculturalCalendarPage />}

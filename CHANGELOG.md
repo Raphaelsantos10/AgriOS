@@ -1,5 +1,14 @@
 # Changelog
 
+## Sprint 79 — Água e ambiente
+
+- Títulos de utilização, origens, validade, volume indicado e contadores.
+- Leituras acumuladas e cálculo de consumo de água.
+- Alertas de títulos ausentes, próximos da validade ou expirados.
+- Resíduos, códigos LER, destinos e referências e-GAR.
+- Ligações oficiais APA sem substituir SILiAmb, TRH, SIRER ou MIRR.
+- Três novos testes; total acumulado de 130 testes automatizados.
+
 ## Sprint 78 — Fitofármacos e fertilização
 
 - Registo especializado de tratamentos e fertilizações por exploração, talhão e cultura.

@@ -1,9 +1,6 @@
-FARPHA — GUIA ATUAL — SPRINT 79
+FARPHA — SPRINT 79 — ÁGUA E AMBIENTE
 
-Caminho final:
-C:\Users\Utilizador\Documents\Projetos\AgriOS
-
-Cole no Git Bash:
+Antes de instalar, feche o VS Code e terminais dentro de AgriOS.
 
 cd ~
 taskkill //F //IM node.exe 2>/dev/null || true
@@ -19,11 +16,6 @@ npm run audit:prod
 npm run validate
 npm run preview
 
-Depois de validar, pressione Ctrl+C e publique:
+Esperado: zero vulnerabilidades, 130 testes, lint, build, PWA, segurança, integridade e smoke aprovados.
 
-cd ~/Documents/Projetos/AgriOS
-git status
-git add .
-git commit -m "feat: Sprint 79 - gerir agua e ambiente"
-git pull --rebase origin main
-git push origin main
+Teste em Monitorização > Água e ambiente com dados fictícios. O FARPHA não substitui SILiAmb, TRH, SIRER, MIRR ou e-GAR.

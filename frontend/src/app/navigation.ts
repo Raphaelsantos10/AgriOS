@@ -7,6 +7,7 @@ import {
   Beaker,
   CalendarDays,
   CloudSun,
+  Droplets,
   ClipboardCheck,
   CircleDollarSign,
   ListChecks,
@@ -176,6 +177,11 @@ export const navigationGroups: NavigationGroup[] = [
         label: "Cartografia ICNF",
         path: "/cartografia-incendio",
         icon: MapPinned,
+      },
+      {
+        label: "Água e ambiente",
+        path: "/agua-ambiente",
+        icon: Droplets,
       },
       {
         label: "Sensores",
