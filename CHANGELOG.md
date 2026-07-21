@@ -1,5 +1,14 @@
 # Changelog
 
+## Sprint 78 — Fitofármacos e fertilização
+
+- Registo especializado de tratamentos e fertilizações por exploração, talhão e cultura.
+- Aplicador, habilitação, autorização, dose, quantidade, equipamento, inspeção e condições.
+- Cálculo do intervalo de segurança e destaque de restrições de colheita ativas.
+- Integração de leitura com produtos do Inventário e pulverizadores/implementos de Máquinas.
+- Alertas de validade sem assumir autorização, recomendação ou conformidade legal.
+- Três novos testes; total acumulado de 127 testes automatizados.
+
 ## Sprint 77 — Caderno de Campo de conformidade
 
 - Diário do Talhão ligado aos temas do Centro de Obrigações.

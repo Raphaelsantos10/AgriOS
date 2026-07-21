@@ -4,6 +4,7 @@ import {
   BarChart3,
   BookOpen,
   Bot,
+  Beaker,
   CalendarDays,
   CloudSun,
   ClipboardCheck,
@@ -90,6 +91,11 @@ export const navigationGroups: NavigationGroup[] = [
         label: "Diário do talhão",
         path: "/diario-talhao",
         icon: BookOpen,
+      },
+      {
+        label: "Fitofármacos e fertilização",
+        path: "/tratamentos-agricolas",
+        icon: Beaker,
       },
       {
         label: "Produção e colheita",

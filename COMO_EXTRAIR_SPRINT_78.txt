@@ -1,0 +1,38 @@
+FARPHA — SPRINT 78 — FITOFÁRMACOS E FERTILIZAÇÃO
+
+Caminho final:
+C:\Users\Utilizador\Documents\Projetos\AgriOS
+
+Antes de instalar, feche o VS Code e outros terminais que estejam dentro da pasta AgriOS.
+
+INSTALAÇÃO COMPLETA NO GIT BASH:
+
+cd ~
+taskkill //F //IM node.exe 2>/dev/null || true
+cd ~/Documents/Projetos
+BACKUP="AgriOS_backup_sprint77_$(date +%Y%m%d_%H%M%S)"
+mv AgriOS "$BACKUP"
+unzip -o ~/Downloads/FARPHA_Sprint_78_Fitofarmacos_Fertilizacao.zip
+cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local
+cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run audit:prod
+npm run validate
+npm run preview
+
+Resultado esperado:
+- found 0 vulnerabilities
+- Toolchain e 127 testes aprovados
+- PWA, segurança, lint, build, integridade e smoke test aprovados
+
+Teste manual apenas com dados fictícios:
+1. Abra Operações > Fitofármacos e fertilização.
+2. Registe um fitofármaco fictício com intervalo de segurança.
+3. Confirme a data mínima de colheita calculada.
+4. Teste uma validade antiga e confirme o aviso.
+5. Elimine o registo fictício.
+
+Não use o FARPHA como autorização ou recomendação de aplicação.
+
+Depois pressione Ctrl+C e use ATUALIZAR_GITHUB_SPRINT_78.txt.
