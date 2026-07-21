@@ -1,5 +1,29 @@
 # Changelog
 
+## Sprint 91 — Notificações funcionais e login social
+
+- Sino do cabeçalho deixou de usar o contador fixo “3”.
+- Painel de notificações ligado aos alertas do Centro de Operações.
+- Contagem real de não lidas e persistência local do estado de leitura.
+- Abertura do módulo correspondente ao selecionar um alerta.
+- Ações para marcar todas como lidas e abrir o Centro de Operações.
+- Fecho por clique exterior, tecla Escape e botão acessível.
+- Login Google e Microsoft preparado por configuração Supabase.
+- Novas contas sociais continuam pendentes até ativação pelo proprietário.
+- Três novos testes; total acumulado de 166 testes automatizados.
+
+## Sprint 90 — Autenticação Supabase e perfis protegidos
+
+- Início de sessão real por e-mail e palavra-passe através do Supabase Auth.
+- Recuperação e atualização segura da palavra-passe.
+- Perfis FARPHA com funções proprietário, gestor, operador e consulta.
+- Bloqueio de contas ainda não ativadas pelo administrador.
+- Modo local preservado enquanto `VITE_AUTH_REQUIRED=false`.
+- Ecrã de diagnóstico quando a autenticação obrigatória está mal configurada.
+- Migração SQL para `user_profiles`, criação automática de perfis e RLS.
+- Identidade autenticada e término de sessão integrados no cabeçalho.
+- Três novos testes; total acumulado de 163 testes automatizados.
+
 ## Sprint 89 — Estabilização e preparação de release
 
 - Verificação automática de caminhos duplicados, inválidos e rótulos vazios.

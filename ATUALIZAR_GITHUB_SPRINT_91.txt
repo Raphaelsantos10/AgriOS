@@ -1,0 +1,8 @@
+SPRINT 91 — PUBLICAR NO GITHUB
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "feat: Sprint 91 - ativar notificacoes e login social"
+git pull --rebase origin main
+git push origin main

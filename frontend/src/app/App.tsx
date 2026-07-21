@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AppErrorBoundary from "../components/errors/AppErrorBoundary";
 import PageLoader from "../components/ui/PageLoader";
 import Layout from "./layout";
+import { AuthGate, AuthProvider } from "../features/auth";
 
 const Dashboard = lazy(() => import("../features/dashboard/pages/Dashboard"));
 const OperationsCenterPage = lazy(() => import("../features/operations/pages/OperationsCenterPage"));
@@ -80,7 +81,8 @@ export default function App() {
   return (
     <AppErrorBoundary>
       <BrowserRouter>
-        <Layout>
+        <AuthProvider>
+        <AuthGate><Layout>
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/" element={<Dashboard />} />
@@ -140,7 +142,8 @@ export default function App() {
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
-        </Layout>
+        </Layout></AuthGate>
+        </AuthProvider>
       </BrowserRouter>
     </AppErrorBoundary>
   );

@@ -1,0 +1,12 @@
+SPRINT 90 — PUBLICAR NO GITHUB
+
+Depois de instalar, validar e fechar o servidor com Ctrl+C:
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "feat: Sprint 90 - adicionar autenticacao Supabase e RLS"
+git pull --rebase origin main
+git push origin main
+
+Resultado esperado: main -> main sem erros e os workflows FARPHA com visto verde.
