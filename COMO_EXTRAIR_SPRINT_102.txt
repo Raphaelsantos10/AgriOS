@@ -1,0 +1,38 @@
+FARPHA — Sprint 102 — Design System e Assistente Global
+
+INSTALAÇÃO (Git Bash)
+
+cd ~
+
+taskkill //F //IM node.exe 2>/dev/null || true
+
+cd ~/Documents/Projetos
+
+BACKUP="AgriOS_backup_sprint101_$(date +%Y%m%d_%H%M%S)"
+
+mv AgriOS "$BACKUP"
+
+unzip -o ~/Downloads/FARPHA_Sprint_102_Design_System_Assistente.zip -d ~/Documents/Projetos
+
+cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local 2>/dev/null || true
+
+cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
+
+cd ~/Documents/Projetos/AgriOS/frontend
+
+npm install
+
+npm run audit:prod
+
+npm run validate
+
+npm run dev
+
+PUBLICAR NO GITHUB
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "feat: Sprint 102 - design system e assistente global"
+git pull --rebase origin main
+git push origin main

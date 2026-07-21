@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Bell, Check, CreditCard, KeyRound, LockKeyhole, Mail, MonitorSmartphone, Save, ShieldCheck, UserRound } from "lucide-react";
+import { Bell, Check, KeyRound, LockKeyhole, Mail, MonitorSmartphone, Save, ShieldCheck, UserRound } from "lucide-react";
 import Button from "../../../design-system/components/Button";
 import Card from "../../../design-system/components/Card";
 import { useAuth } from "../../auth";
 import MfaSettingsCard from "../components/MfaSettingsCard";
 import { supabase } from "../../../services/supabase";
+import SubscriptionPanel from "../components/SubscriptionPanel";
 
 type Preferences = { emailAlerts: boolean; operationalAlerts: boolean; weeklyDigest: boolean; compactMode: boolean };
 const preferenceKey = "farpha.account.preferences.v1";
@@ -44,7 +45,7 @@ export default function AccountSettingsPage() {
 
     <Card className="p-5"><h2 className="flex items-center gap-2 text-xl font-black"><Bell className="text-emerald-700"/> Notificações e preferências</h2><div className="mt-5 grid gap-3 md:grid-cols-2"> <Toggle label="Alertas por email" detail="Avisos importantes enviados para o email da conta." checked={preferences.emailAlerts} onChange={(value) => setPreferences((p) => ({ ...p, emailAlerts: value }))}/><Toggle label="Alertas operacionais" detail="Risco, clima e tarefas dentro do FARPHA." checked={preferences.operationalAlerts} onChange={(value) => setPreferences((p) => ({ ...p, operationalAlerts: value }))}/><Toggle label="Resumo semanal" detail="Relatório consolidado da exploração." checked={preferences.weeklyDigest} onChange={(value) => setPreferences((p) => ({ ...p, weeklyDigest: value }))}/><Toggle label="Interface compacta" detail="Reduz o espaçamento em tabelas e listas." checked={preferences.compactMode} onChange={(value) => setPreferences((p) => ({ ...p, compactMode: value }))}/></div><div className="mt-5"><Button onClick={savePreferences}><Save size={17}/> Guardar preferências</Button></div></Card>
 
-    <Card id="subscricao" className="scroll-mt-24 overflow-hidden"><div className="bg-gradient-to-r from-[#123524] to-[#276545] p-6 text-white"><p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-200">Plano atual</p><div className="mt-2 flex flex-wrap items-end justify-between gap-4"><div><h2 className="text-3xl font-black text-white">FARPHA Foundation</h2><p className="mt-1 text-sm text-emerald-100/75">Acesso local durante a preparação comercial.</p></div><span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-black">Sem cobrança ativa</span></div></div><div className="p-5"><div className="grid gap-3 md:grid-cols-3"><Info label="Estado" value="Ativo"/><Info label="Renovação" value="Não aplicável"/><Info label="Pagamento" value="Stripe - Sprint 100"/></div><p className="mt-5 flex items-start gap-2 rounded-xl bg-amber-50 p-4 text-sm text-amber-950"><CreditCard className="mt-0.5 shrink-0" size={18}/>Nenhum cartão é solicitado nesta versão. Cobranças somente serão ativadas depois da integração segura com o Stripe.</p></div></Card>
+    <SubscriptionPanel enabled={mode === "required"}/>
   </div>;
 }
 

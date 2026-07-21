@@ -1,11 +1,15 @@
 :root {
   --farpha-brand-50: #f3f8f4;
   --farpha-brand-100: #dcece1;
+  --farpha-brand-200: #bbdac5;
   --farpha-brand-300: #8fc5a1;
+  --farpha-brand-400: #5e9d75;
   --farpha-brand-500: #377d57;
   --farpha-brand-600: #276545;
   --farpha-brand-700: #214f39;
+  --farpha-brand-800: #1c3f30;
   --farpha-brand-900: #123524;
+  --farpha-brand-950: #081f15;
   --farpha-lime: #a7e22e;
   --farpha-lime-soft: #eaf8c6;
   --farpha-gold: #b8903c;
@@ -17,10 +21,14 @@
   --farpha-text-muted: #66756c;
   --farpha-border: #d9e3dc;
   --farpha-border-strong: #bccbc1;
-  --farpha-success: #2e8b57;
-  --farpha-warning: #d99a2b;
-  --farpha-danger: #c84a4a;
-  --farpha-info: #2e7db2;
+  --farpha-success-50: #ecfdf3; --farpha-success-100: #d1fadf; --farpha-success-200: #a6f4c5; --farpha-success-300: #6ce9a6; --farpha-success-400: #32d583; --farpha-success-500: #12b76a; --farpha-success-600: #039855; --farpha-success-700: #027a48; --farpha-success-800: #05603a; --farpha-success-900: #054f31;
+  --farpha-warning-50: #fffaeb; --farpha-warning-100: #fef0c7; --farpha-warning-200: #fedf89; --farpha-warning-300: #fec84b; --farpha-warning-400: #fdb022; --farpha-warning-500: #f79009; --farpha-warning-600: #dc6803; --farpha-warning-700: #b54708; --farpha-warning-800: #93370d; --farpha-warning-900: #7a2e0e;
+  --farpha-danger-50: #fef3f2; --farpha-danger-100: #fee4e2; --farpha-danger-200: #fecdca; --farpha-danger-300: #fda29b; --farpha-danger-400: #f97066; --farpha-danger-500: #f04438; --farpha-danger-600: #d92d20; --farpha-danger-700: #b42318; --farpha-danger-800: #912018; --farpha-danger-900: #7a271a;
+  --farpha-info-50: #eff8ff; --farpha-info-100: #d1e9ff; --farpha-info-200: #b2ddff; --farpha-info-300: #84caff; --farpha-info-400: #53b1fd; --farpha-info-500: #2e90fa; --farpha-info-600: #1570ef; --farpha-info-700: #175cd3; --farpha-info-800: #1849a9; --farpha-info-900: #194185;
+  --farpha-success: var(--farpha-success-600);
+  --farpha-warning: var(--farpha-warning-600);
+  --farpha-danger: var(--farpha-danger-600);
+  --farpha-info: var(--farpha-info-600);
   --farpha-sidebar: #020c09;
   --farpha-sidebar-surface: #061610;
   --farpha-accent: #b6e83e;
@@ -32,7 +40,38 @@
   --farpha-radius-xl: 24px;
   --farpha-shadow-sm: 0 1px 2px rgba(12, 28, 18, 0.05), 0 4px 16px rgba(12, 28, 18, 0.04);
   --farpha-shadow-md: 0 12px 32px rgba(12, 28, 18, 0.10);
+  --farpha-shadow-lg: 0 24px 64px rgba(12, 28, 18, 0.14);
   --farpha-focus: 0 0 0 4px rgba(167, 226, 46, 0.22);
+  --farpha-motion-fast: 140ms;
+  --farpha-motion-base: 220ms;
+  --farpha-motion-slow: 320ms;
+  --farpha-ease-standard: cubic-bezier(.2, 0, 0, 1);
+  --farpha-ease-enter: cubic-bezier(0, 0, 0, 1);
+  --farpha-ease-exit: cubic-bezier(.3, 0, 1, 1);
+  --farpha-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --farpha-text-caption: .75rem;
+  --farpha-text-body-sm: .875rem;
+  --farpha-text-body: 1rem;
+  --farpha-text-h6: 1rem;
+  --farpha-text-h5: 1.125rem;
+  --farpha-text-h4: 1.25rem;
+  --farpha-text-h3: 1.5rem;
+  --farpha-text-h2: 2rem;
+  --farpha-text-h1: 2.5rem;
+  --farpha-text-display: 3.5rem;
+  --farpha-leading-tight: 1.1;
+  --farpha-leading-heading: 1.2;
+  --farpha-leading-body: 1.5;
+  --farpha-leading-relaxed: 1.65;
+  --farpha-z-sticky: 30;
+  --farpha-z-dropdown: 50;
+  --farpha-z-overlay: 80;
+  --farpha-z-modal: 100;
+  --farpha-z-toast: 120;
+  --farpha-z-assistant: 140;
+  --farpha-content-sm: 720px;
+  --farpha-content-md: 1040px;
+  --farpha-content-lg: 1440px;
 }
 
 [data-theme="farpha-dark"] {
@@ -44,4 +83,7 @@
   --farpha-text-muted: #9db0a4;
   --farpha-border: #273a2d;
   --farpha-border-strong: #3c5143;
+  --farpha-shadow-sm: 0 1px 2px rgba(0, 0, 0, .22), 0 6px 20px rgba(0, 0, 0, .12);
+  --farpha-shadow-md: 0 16px 38px rgba(0, 0, 0, .24);
+  --farpha-shadow-lg: 0 30px 80px rgba(0, 0, 0, .32);
 }

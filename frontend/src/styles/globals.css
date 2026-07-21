@@ -26,7 +26,7 @@ body {
   overflow: hidden;
   background: var(--farpha-background);
   color: var(--farpha-text);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--farpha-font-sans);
   font-size: 14px;
   line-height: 1.5;
   text-rendering: optimizeLegibility;
@@ -111,6 +111,45 @@ p {
   body {
     font-size: 13px;
   }
+}
+
+body, button, input, textarea, select { font-feature-settings: "kern" 1, "liga" 1; }
+
+:where(button, a, input, textarea, select) { transition-duration: var(--farpha-motion-fast); }
+
+:where(button, a, input, textarea, select, [role="button"]) {
+  transition-timing-function: var(--farpha-ease-standard);
+}
+
+.farpha-display { font-size: clamp(2.5rem, 6vw, var(--farpha-text-display)); font-weight: 900; letter-spacing: -.05em; line-height: var(--farpha-leading-tight); }
+.farpha-heading-1 { font-size: clamp(2rem, 4vw, var(--farpha-text-h1)); font-weight: 900; letter-spacing: -.04em; line-height: var(--farpha-leading-tight); }
+.farpha-heading-2 { font-size: clamp(1.75rem, 3vw, var(--farpha-text-h2)); font-weight: 800; letter-spacing: -.035em; line-height: var(--farpha-leading-heading); }
+.farpha-heading-3 { font-size: var(--farpha-text-h3); font-weight: 800; letter-spacing: -.02em; line-height: var(--farpha-leading-heading); }
+.farpha-heading-4 { font-size: var(--farpha-text-h4); font-weight: 700; line-height: var(--farpha-leading-heading); }
+.farpha-body { font-size: var(--farpha-text-body); line-height: var(--farpha-leading-body); }
+.farpha-body-sm { font-size: var(--farpha-text-body-sm); line-height: var(--farpha-leading-body); }
+.farpha-caption { font-size: var(--farpha-text-caption); line-height: var(--farpha-leading-body); }
+.farpha-label { font-size: var(--farpha-text-body-sm); font-weight: 600; letter-spacing: .01em; line-height: var(--farpha-leading-body); }
+
+.farpha-touch-target { min-width: 44px; min-height: 44px; }
+.farpha-status-success { color: var(--farpha-success-700); background: var(--farpha-success-50); }
+.farpha-status-warning { color: var(--farpha-warning-700); background: var(--farpha-warning-50); }
+.farpha-status-danger { color: var(--farpha-danger-700); background: var(--farpha-danger-50); }
+.farpha-status-info { color: var(--farpha-info-700); background: var(--farpha-info-50); }
+
+[data-theme="farpha-dark"] .farpha-status-success { color: #a6f4c5; background: rgba(18, 183, 106, .14); }
+[data-theme="farpha-dark"] .farpha-status-warning { color: #fedf89; background: rgba(247, 144, 9, .14); }
+[data-theme="farpha-dark"] .farpha-status-danger { color: #fecdca; background: rgba(240, 68, 56, .14); }
+[data-theme="farpha-dark"] .farpha-status-info { color: #b2ddff; background: rgba(46, 144, 250, .14); }
+
+.farpha-page { width: 100%; max-width: var(--farpha-content-lg); margin-inline: auto; }
+.farpha-page-header { display: grid; gap: .5rem; margin-bottom: 1.5rem; }
+.farpha-page-title { color: var(--farpha-text); font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 900; letter-spacing: -.035em; line-height: 1.05; }
+.farpha-page-description { max-width: 48rem; color: var(--farpha-text-muted); font-size: .925rem; line-height: 1.65; }
+
+@media (max-width: 640px) {
+  .farpha-page-header { margin-bottom: 1rem; }
+  .farpha-page-title { font-size: 1.75rem; }
 }
 
 /* Compatibilidade dos módulos legados com o tema escuro.

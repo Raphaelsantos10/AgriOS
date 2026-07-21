@@ -25,7 +25,7 @@ export default function Card({
 }: Props) {
   return (
     <div
-      className={`rounded-[var(--farpha-radius-lg)] border ${variants[variant]} ${elevated ? "shadow-[var(--farpha-shadow-md)]" : "shadow-[var(--farpha-shadow-sm)]"} ${interactive ? "transition duration-200 hover:-translate-y-0.5 hover:border-[var(--farpha-border-strong)] hover:shadow-[var(--farpha-shadow-md)]" : ""} ${className}`}
+      className={`rounded-[var(--farpha-radius-lg)] border ${variants[variant]} ${elevated ? "shadow-[var(--farpha-shadow-md)]" : "shadow-[var(--farpha-shadow-sm)]"} ${interactive ? "transition duration-200 hover:-translate-y-0.5 hover:border-[var(--farpha-border-strong)] hover:shadow-[var(--farpha-shadow-md)] focus-within:border-[var(--farpha-brand-500)] focus-within:shadow-[var(--farpha-shadow-md)]" : ""} ${className}`}
       {...props}
     >
       {children}

@@ -15,7 +15,7 @@ function Recovery() {
 
 export default function AuthGate({ children }: { children: ReactNode }) {
   const { mode, loading, session, profile, recovery, signOut, error } = useAuth();
-  if (mode === "local") return <>{children}</>;
+  if (mode === "local") return localStorage.getItem("farpha-local-access") === "signed-out" ? <PublicEntry/> : <>{children}</>;
   if (mode === "misconfigured") return <Frame><ShieldCheck className="mb-4 text-amber-600" size={34}/><h1 className="text-xl font-black">Autenticação por configurar</h1><p className="mt-3 text-sm text-slate-600">Preencha VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY no ficheiro frontend/.env.local ou desative VITE_AUTH_REQUIRED.</p></Frame>;
   if (loading) return <Frame><div className="flex items-center gap-3 font-bold"><LoaderCircle className="animate-spin"/>A validar sessão segura…</div></Frame>;
   if (recovery) return <Recovery/>;

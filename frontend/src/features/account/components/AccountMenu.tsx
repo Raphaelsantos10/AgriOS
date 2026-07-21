@@ -32,6 +32,11 @@ export default function AccountMenu() {
     setOpen(false);
     await signOut();
   }
+  function leaveLocalDemo() {
+    if (!window.confirm("Sair do modo de demonstração e voltar ao site inicial?")) return;
+    localStorage.setItem("farpha-local-access", "signed-out");
+    window.location.assign("/");
+  }
 
   return <div ref={rootRef} className="relative">
     <button type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-haspopup="menu" className="flex items-center gap-2 rounded-2xl border border-[var(--farpha-border)] bg-[var(--farpha-surface)] p-1.5 pr-2 text-left transition hover:bg-[var(--farpha-surface-muted)]">
@@ -48,7 +53,7 @@ export default function AccountMenu() {
         <MenuItem icon={<CreditCard size={17}/>} label="Plano e subscrição" onClick={() => go("subscricao")} />
         <MenuItem icon={<CircleHelp size={17}/>} label="Ajuda" onClick={() => { setOpen(false); navigate("/diagnostico"); }} />
       </div>
-      <div className="border-t border-[var(--farpha-border)] p-2">{mode === "required" ? <MenuItem danger icon={<LogOut size={17}/>} label="Terminar sessão" onClick={() => void handleSignOut()} /> : <p className="px-3 py-2 text-xs text-[var(--farpha-text-muted)]">O encerramento de sessão estará disponível quando a autenticação for ativada.</p>}</div>
+      <div className="border-t border-[var(--farpha-border)] p-2"><MenuItem danger icon={<LogOut size={17}/>} label={mode === "required" ? "Terminar sessão" : "Sair da demonstração"} onClick={mode === "required" ? () => void handleSignOut() : leaveLocalDemo} /></div>
     </section>}
   </div>;
 }

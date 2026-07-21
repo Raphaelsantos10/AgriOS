@@ -40,6 +40,7 @@ export default function Layout({ children }: Props) {
 
   return (
     <div className="flex h-dvh min-h-0 bg-[var(--farpha-background)] text-[var(--farpha-text)]">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[var(--farpha-z-toast)] focus:rounded-xl focus:bg-[var(--farpha-brand-700)] focus:px-4 focus:py-3 focus:font-bold focus:text-white focus:shadow-lg">Saltar para o conteúdo principal</a>
       <Sidebar collapsed={sidebarCollapsed} mobileOpen={mobileMenuOpen} onCloseMobile={() => setMobileMenuOpen(false)} onToggleCollapsed={() => setSidebarCollapsed((current) => !current)} />
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <Header onOpenMobileMenu={() => setMobileMenuOpen(true)} onOpenCommand={openCommand} darkMode={darkMode} onToggleTheme={() => setDarkMode((value) => !value)} />

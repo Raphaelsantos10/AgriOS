@@ -1,0 +1,38 @@
+FARPHA — Sprint 103 — Fundação completa do Design System
+
+INSTALAÇÃO (Git Bash)
+
+cd ~
+
+taskkill //F //IM node.exe 2>/dev/null || true
+
+cd ~/Documents/Projetos
+
+BACKUP="AgriOS_backup_sprint102_$(date +%Y%m%d_%H%M%S)"
+
+mv AgriOS "$BACKUP"
+
+unzip -o ~/Downloads/FARPHA_Sprint_103_Fundacao_Design_System.zip -d ~/Documents/Projetos
+
+cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local 2>/dev/null || true
+
+cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
+
+cd ~/Documents/Projetos/AgriOS/frontend
+
+npm install
+
+npm run audit:prod
+
+npm run validate
+
+npm run dev
+
+PUBLICAR NO GITHUB
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "feat: Sprint 103 - fundacao completa do design system"
+git pull --rebase origin main
+git push origin main

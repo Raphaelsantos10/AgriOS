@@ -33,7 +33,6 @@ export default function Header({ onOpenMobileMenu, onOpenCommand, darkMode, onTo
 
   return (
     <header className="z-30 flex h-[72px] shrink-0 items-center gap-3 border-b border-[var(--farpha-border)] bg-[color:var(--farpha-surface)]/95 px-4 shadow-sm backdrop-blur-xl md:px-6 xl:px-8">
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-[#173321]">Saltar para o conteúdo</a>
       <button type="button" aria-label="Abrir menu principal" onClick={onOpenMobileMenu} className="rounded-xl border border-[var(--farpha-border)] p-2.5 text-[var(--farpha-brand-700)] transition hover:bg-[var(--farpha-surface-muted)] lg:hidden">
         <Menu size={20} />
       </button>

@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes, ReactNode } from "react";
+import { useId, type InputHTMLAttributes, type ReactNode } from "react";
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
@@ -8,7 +8,8 @@ type Props = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 export default function Input({ label, error, hint, leadingIcon, id, className = "", ...props }: Props) {
-  const inputId = id ?? props.name;
+  const generatedId = useId();
+  const inputId = id ?? props.name ?? generatedId;
   const describedBy = error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined;
 
   return (
