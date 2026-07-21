@@ -1,5 +1,15 @@
 # Changelog
 
+## Sprint 83 — Rastreabilidade ampliada por lote
+
+- Rastreabilidade existente ampliada com tratamentos fitofarmacêuticos e fertilizações.
+- Dossiê por lote com histórico, tratamentos, colheita, segurança e destino.
+- Pesquisa direta pelo código do lote e indicadores de cobertura média.
+- Linha temporal enriquecida com produto, quantidade, equipamento e evidências do Diário.
+- Segurança, responsável, evidência e destino associados ao evento de colheita.
+- Lacunas apresentadas sem certificar origem ou conformidade.
+- Três novos testes; total acumulado de 142 testes automatizados.
+
 ## Sprint 82 — Segurança da produção vegetal
 
 - Segurança integrada na área existente de Produção e colheita, sem módulo pecuário.
