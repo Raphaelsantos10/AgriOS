@@ -1,5 +1,16 @@
 # Changelog
 
+## Sprint 89 — Estabilização e preparação de release
+
+- Verificação automática de caminhos duplicados, inválidos e rótulos vazios.
+- Cobertura das rotas críticas da operação e conformidade.
+- Validação dos cinco destinos da navegação móvel.
+- Atalho móvel “Mais/Diagnóstico” substituído por “Auditoria”.
+- Bloqueio local elevado acima de todos os diálogos da aplicação.
+- Janela de bloqueio identificada como diálogo modal para tecnologias assistivas.
+- Revisão do foco visível, redução de movimento e salto para conteúdo já existentes.
+- Três novos testes; total acumulado de 160 testes automatizados.
+
 ## Sprint 88 — Painel final de conformidade
 
 - Painel final integrado no Assistente de Auditoria, sem novo item de menu.

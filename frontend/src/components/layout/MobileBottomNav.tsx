@@ -1,4 +1,4 @@
-import { BarChart3, Gauge, MapPinned, MoreHorizontal, Sprout } from "lucide-react";
+import { BarChart3, ClipboardCheck, Gauge, MapPinned, Sprout } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const items = [
@@ -6,7 +6,7 @@ const items = [
   { label: "Explorações", path: "/exploracoes", icon: MapPinned },
   { label: "Culturas", path: "/culturas", icon: Sprout },
   { label: "Analytics", path: "/analytics", icon: BarChart3 },
-  { label: "Mais", path: "/diagnostico", icon: MoreHorizontal },
+  { label: "Auditoria", path: "/assistente-auditoria", icon: ClipboardCheck },
 ];
 
 export default function MobileBottomNav() {
