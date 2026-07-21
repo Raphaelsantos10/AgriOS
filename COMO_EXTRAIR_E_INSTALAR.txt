@@ -1,15 +1,15 @@
-FARPHA — GUIA ATUAL — SPRINT 91
+FARPHA — GUIA ATUAL — SPRINT 92
 
 Caminho final: C:\Users\Utilizador\Documents\Projetos\AgriOS
 
-INSTALAÇÃO — cole todo o bloco no Git Bash:
+Cole todo o bloco no Git Bash:
 
 cd ~
 taskkill //F //IM node.exe 2>/dev/null || true
 cd ~/Documents/Projetos
-BACKUP="AgriOS_backup_sprint90_$(date +%Y%m%d_%H%M%S)"
+BACKUP="AgriOS_backup_sprint91_$(date +%Y%m%d_%H%M%S)"
 mv AgriOS "$BACKUP"
-unzip -o ~/Downloads/FARPHA_Sprint_91_Notificacoes_Login_Social.zip
+unzip -o ~/Downloads/FARPHA_Sprint_92_Assistente_Inteligente_Funcional.zip
 cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local
 cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
 cd ~/Documents/Projetos/AgriOS/frontend
@@ -18,38 +18,15 @@ npm run audit:prod
 npm run validate
 npm run dev
 
-O sino já funciona sem qualquer configuração adicional.
+TESTE:
+Abra o FARPHA e pressione o botão de brilho ao lado do sino.
+O endereço deve mudar para /intelligence e abrir o FARPHA Intelligence.
 
-ATIVAR GOOGLE (opcional):
-
-1. Configure uma aplicação OAuth no Google Cloud.
-2. No Supabase: Authentication > Sign In / Providers > Google.
-3. Copie para o Google a Callback URL mostrada pelo Supabase.
-4. Coloque Client ID e Client Secret no fornecedor Google do Supabase e guarde.
-5. No Supabase: Authentication > URL Configuration. Adicione o endereço do FARPHA às Redirect URLs.
-6. No Git Bash: nano ~/Documents/Projetos/AgriOS/frontend/.env.local
-7. Acrescente: VITE_GOOGLE_AUTH_ENABLED=true
-8. Guarde com Ctrl+O, Enter, Ctrl+X e reinicie npm run dev.
-
-ATIVAR MICROSOFT (opcional):
-
-1. Registe uma aplicação no Microsoft Entra ID.
-2. No Supabase: Authentication > Sign In / Providers > Azure (Microsoft).
-3. Configure a Callback URL, Client ID e Client Secret indicados.
-4. Acrescente a frontend/.env.local: VITE_MICROSOFT_AUTH_ENABLED=true
-5. Reinicie npm run dev.
-
-IMPORTANTE: contas Google/Microsoft novas são criadas como “Consulta” e inativas.
-O proprietário deve ativá-las no SQL Editor:
-
-update public.user_profiles set active = true, role = 'viewer'
-where id = (select id from auth.users where email = 'EMAIL_DO_UTILIZADOR');
-
-PUBLICAR NO GITHUB — depois pressione Ctrl+C:
+PUBLICAR — depois pressione Ctrl+C:
 
 cd ~/Documents/Projetos/AgriOS
 git status
 git add .
-git commit -m "feat: Sprint 91 - ativar notificacoes e login social"
+git commit -m "fix: Sprint 92 - ativar acesso ao assistente inteligente"
 git pull --rebase origin main
 git push origin main

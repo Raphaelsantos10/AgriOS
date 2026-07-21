@@ -1,5 +1,14 @@
 # Changelog
 
+## Sprint 92 — Acesso rápido ao assistente inteligente
+
+- Botão FARPHA Intelligence do cabeçalho ligado ao módulo `/intelligence`.
+- Clique, Enter e barra de espaço passam a abrir o assistente corretamente.
+- Foco visível reforçado para utilização por teclado.
+- Tooltip atualizado para explicar a ação do botão.
+- Motor de recomendações, riscos, rega e atualização manual preservados.
+- Suite acumulada de 166 testes automatizados novamente validada.
+
 ## Sprint 91 — Notificações funcionais e login social
 
 - Sino do cabeçalho deixou de usar o contador fixo “3”.
