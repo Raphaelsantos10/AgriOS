@@ -1,5 +1,12 @@
 # Changelog
 
+## Sprint 80 — IFAP e PEPAC
+
+- Pedido Único, parcelário, comprovativos e compromissos por campanha.
+- Responsáveis, evidências, revisão, condicionalidade e alertas.
+- Ligações oficiais sem submissão automática ao IFAP.
+- Três novos testes; total acumulado de 133 testes.
+
 ## Sprint 79 — Água e ambiente
 
 - Títulos de utilização, origens, validade, volume indicado e contadores.

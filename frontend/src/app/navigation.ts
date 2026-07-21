@@ -15,6 +15,7 @@ import {
   Flame,
   FolderLock,
   Layers3,
+  LandPlot,
   MapPinned,
   Package,
   RadioTower,
@@ -202,6 +203,11 @@ export const navigationGroups: NavigationGroup[] = [
         label: "Centro de Obrigações",
         path: "/obrigacoes",
         icon: ShieldCheck,
+      },
+      {
+        label: "IFAP e PEPAC",
+        path: "/ifap-pepac",
+        icon: LandPlot,
       },
       {
         label: "Cofre Documental",

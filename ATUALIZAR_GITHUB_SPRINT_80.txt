@@ -1,0 +1,8 @@
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "feat: Sprint 80 - acompanhar IFAP e PEPAC"
+git pull --rebase origin main
+git push origin main
+
+Confirme FARPHA CI e FARPHA Security verdes.

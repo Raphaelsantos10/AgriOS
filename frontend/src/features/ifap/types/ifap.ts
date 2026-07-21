@@ -1,0 +1,3 @@
+export type IfapApplicationStatus = "preparing" | "submitted" | "correction" | "decided";
+export type IfapApplication = { id:string; campaign:number; farm:string; declaredAreaHa:number; parcelCount:number; status:IfapApplicationStatus; submittedAt:string; receiptReference:string; parcelReviewedAt:string; notes:string; createdAt:string };
+export type PepacCommitment = { id:string; applicationId:string; interventionCode:string; name:string; areaHa:number; startDate:string; endDate:string; conditionality:boolean; socialConditionality:boolean; evidenceReference:string; responsible:string; reviewDate:string; status:"active"|"completed"|"suspended"|"review"; createdAt:string };
