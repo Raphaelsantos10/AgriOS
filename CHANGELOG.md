@@ -1,5 +1,14 @@
 # Changelog
 
+## Sprint 77 — Caderno de Campo de conformidade
+
+- Diário do Talhão ligado aos temas do Centro de Obrigações.
+- Produto, quantidade, unidade, equipamento e referência de evidência nas operações.
+- Regras adicionais para fertilização e aplicação de produtos fitofarmacêuticos.
+- Indicador de completude e lista de campos em falta sem bloquear o registo.
+- CSV ampliado e compatibilidade preservada com registos anteriores.
+- Três novos testes; total acumulado de 124 testes automatizados.
+
 ## Sprint 76 — Cofre Documental
 
 - Cofre local para licenças, certificados, comprovativos, faturas e outros documentos.

@@ -11,6 +11,12 @@ export type FieldDiaryEntry = {
   responsible: string;
   weather: string;
   notes: string;
+  complianceObligationId?: string;
+  product?: string;
+  quantity?: string;
+  unit?: string;
+  equipment?: string;
+  evidenceReference?: string;
   photoName: string;
   photoDataUrl: string;
   createdAt: string;
