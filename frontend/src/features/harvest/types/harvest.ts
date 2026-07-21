@@ -15,6 +15,14 @@ export type HarvestRecord = {
   quality: HarvestQuality;
   destination: string;
   notes: string;
+  lotCode?: string;
+  hygieneChecked?: boolean;
+  containersClean?: boolean;
+  contaminationIncident?: boolean;
+  incidentNotes?: string;
+  safetyStatus?: "pending" | "released" | "blocked";
+  releasedBy?: string;
+  safetyEvidenceReference?: string;
   createdAt: string;
 };
 

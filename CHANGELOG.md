@@ -1,5 +1,15 @@
 # Changelog
 
+## Sprint 82 — Segurança da produção vegetal
+
+- Segurança integrada na área existente de Produção e colheita, sem módulo pecuário.
+- Código do lote, higiene da colheita e limpeza de recipientes.
+- Registo de ocorrência ou possível contaminação com bloqueio preventivo.
+- Libertação do lote com responsável e referência da evidência.
+- Indicadores de lotes libertados, pendentes e bloqueados.
+- CSV de colheitas ampliado com os controlos de segurança.
+- Três novos testes; total acumulado de 139 testes automatizados.
+
 ## Sprint 81 — Fiscal, laboral e seguros
 
 - Agenda local de obrigações e verificações fiscais, laborais, contributivas e de segurança.
