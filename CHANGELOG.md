@@ -1,5 +1,16 @@
 # Changelog
 
+## Sprint 88 — Painel final de conformidade
+
+- Painel final integrado no Assistente de Auditoria, sem novo item de menu.
+- Pontuação atual, avaliação anterior, variação e direção da evolução.
+- Histórico manual local limitado às 24 avaliações mais recentes.
+- Prioridades operacionais ordenadas com acesso direto ao módulo de correção.
+- Distinção entre áreas preparadas, com atenção e não aplicáveis.
+- Compatibilidade com PDF, pacote ZIP, portais oficiais e backup cifrado.
+- Avisos explícitos de que a pontuação não constitui certificação.
+- Três novos testes; total acumulado de 157 testes automatizados.
+
 ## Sprint 87 — Proteção local e backups cifrados
 
 - Bloqueio opcional da interface FARPHA por palavra-passe local.
