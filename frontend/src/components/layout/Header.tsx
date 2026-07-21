@@ -9,7 +9,7 @@ import {
   Sun,
   LogOut,
 } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { navigationGroups } from "../../app/navigation";
 import { useAuth } from "../../features/auth";
@@ -30,6 +30,7 @@ function resolvePageTitle(pathname: string) {
 
 export default function Header({ onOpenMobileMenu, onOpenCommand, darkMode, onToggleTheme }: HeaderProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { mode, profile, signOut } = useAuth();
   const pageTitle = resolvePageTitle(location.pathname);
   const displayName = profile?.fullName || "Raphael";
@@ -62,7 +63,7 @@ export default function Header({ onOpenMobileMenu, onOpenCommand, darkMode, onTo
         </div>
         <button type="button" onClick={onOpenCommand} className="hidden rounded-xl border border-[var(--farpha-border)] p-2.5 text-[var(--farpha-text-muted)] transition hover:bg-[var(--farpha-surface-muted)] md:block" aria-label="Ajuda e comandos" title="Ajuda e atalhos"><HelpCircle size={19} /></button>
         <button type="button" onClick={onToggleTheme} className="rounded-xl border border-[var(--farpha-border)] p-2.5 text-[var(--farpha-text-muted)] transition hover:bg-[var(--farpha-surface-muted)]" aria-label={darkMode ? "Ativar tema claro" : "Ativar tema escuro"} title={darkMode ? "Tema claro" : "Tema escuro"}>{darkMode ? <Sun size={19} /> : <Moon size={19} />}</button>
-        <button type="button" className="hidden rounded-xl border border-[var(--farpha-border)] p-2.5 text-[var(--farpha-brand-600)] transition hover:bg-[var(--farpha-surface-muted)] md:block" aria-label="Abrir FARPHA Intelligence" title="Assistente inteligente"><Sparkles size={19} /></button>
+        <button type="button" onClick={() => navigate("/intelligence")} className="hidden rounded-xl border border-[var(--farpha-border)] p-2.5 text-[var(--farpha-brand-600)] transition hover:bg-[var(--farpha-surface-muted)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--farpha-brand-500)] md:block" aria-label="Abrir FARPHA Intelligence" title="Abrir assistente inteligente"><Sparkles size={19} /></button>
         <NotificationBell />
         <button type="button" onClick={mode === "required" ? () => void signOut() : undefined} className="flex items-center gap-2 rounded-2xl border border-[var(--farpha-border)] bg-[var(--farpha-surface)] p-1.5 pr-2 text-left transition hover:bg-[var(--farpha-surface-muted)]" aria-label={mode === "required" ? "Terminar sessão" : "Perfil local"} title={mode === "required" ? "Terminar sessão" : "Modo local"}>
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--farpha-brand-700)] text-xs font-extrabold text-white">{initials}</div>
