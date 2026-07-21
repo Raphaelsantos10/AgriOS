@@ -1,5 +1,4 @@
 import {
-  ChevronDown,
   Command,
   HelpCircle,
   Menu,
@@ -7,12 +6,11 @@ import {
   Search,
   Sparkles,
   Sun,
-  LogOut,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { navigationGroups } from "../../app/navigation";
-import { useAuth } from "../../features/auth";
+import AccountMenu from "../../features/account/components/AccountMenu";
 import NotificationBell from "../../features/notifications/components/NotificationBell";
 
 type HeaderProps = {
@@ -31,11 +29,7 @@ function resolvePageTitle(pathname: string) {
 export default function Header({ onOpenMobileMenu, onOpenCommand, darkMode, onToggleTheme }: HeaderProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { mode, profile, signOut } = useAuth();
   const pageTitle = resolvePageTitle(location.pathname);
-  const displayName = profile?.fullName || "Raphael";
-  const initials = displayName.split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
-  const roleLabel = profile ? ({ owner: "Proprietário", manager: "Gestor", operator: "Operador", viewer: "Consulta" }[profile.role]) : "Administrador";
 
   return (
     <header className="z-30 flex h-[72px] shrink-0 items-center gap-3 border-b border-[var(--farpha-border)] bg-[color:var(--farpha-surface)]/95 px-4 shadow-sm backdrop-blur-xl md:px-6 xl:px-8">
@@ -65,11 +59,7 @@ export default function Header({ onOpenMobileMenu, onOpenCommand, darkMode, onTo
         <button type="button" onClick={onToggleTheme} className="rounded-xl border border-[var(--farpha-border)] p-2.5 text-[var(--farpha-text-muted)] transition hover:bg-[var(--farpha-surface-muted)]" aria-label={darkMode ? "Ativar tema claro" : "Ativar tema escuro"} title={darkMode ? "Tema claro" : "Tema escuro"}>{darkMode ? <Sun size={19} /> : <Moon size={19} />}</button>
         <button type="button" onClick={() => navigate("/intelligence")} className="hidden rounded-xl border border-[var(--farpha-border)] p-2.5 text-[var(--farpha-brand-600)] transition hover:bg-[var(--farpha-surface-muted)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--farpha-brand-500)] md:block" aria-label="Abrir FARPHA Intelligence" title="Abrir assistente inteligente"><Sparkles size={19} /></button>
         <NotificationBell />
-        <button type="button" onClick={mode === "required" ? () => void signOut() : undefined} className="flex items-center gap-2 rounded-2xl border border-[var(--farpha-border)] bg-[var(--farpha-surface)] p-1.5 pr-2 text-left transition hover:bg-[var(--farpha-surface-muted)]" aria-label={mode === "required" ? "Terminar sessão" : "Perfil local"} title={mode === "required" ? "Terminar sessão" : "Modo local"}>
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--farpha-brand-700)] text-xs font-extrabold text-white">{initials}</div>
-          <div className="hidden max-w-28 sm:block"><p className="truncate text-xs font-bold text-[var(--farpha-text)]">{displayName}</p><p className="truncate text-[10px] text-[var(--farpha-text-muted)]">{roleLabel}</p></div>
-          {mode === "required" ? <LogOut size={15} className="hidden text-[var(--farpha-text-muted)] sm:block" /> : <ChevronDown size={15} className="hidden text-[var(--farpha-text-muted)] sm:block" />}
-        </button>
+        <AccountMenu />
       </div>
     </header>
   );

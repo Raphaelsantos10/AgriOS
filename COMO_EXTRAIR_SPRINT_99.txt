@@ -1,0 +1,38 @@
+FARPHA - SPRINT 99
+SITE PUBLICO E LOGIN RESPONSIVO
+
+cd ~
+
+taskkill //F //IM node.exe 2>/dev/null || true
+
+cd ~/Documents/Projetos
+
+BACKUP="AgriOS_backup_sprint98_$(date +%Y%m%d_%H%M%S)"
+
+mv AgriOS "$BACKUP"
+
+unzip -o ~/Downloads/FARPHA_Sprint_99_Site_Login_Responsivo.zip -d ~/Documents/Projetos
+
+cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local 2>/dev/null || true
+
+cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
+
+cd ~/Documents/Projetos/AgriOS/frontend
+
+npm install
+
+npm run audit:prod
+
+npm run validate
+
+npm run dev
+
+PUBLICAR NO GITHUB
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "feat: Sprint 99 - site publico e login responsivo"
+git pull --rebase origin main
+git push origin main
+

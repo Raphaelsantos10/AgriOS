@@ -29,6 +29,7 @@ const ProductivityDashboardPage = lazy(() => import("../features/productivity/pa
 const WeatherPage = lazy(() => import("../features/weather/pages/WeatherPage"));
 const RecommendationsPage = lazy(() => import("../features/recommendations/pages/RecommendationsPage"));
 const ProductionReadinessPage = lazy(() => import("../features/system/pages/ProductionReadinessPage"));
+const AccountSettingsPage = lazy(() => import("../features/account/pages/AccountSettingsPage"));
 const SoilIntelligencePage = lazy(() => import("../features/soil/pages/SoilIntelligencePage"));
 const OfficialFireRiskPage = lazy(() => import("../features/fire-official/pages/OfficialFireRiskPage"));
 const IcnfCartographyPage = lazy(() => import("../features/icnf-map/pages/IcnfCartographyPage"));
@@ -101,7 +102,8 @@ export default function App() {
               <Route path="/produtividade" element={<ProductivityDashboardPage />} />
               <Route path="/clima" element={<WeatherPage />} />
               <Route path="/recomendacoes" element={<RecommendationsPage />} />
-              <Route path="/configuracoes" element={<ProductionReadinessPage />} />
+              <Route path="/configuracoes" element={<AccountSettingsPage />} />
+              <Route path="/seguranca-sistema" element={<ProductionReadinessPage />} />
               <Route path="/solo-inteligente" element={<SoilIntelligencePage />} />
               <Route path="/risco-incendio-oficial" element={<OfficialFireRiskPage />} />
               <Route path="/cartografia-incendio" element={<IcnfCartographyPage />} />
