@@ -1,4 +1,4 @@
-FARPHA — GUIA ATUAL — SPRINT 75
+FARPHA — GUIA ATUAL — SPRINT 76
 
 Caminho final:
 C:\Users\Utilizador\Documents\Projetos\AgriOS
@@ -8,9 +8,9 @@ Cole no Git Bash:
 cd ~
 taskkill //F //IM node.exe 2>/dev/null || true
 cd ~/Documents/Projetos
-BACKUP="AgriOS_backup_sprint74_$(date +%Y%m%d_%H%M%S)"
+BACKUP="AgriOS_backup_sprint75_$(date +%Y%m%d_%H%M%S)"
 mv AgriOS "$BACKUP"
-unzip -o ~/Downloads/FARPHA_Sprint_75_Matriz_Obrigacoes.zip
+unzip -o ~/Downloads/FARPHA_Sprint_76_Cofre_Documental.zip
 cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local
 cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
 cd ~/Documents/Projetos/AgriOS/frontend
@@ -24,6 +24,6 @@ Depois de validar, pressione Ctrl+C e publique:
 cd ~/Documents/Projetos/AgriOS
 git status
 git add .
-git commit -m "feat: Sprint 75 - acompanhar obrigacoes agricolas"
+git commit -m "feat: Sprint 76 - adicionar cofre documental"
 git pull --rebase origin main
 git push origin main

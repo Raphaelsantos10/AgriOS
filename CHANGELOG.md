@@ -1,5 +1,15 @@
 # Changelog
 
+## Sprint 76 — Cofre Documental
+
+- Cofre local para licenças, certificados, comprovativos, faturas e outros documentos.
+- Associação dos anexos às obrigações agrícolas já identificadas.
+- Controlo de emissão, validade e alertas de expiração em 30 dias.
+- PDF e imagens até 5 MB guardados no IndexedDB do navegador.
+- Impressão SHA-256, download e eliminação com confirmação.
+- Avisos explícitos sobre armazenamento local não cifrado e necessidade de cópias protegidas.
+- Três novos testes; total acumulado de 121 testes automatizados.
+
 ## Sprint 75 — Matriz operacional de obrigações
 
 - Estado, prazo, responsável e notas para cada obrigação agrícola.

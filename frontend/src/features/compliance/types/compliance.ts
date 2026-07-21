@@ -39,3 +39,21 @@ export type ObligationTracking = {
   confirmedAt: string;
   updatedAt: string;
 };
+
+export type ComplianceDocument = {
+  id: string;
+  obligationId: string;
+  title: string;
+  category: "licence" | "certificate" | "proof" | "invoice" | "other";
+  issuer: string;
+  reference: string;
+  issuedAt: string;
+  expiresAt: string;
+  fileName: string;
+  mimeType: string;
+  size: number;
+  checksum: string;
+  addedAt: string;
+};
+
+export type StoredComplianceDocument = ComplianceDocument & { file: Blob };

@@ -11,6 +11,7 @@ import {
   ListChecks,
   Gauge,
   Flame,
+  FolderLock,
   Layers3,
   MapPinned,
   Package,
@@ -189,6 +190,11 @@ export const navigationGroups: NavigationGroup[] = [
         label: "Centro de Obrigações",
         path: "/obrigacoes",
         icon: ShieldCheck,
+      },
+      {
+        label: "Cofre Documental",
+        path: "/documentos-conformidade",
+        icon: FolderLock,
       },
       {
         label: "Automações",
