@@ -1,5 +1,14 @@
 # Changelog
 
+## Sprint 75 — Matriz operacional de obrigações
+
+- Estado, prazo, responsável e notas para cada obrigação agrícola.
+- Confirmação manual datada ao marcar uma obrigação como concluída.
+- Deteção visual e indicador agregado de prazos ultrapassados.
+- Separação entre aplicabilidade orientadora e estado operacional do utilizador.
+- Acompanhamento preservado no armazenamento e backup local.
+- Três novos testes; total acumulado de 118 testes automatizados.
+
 ## Sprint 74 — Centro de Obrigações
 
 - Novo perfil orientador da exploração no menu Sistema.

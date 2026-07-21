@@ -27,3 +27,15 @@ export type ComplianceObligation = {
 };
 
 export type ComplianceSummary = Record<ObligationStatus, number>;
+
+export type TrackingStatus = "pending" | "in_progress" | "completed" | "not_applicable";
+
+export type ObligationTracking = {
+  obligationId: string;
+  status: TrackingStatus;
+  dueDate: string;
+  responsible: string;
+  notes: string;
+  confirmedAt: string;
+  updatedAt: string;
+};
