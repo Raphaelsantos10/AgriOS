@@ -16,6 +16,8 @@ import TodayFocus from "../components/TodayFocus";
 import UnifiedAlertsPanel from "../../operations/components/UnifiedAlertsPanel";
 import OperationsTimeline from "../../operations/components/OperationsTimeline";
 import { useOperationsCenter } from "../../operations/hooks/useOperationsCenter";
+import { useAuth } from "../../auth";
+import { greetingForHour } from "../utils/dailyContext";
 
 export default function Dashboard() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -23,6 +25,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const intelligence = useFarphaIntelligence(farms);
   const operations = useOperationsCenter();
+  const { profile } = useAuth();
+  const userName = profile?.fullName?.split(/\s+/)[0] || "Raphael";
 
   const loadFarms = useCallback(async () => {
     setLoading(true);
@@ -51,7 +55,7 @@ export default function Dashboard() {
 
   return (
     <section className="-m-4 min-h-full space-y-4 bg-[radial-gradient(circle_at_top_right,rgba(156,223,40,0.08),transparent_26%),#061014] p-4 text-white md:-m-6 md:p-6 xl:-m-7 xl:p-7">
-      <DashboardHeader loading={loading} onRefresh={() => void loadFarms()} onCreateFarm={() => setDrawerOpen(true)} />
+      <DashboardHeader loading={loading} onRefresh={() => void loadFarms()} onCreateFarm={() => setDrawerOpen(true)} userName={userName} farm={farms[0]} />
 
       <OperationsKpiGrid />
 
@@ -70,6 +74,8 @@ export default function Dashboard() {
           </div>
         </div>
         <FarphaIntelligencePanel
+          greeting={greetingForHour(new Date().getHours())}
+          userName={userName}
           recommendations={intelligence.recommendations}
           confidence={intelligence.confidence}
           loading={intelligence.loading}

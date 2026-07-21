@@ -59,25 +59,25 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
   return (
     <div className="fixed inset-0 z-[1000] flex items-start justify-center bg-[#07110d]/65 px-4 pt-[10vh] backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Pesquisa global">
       <button type="button" aria-label="Fechar pesquisa" className="absolute inset-0" onClick={closePalette} />
-      <section className="relative z-10 w-full max-w-2xl overflow-hidden rounded-[24px] border border-white/60 bg-white shadow-[0_32px_100px_rgba(5,24,15,0.35)]">
-        <div className="flex items-center gap-3 border-b border-[#e1e9e3] px-5 py-4">
-          <Search size={20} className="shrink-0 text-[#4f765f]" />
+      <section className="relative z-10 w-full max-w-2xl overflow-hidden rounded-[24px] border border-[var(--farpha-border)] bg-[var(--farpha-surface)] text-[var(--farpha-text)] shadow-[0_32px_100px_rgba(5,24,15,0.35)]">
+        <div className="flex items-center gap-3 border-b border-[var(--farpha-border)] px-5 py-4">
+          <Search size={20} className="shrink-0 text-[var(--farpha-brand-500)]" />
           <input
             ref={inputRef}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Pesquisar módulos, páginas e ações..."
-            className="h-11 min-w-0 flex-1 border-0 bg-transparent text-base font-medium text-[#173321] outline-none placeholder:text-[#91a097]"
+            className="h-11 min-w-0 flex-1 border-0 bg-transparent text-base font-medium text-[var(--farpha-text)] outline-none placeholder:text-[var(--farpha-text-muted)]"
           />
-          <button type="button" onClick={closePalette} className="rounded-xl p-2 text-[#6c7f73] transition hover:bg-[#eef5f0] hover:text-[#214f39]" aria-label="Fechar">
+          <button type="button" onClick={closePalette} className="rounded-xl p-2 text-[var(--farpha-text-muted)] transition hover:bg-[var(--farpha-surface-muted)] hover:text-[var(--farpha-text)]" aria-label="Fechar">
             <X size={18} />
           </button>
         </div>
 
         <div className="max-h-[55vh] overflow-y-auto p-3">
           <div className="mb-2 flex items-center justify-between px-2 py-1">
-            <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#7b8d82]">Resultados</p>
-            <span className="text-xs text-[#8a9a90]">Enter para abrir</span>
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--farpha-text-muted)]">Resultados</p>
+            <span className="text-xs text-[var(--farpha-text-muted)]">Enter para abrir</span>
           </div>
 
           {results.length > 0 ? (
@@ -92,14 +92,14 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
                       navigate(item.path);
                       closePalette();
                     }}
-                    className={`group flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left transition ${index === 0 ? "bg-[#edf6ef]" : "hover:bg-[#f3f7f4]"}`}
+                    className={`group flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left transition ${index === 0 ? "bg-[var(--farpha-surface-muted)]" : "hover:bg-[var(--farpha-surface-muted)]"}`}
                   >
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#d9e7dc] bg-white text-[#2d6847] shadow-sm">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--farpha-border)] bg-[var(--farpha-surface-raised)] text-[var(--farpha-brand-500)] shadow-sm">
                       <Icon size={19} />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-bold text-[#183423]">{item.label}</span>
-                      <span className="block truncate text-xs text-[#7b8d82]">{item.group}</span>
+                      <span className="block truncate text-sm font-bold text-[var(--farpha-text)]">{item.label}</span>
+                      <span className="block truncate text-xs text-[var(--farpha-text-muted)]">{item.group}</span>
                     </span>
                     <ArrowRight size={17} className="text-[#8ba095] transition group-hover:translate-x-0.5 group-hover:text-[#2d6847]" />
                   </button>
@@ -111,15 +111,15 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
               <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#edf6ef] text-[#34724f]">
                 <Sparkles size={24} />
               </span>
-              <p className="font-bold text-[#173321]">Nenhum resultado encontrado</p>
-              <p className="mt-1 max-w-sm text-sm text-[#7b8d82]">Tente pesquisar por exploração, cultura, calendário, analytics ou diagnóstico.</p>
+              <p className="font-bold text-[var(--farpha-text)]">Nenhum resultado encontrado</p>
+              <p className="mt-1 max-w-sm text-sm text-[var(--farpha-text-muted)]">Tente pesquisar por exploração, cultura, calendário, analytics ou diagnóstico.</p>
             </div>
           )}
         </div>
 
-        <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-[#e1e9e3] bg-[#f7faf8] px-5 py-3 text-[11px] text-[#73867a]">
+        <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--farpha-border)] bg-[var(--farpha-surface-muted)] px-5 py-3 text-[11px] text-[var(--farpha-text-muted)]">
           <span>FARPHA Pesquisa Global</span>
-          <span className="flex items-center gap-2"><kbd className="rounded-md border border-[#d6e0d8] bg-white px-2 py-1 font-semibold">Esc</kbd> fechar</span>
+          <span className="flex items-center gap-2"><kbd className="rounded-md border border-[var(--farpha-border)] bg-[var(--farpha-surface)] px-2 py-1 font-semibold">Esc</kbd> fechar</span>
         </footer>
       </section>
     </div>

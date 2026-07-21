@@ -27,6 +27,8 @@ function iconFor(recommendation: EngineRecommendation) {
 }
 
 type Props = {
+  greeting: string;
+  userName: string;
   recommendations: EngineRecommendation[];
   confidence: number;
   loading: boolean;
@@ -35,6 +37,8 @@ type Props = {
 };
 
 export default function FarphaIntelligencePanel({
+  greeting,
+  userName,
   recommendations,
   confidence,
   loading,
@@ -65,7 +69,7 @@ export default function FarphaIntelligencePanel({
 
       <div className="flex-1 space-y-4 p-5">
         <div>
-          <p className="font-semibold text-white">Bom dia, Raphael!</p>
+          <p className="font-semibold text-white">{greeting}, {userName}!</p>
           <p className="mt-2 text-sm leading-6 text-[#9aa9a2]">
             Os primeiros motores da FARPHA cruzaram perfis ambientais, culturas e sistemas de rega.
           </p>

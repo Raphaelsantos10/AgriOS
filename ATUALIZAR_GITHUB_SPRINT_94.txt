@@ -1,0 +1,8 @@
+SPRINT 94 — PUBLICAR NO GITHUB
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "feat: Sprint 94 - adicionar saudacao hora e previsao diaria"
+git pull --rebase origin main
+git push origin main

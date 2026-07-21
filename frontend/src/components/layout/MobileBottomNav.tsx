@@ -11,7 +11,7 @@ const items = [
 
 export default function MobileBottomNav() {
   return (
-    <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[22px] border border-white/80 bg-white/95 p-1.5 shadow-[0_18px_55px_rgba(17,52,33,0.22)] backdrop-blur-xl lg:hidden" aria-label="Navegação móvel">
+    <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[22px] border border-[var(--farpha-border)] bg-[var(--farpha-surface)]/95 p-1.5 shadow-[0_18px_55px_rgba(17,52,33,0.22)] backdrop-blur-xl lg:hidden" aria-label="Navegação móvel">
       {items.map((item) => {
         const Icon = item.icon;
         return (
@@ -21,7 +21,7 @@ export default function MobileBottomNav() {
             end={item.path === "/"}
             className={({ isActive }) =>
               `flex min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 py-2 text-[10px] font-bold transition ${
-                isActive ? "bg-[#214f39] text-white shadow-sm" : "text-[#6f8276] hover:bg-[#eef5f0] hover:text-[#214f39]"
+                isActive ? "bg-[var(--farpha-brand-700)] text-white shadow-sm" : "text-[var(--farpha-text-muted)] hover:bg-[var(--farpha-surface-muted)] hover:text-[var(--farpha-text)]"
               }`
             }
           >

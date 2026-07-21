@@ -1,0 +1,8 @@
+SPRINT 93 — PUBLICAR NO GITHUB
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "fix: Sprint 93 - corrigir temas e sobreposicoes visuais"
+git pull --rebase origin main
+git push origin main

@@ -1,4 +1,4 @@
-FARPHA — GUIA ATUAL — SPRINT 92
+FARPHA — GUIA ATUAL — SPRINT 94
 
 Caminho final: C:\Users\Utilizador\Documents\Projetos\AgriOS
 
@@ -7,9 +7,9 @@ Cole todo o bloco no Git Bash:
 cd ~
 taskkill //F //IM node.exe 2>/dev/null || true
 cd ~/Documents/Projetos
-BACKUP="AgriOS_backup_sprint91_$(date +%Y%m%d_%H%M%S)"
+BACKUP="AgriOS_backup_sprint93_$(date +%Y%m%d_%H%M%S)"
 mv AgriOS "$BACKUP"
-unzip -o ~/Downloads/FARPHA_Sprint_92_Assistente_Inteligente_Funcional.zip
+unzip -o ~/Downloads/FARPHA_Sprint_94_Saudacao_Hora_Previsao.zip
 cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local
 cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
 cd ~/Documents/Projetos/AgriOS/frontend
@@ -18,15 +18,19 @@ npm run audit:prod
 npm run validate
 npm run dev
 
-TESTE:
-Abra o FARPHA e pressione o botão de brilho ao lado do sino.
-O endereço deve mudar para /intelligence e abrir o FARPHA Intelligence.
+Na página inicial serão mostrados:
+- saudação adequada à hora;
+- nome do utilizador;
+- data e hora local;
+- previsão do dia da primeira exploração cadastrada.
+
+A Open-Meteo não precisa de chave. É necessário acesso à Internet e uma exploração com coordenadas válidas.
 
 PUBLICAR — depois pressione Ctrl+C:
 
 cd ~/Documents/Projetos/AgriOS
 git status
 git add .
-git commit -m "fix: Sprint 92 - ativar acesso ao assistente inteligente"
+git commit -m "feat: Sprint 94 - adicionar saudacao hora e previsao diaria"
 git pull --rebase origin main
 git push origin main

@@ -1,5 +1,30 @@
 # Changelog
 
+## Sprint 94 — Saudação, relógio e meteorologia diária
+
+- Saudação automática: Bom dia, Boa tarde ou Boa noite conforme a hora local.
+- Primeiro nome da sessão Supabase apresentado quando disponível.
+- Data completa em português e relógio atualizado a cada 30 segundos.
+- Previsão diária Open-Meteo para as coordenadas da primeira exploração.
+- Condição, mínima, máxima, probabilidade e quantidade de chuva apresentadas.
+- Nome e fonte da localização meteorológica identificados.
+- Ausência de exploração ou falha externa tratadas sem previsão fictícia.
+- Saudação fixa do painel Intelligence também corrigida.
+- Três novos testes; total acumulado de 172 testes automatizados.
+
+## Sprint 93 — Auditoria visual dos temas claro e escuro
+
+- Camada global de compatibilidade para formulários, tabelas, listas e cartões antigos.
+- Texto principal e secundário corrigido no tema escuro.
+- Inputs, datas, áreas de texto, selects e opções nativas com fundo e texto coerentes.
+- Estados semânticos verde, vermelho, âmbar e azul adaptados ao fundo escuro.
+- Bordas e separadores antigos convertidos para os tokens do tema.
+- Pesquisa global, barra de estado e navegação móvel migradas para tokens FARPHA.
+- Aviso de instalação PWA reduzido para não cobrir formulários.
+- Barra de ferramentas do mapa reposicionada em ecrãs estreitos.
+- Transbordo horizontal do conteúdo principal bloqueado.
+- Três testes WCAG; total acumulado de 169 testes automatizados.
+
 ## Sprint 92 — Acesso rápido ao assistente inteligente
 
 - Botão FARPHA Intelligence do cabeçalho ligado ao módulo `/intelligence`.
