@@ -37,6 +37,7 @@ const TreatmentsPage = lazy(() => import("../features/treatments/pages/Treatment
 const WaterEnvironmentPage = lazy(() => import("../features/water-environment/pages/WaterEnvironmentPage"));
 const IfapPepacPage = lazy(() => import("../features/ifap/pages/IfapPepacPage"));
 const FiscalLabourPage = lazy(() => import("../features/fiscal-labour/pages/FiscalLabourPage"));
+const AuditAssistantPage = lazy(() => import("../features/audit/pages/AuditAssistantPage"));
 const AgriculturalCalendarPage = lazy(
   () => import("../features/calendar/pages/AgriculturalCalendarPage"),
 );
@@ -108,6 +109,7 @@ export default function App() {
               <Route path="/agua-ambiente" element={<WaterEnvironmentPage />} />
               <Route path="/ifap-pepac" element={<IfapPepacPage />} />
               <Route path="/fiscal-laboral" element={<FiscalLabourPage />} />
+              <Route path="/assistente-auditoria" element={<AuditAssistantPage />} />
               <Route
                 path="/calendario"
                 element={<AgriculturalCalendarPage />}

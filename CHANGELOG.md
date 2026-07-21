@@ -1,5 +1,15 @@
 # Changelog
 
+## Sprint 84 — Assistente de Auditoria
+
+- Nova verificação central no menu Sistema com oito áreas operacionais.
+- Perfil, prazos, documentos, tratamentos, água, IFAP, fiscal/seguros e rastreabilidade.
+- Prontidão indicativa calculada apenas sobre áreas consideradas aplicáveis.
+- Estados Preparado, Atenção e Não aplicável com explicação objetiva.
+- Ligação direta para o módulo onde cada lacuna deve ser corrigida.
+- Leitura local dos módulos existentes, sem duplicar ou alterar registos.
+- Três novos testes; total acumulado de 145 testes automatizados.
+
 ## Sprint 83 — Rastreabilidade ampliada por lote
 
 - Rastreabilidade existente ampliada com tratamentos fitofarmacêuticos e fertilizações.

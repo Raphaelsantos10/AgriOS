@@ -206,6 +206,11 @@ export const navigationGroups: NavigationGroup[] = [
         icon: ShieldCheck,
       },
       {
+        label: "Assistente de Auditoria",
+        path: "/assistente-auditoria",
+        icon: ClipboardCheck,
+      },
+      {
         label: "IFAP e PEPAC",
         path: "/ifap-pepac",
         icon: LandPlot,
