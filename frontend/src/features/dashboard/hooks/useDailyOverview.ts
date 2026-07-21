@@ -10,7 +10,18 @@ export function useDailyOverview(farm?: Farm) {
   const [weatherError, setWeatherError] = useState("");
   const [weatherLoading, setWeatherLoading] = useState(false);
 
-  useEffect(() => { const timer = window.setInterval(() => setNow(new Date()), 30_000); return () => window.clearInterval(timer); }, []);
+  useEffect(() => {
+    const updateClock = () => setNow(new Date());
+    updateClock();
+    const timer = window.setInterval(updateClock, 1_000);
+    document.addEventListener("visibilitychange", updateClock);
+    window.addEventListener("focus", updateClock);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", updateClock);
+      window.removeEventListener("focus", updateClock);
+    };
+  }, []);
   useEffect(() => {
     if (!farm) return;
     const controller = new AbortController();

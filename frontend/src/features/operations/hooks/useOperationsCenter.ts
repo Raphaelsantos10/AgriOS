@@ -3,8 +3,9 @@ import { buildTimeline, buildUnifiedAlerts, calculateFarmHealth } from "../../..
 import { satelliteObservations } from "../../precision-agriculture/data/precisionMockData";
 import { listWorkOrders } from "../../work-orders/services/workOrderStorage";
 
-export function useOperationsCenter() {
+export function useOperationsCenter(refreshToken = 0) {
   return useMemo(() => {
+    void refreshToken;
     const workOrders = listWorkOrders();
     const alerts = buildUnifiedAlerts(satelliteObservations, workOrders);
     const timeline = buildTimeline(workOrders);
@@ -17,5 +18,5 @@ export function useOperationsCenter() {
       criticalCount: alerts.filter((item) => item.severity === "critical").length,
       activeOrders: workOrders.filter((item) => item.status === "planned" || item.status === "in_progress").length,
     };
-  }, []);
+  }, [refreshToken]);
 }

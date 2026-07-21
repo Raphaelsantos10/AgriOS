@@ -54,7 +54,7 @@ export default function Dashboard() {
   }
 
   return (
-    <section className="-m-4 min-h-full space-y-4 bg-[radial-gradient(circle_at_top_right,rgba(156,223,40,0.08),transparent_26%),#061014] p-4 text-white md:-m-6 md:p-6 xl:-m-7 xl:p-7">
+    <section className="farpha-dashboard -m-4 min-h-full space-y-4 p-4 md:-m-6 md:p-6 xl:-m-7 xl:p-7">
       <DashboardHeader loading={loading} onRefresh={() => void loadFarms()} onCreateFarm={() => setDrawerOpen(true)} userName={userName} farm={farms[0]} />
 
       <OperationsKpiGrid />

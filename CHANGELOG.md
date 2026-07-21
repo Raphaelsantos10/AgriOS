@@ -1,5 +1,18 @@
 # Changelog
 
+## Sprint 95 — Caixa de notificações organizada
+
+- Abas “Novas” e “Todas” com contadores independentes.
+- Badge vermelho reduzido somente ao ler notificações novas.
+- Notificação lida removida da aba Novas e preservada no histórico.
+- Ação individual para dispensar definitivamente um alerta da versão atual.
+- Ações “Marcar tudo como lido” e “Limpar lidas”.
+- Atualização manual procura alterações sem ressuscitar notificações antigas.
+- Alteração real de título, descrição ou gravidade volta a aparecer como nova.
+- Tempo relativo apresentado em minutos, horas ou dias.
+- Estado de leitura e histórico dispensado preservados no dispositivo.
+- Três novos testes; total acumulado de 175 testes automatizados.
+
 ## Sprint 94 — Saudação, relógio e meteorologia diária
 
 - Saudação automática: Bom dia, Boa tarde ou Boa noite conforme a hora local.

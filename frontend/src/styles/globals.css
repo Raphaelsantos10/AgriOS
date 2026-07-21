@@ -168,6 +168,31 @@ p {
 
 #main-content { overflow-x: hidden; }
 
+/* Dashboard usa cores semânticas para manter contraste nos dois temas. */
+.farpha-dashboard {
+  --dashboard-heading: #17251c;
+  --dashboard-muted: #66756c;
+  --dashboard-accent: #4f7f16;
+  --dashboard-success: #276545;
+  --dashboard-border: #d9e3dc;
+  --dashboard-card: #ffffff;
+  --dashboard-chip: #edf8f0;
+  background: radial-gradient(circle at top right, rgba(146, 201, 37, .12), transparent 26%), var(--farpha-background);
+  color: var(--farpha-text);
+}
+
+[data-theme="farpha-dark"] .farpha-dashboard {
+  --dashboard-heading: #ffffff;
+  --dashboard-muted: #9eaca5;
+  --dashboard-accent: #9cdf28;
+  --dashboard-success: #a7f3d0;
+  --dashboard-border: rgba(255, 255, 255, .10);
+  --dashboard-card: rgba(255, 255, 255, .04);
+  --dashboard-chip: rgba(52, 211, 153, .06);
+  background: radial-gradient(circle at top right, rgba(156, 223, 40, .08), transparent 26%), #061014;
+  color: #ffffff;
+}
+
 /* FARPHA Enterprise UX layer */
 :root { accent-color: var(--farpha-brand-600); }
 [data-theme="farpha-dark"] { color-scheme: dark; }

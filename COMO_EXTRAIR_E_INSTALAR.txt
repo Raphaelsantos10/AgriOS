@@ -1,4 +1,4 @@
-FARPHA — GUIA ATUAL — SPRINT 94
+FARPHA — GUIA ATUAL — SPRINT 95
 
 Caminho final: C:\Users\Utilizador\Documents\Projetos\AgriOS
 
@@ -7,9 +7,9 @@ Cole todo o bloco no Git Bash:
 cd ~
 taskkill //F //IM node.exe 2>/dev/null || true
 cd ~/Documents/Projetos
-BACKUP="AgriOS_backup_sprint93_$(date +%Y%m%d_%H%M%S)"
+BACKUP="AgriOS_backup_sprint94_$(date +%Y%m%d_%H%M%S)"
 mv AgriOS "$BACKUP"
-unzip -o ~/Downloads/FARPHA_Sprint_94_Saudacao_Hora_Previsao.zip
+unzip -o ~/Downloads/FARPHA_Sprint_95_Notificacoes_Organizadas.zip
 cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local
 cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
 cd ~/Documents/Projetos/AgriOS/frontend
@@ -18,19 +18,21 @@ npm run audit:prod
 npm run validate
 npm run dev
 
-Na página inicial serão mostrados:
-- saudação adequada à hora;
-- nome do utilizador;
-- data e hora local;
-- previsão do dia da primeira exploração cadastrada.
+COMO USAR O SINO:
 
-A Open-Meteo não precisa de chave. É necessário acesso à Internet e uma exploração com coordenadas válidas.
+- Novas: mostra apenas o que ainda não foi lido.
+- Todas: mostra novas e antigas ainda guardadas.
+- Clique numa notificação: marca como lida e abre o módulo correspondente.
+- Caixote: dispensa aquela notificação.
+- Marcar tudo como lido: remove o número vermelho do sino.
+- Limpar lidas: remove as notificações já vistas do histórico.
+- Atualizar: procura alertas novos ou modificados.
 
 PUBLICAR — depois pressione Ctrl+C:
 
 cd ~/Documents/Projetos/AgriOS
 git status
 git add .
-git commit -m "feat: Sprint 94 - adicionar saudacao hora e previsao diaria"
+git commit -m "feat: Sprint 95 - organizar caixa de notificacoes"
 git pull --rebase origin main
 git push origin main

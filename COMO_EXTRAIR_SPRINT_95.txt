@@ -1,0 +1,15 @@
+SPRINT 95 — INSTALAÇÃO COMPLETA
+
+cd ~
+taskkill //F //IM node.exe 2>/dev/null || true
+cd ~/Documents/Projetos
+BACKUP="AgriOS_backup_sprint94_$(date +%Y%m%d_%H%M%S)"
+mv AgriOS "$BACKUP"
+unzip -o ~/Downloads/FARPHA_Sprint_95_Notificacoes_Organizadas.zip
+cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local
+cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run audit:prod
+npm run validate
+npm run dev

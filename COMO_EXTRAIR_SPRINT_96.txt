@@ -1,0 +1,32 @@
+FARPHA - SPRINT 96
+PAINEL, TEMAS E RELOGIO EM TEMPO REAL
+
+1. Feche o FARPHA e abra o Git Bash.
+
+2. Execute os comandos abaixo, um de cada vez:
+
+cd ~/Documents/Projetos
+mv AgriOS "AgriOS_backup_sprint95_$(date +%Y%m%d_%H%M%S)"
+unzip -o ~/Downloads/FARPHA_Sprint_96_Painel_Temas_Relogio.zip -d ~/Documents/Projetos
+cp ~/Documents/Projetos/AgriOS_backup_sprint95_*/frontend/.env.local ~/Documents/Projetos/AgriOS/frontend/.env.local 2>/dev/null || true
+cp -r ~/Documents/Projetos/AgriOS_backup_sprint95_*/.git ~/Documents/Projetos/AgriOS/.git 2>/dev/null || true
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run audit:prod
+npm run validate
+npm run dev
+
+3. Abra no navegador o endereco mostrado pelo Vite.
+
+4. Teste o Dashboard nos temas claro e escuro. A saudacao, a data e a hora
+devem permanecer legiveis, e os segundos devem avancar sem atualizar a pagina.
+
+PUBLICAR NO GITHUB
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "fix: Sprint 96 - painel, temas e relogio em tempo real"
+git pull --rebase origin main
+git push origin main
+
