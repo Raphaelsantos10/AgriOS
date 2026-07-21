@@ -1,5 +1,15 @@
 # Changelog
 
+## Sprint 86 — Portais oficiais contextuais
+
+- Acessos oficiais apresentados diretamente nas pendências do Assistente de Auditoria.
+- SIFITO/DGAV, APA, IFAP, Finanças, Segurança Social Direta e ACT.
+- Sem nova tela isolada ou catálogo redundante de links.
+- Domínios HTTPS permitidos por lista restrita no código.
+- Descrição do objetivo de cada portal antes da abertura.
+- Aviso de que credenciais e submissões permanecem exclusivamente no portal oficial.
+- Três novos testes; total acumulado de 151 testes automatizados.
+
 ## Sprint 85 — Dossiê de auditoria em PDF e ZIP
 
 - Relatório A4 preparado para impressão ou gravação como PDF.
