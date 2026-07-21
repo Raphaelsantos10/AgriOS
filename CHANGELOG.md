@@ -1,5 +1,16 @@
 # Changelog
 
+## Sprint 87 — Proteção local e backups cifrados
+
+- Bloqueio opcional da interface FARPHA por palavra-passe local.
+- Palavra-passe nunca guardada; verificador derivado por PBKDF2-SHA-256.
+- Requisitos mínimos de comprimento e diversidade da palavra-passe.
+- Backup local cifrado e autenticado com AES-256-GCM.
+- Importação cifrada com rejeição de palavra-passe incorreta ou ficheiro alterado.
+- Compatibilidade preservada com backups JSON antigos, que continuam não cifrados.
+- Avisos sobre IndexedDB, autenticação, RLS e impossibilidade de recuperação da palavra-passe.
+- Três novos testes; total acumulado de 154 testes automatizados.
+
 ## Sprint 86 — Portais oficiais contextuais
 
 - Acessos oficiais apresentados diretamente nas pendências do Assistente de Auditoria.

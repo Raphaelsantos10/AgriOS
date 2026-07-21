@@ -4,6 +4,7 @@ import Header from "../components/layout/Header";
 import MobileBottomNav from "../components/layout/MobileBottomNav";
 import Sidebar from "../components/layout/Sidebar";
 import StatusBar from "../components/layout/StatusBar";
+import AppLock from "../features/system/components/AppLock";
 
 type Props = { children: ReactNode };
 
@@ -47,6 +48,7 @@ export default function Layout({ children }: Props) {
       </div>
       <MobileBottomNav />
       <CommandPalette open={commandOpen} onClose={closeCommand} />
+      <AppLock />
     </div>
   );
 }
