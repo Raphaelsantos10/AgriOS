@@ -1,5 +1,15 @@
 # Changelog
 
+## Sprint 85 — Dossiê de auditoria em PDF e ZIP
+
+- Relatório A4 preparado para impressão ou gravação como PDF.
+- Pacote ZIP criado localmente sem envio de documentos para servidores externos.
+- Checklist CSV, relatório HTML, dados técnicos JSON e aviso LEIA-ME.
+- Inclusão das cópias dos ficheiros existentes no Cofre Documental.
+- Nomes de ficheiro higienizados e conteúdo HTML protegido.
+- Avisos de privacidade e de que o resultado não constitui certificação.
+- Três novos testes; total acumulado de 148 testes automatizados.
+
 ## Sprint 84 — Assistente de Auditoria
 
 - Nova verificação central no menu Sistema com oito áreas operacionais.
