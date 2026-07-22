@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
-import { CalendarDays, CheckCircle2, CircleDollarSign, Clock3, Download, Plus, Search, SlidersHorizontal, Trash2, Wrench } from "lucide-react";
-import Button from "../../../design-system/components/Button";
-import Card from "../../../design-system/components/Card";
+import { CalendarDays, CheckCircle2, CircleDollarSign, Clock3, Download, Plus, Search, Trash2, Wrench } from "lucide-react";
+import { Button, Card, DataTable, FilterBar, Input, PageHeader, Select, type DataColumn } from "../../../design-system";
 import CreateWorkOrderModal from "../components/CreateWorkOrderModal";
 import { PriorityLabel, StatusBadge } from "../components/WorkOrderBadge";
 import { createWorkOrder, deleteWorkOrder, listWorkOrders, updateWorkOrderStatus } from "../services/workOrderStorage";
@@ -32,16 +31,23 @@ export default function WorkOrdersPage() {
     cost: orders.reduce((sum, order) => sum + order.estimatedCost, 0),
   };
 
+  const columns: DataColumn<WorkOrder>[] = [
+    { id: "order", header: "Ordem", cell: order => <div><p className="text-xs font-bold text-[var(--farpha-brand-700)]">{order.id}</p><p className="mt-1 font-bold">{order.title}</p><p className="text-xs text-[var(--farpha-text-muted)]">{order.type}</p></div> },
+    { id: "farm", header: "Exploração / Talhão", cell: order => <div><p className="font-semibold">{order.farm}</p><p className="text-sm text-[var(--farpha-text-muted)]">{order.field}</p></div> },
+    { id: "date", header: "Data", cell: order => <span className="text-sm"><CalendarDays className="mr-2 inline" size={16}/>{new Date(`${order.scheduledDate}T12:00:00`).toLocaleDateString("pt-PT")}</span> },
+    { id: "owner", header: "Responsável", cell: order => <span className="text-sm font-semibold">{order.assignedTo}</span> },
+    { id: "priority", header: "Prioridade", cell: order => <PriorityLabel priority={order.priority}/> },
+    { id: "status", header: "Estado", cell: order => <StatusBadge status={order.status}/> },
+    { id: "actions", header: "Ação", cell: order => <div className="flex items-center gap-2"><select aria-label={`Alterar estado de ${order.id}`} value={order.status} onChange={e => changeStatus(order.id, e.target.value as WorkOrderStatus)} className="h-9 rounded-lg border border-[var(--farpha-border)] bg-[var(--farpha-surface)] px-2 text-xs font-semibold"><option value="draft">Rascunho</option><option value="planned">Planeada</option><option value="in_progress">Em execução</option><option value="completed">Concluída</option><option value="cancelled">Cancelada</option></select><button type="button" onClick={() => removeOrder(order.id)} aria-label={`Apagar ${order.id}`} className="rounded-lg p-2 text-[var(--farpha-danger-700)] hover:bg-[var(--farpha-danger-50)]"><Trash2 size={16}/></button></div> },
+  ];
+
   function addOrder(draft: WorkOrderDraft) { setOrders((current) => [createWorkOrder(draft), ...current]); }
   function changeStatus(id: string, next: WorkOrderStatus) { setOrders(updateWorkOrderStatus(id, next)); }
   function removeOrder(id: string) { if (window.confirm("Apagar esta tarefa da agenda?")) setOrders(deleteWorkOrder(id)); }
 
   return (
     <div className="mx-auto max-w-[1600px] space-y-6">
-      <header className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-        <div><p className="text-xs font-extrabold uppercase tracking-[0.22em] text-emerald-700">Operações agrícolas</p><h1 className="mt-1 text-3xl font-black tracking-tight text-slate-950">Ordens de Trabalho</h1><p className="mt-2 max-w-2xl text-sm text-slate-600">Planeie, distribua e acompanhe tarefas de campo num único centro operacional.</p></div>
-        <div className="flex flex-wrap gap-3"><Button variant="secondary" onClick={() => downloadWorkOrderAgendaCsv(orders, new Date().toISOString())}><Download size={18} /> Exportar agenda CSV</Button><Button onClick={() => setModalOpen(true)}><Plus size={18} /> Nova ordem</Button></div>
-      </header>
+      <PageHeader eyebrow="Operações agrícolas" title="Ordens de Trabalho" description="Planeie, distribua e acompanhe tarefas de campo num único centro operacional." actions={<><Button variant="secondary" onClick={() => downloadWorkOrderAgendaCsv(orders, new Date().toISOString())}><Download size={18}/> Exportar agenda CSV</Button><Button onClick={() => setModalOpen(true)}><Plus size={18}/> Nova ordem</Button></>}/>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {([
@@ -53,17 +59,9 @@ export default function WorkOrdersPage() {
       </section>
 
       <Card className="overflow-hidden">
-        <div className="flex flex-col gap-3 border-b border-slate-200 p-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="relative w-full lg:max-w-md"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Pesquisar ordem, exploração, talhão…" className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-3 text-sm outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100" /></div>
-          <label className="flex items-center gap-2 text-sm font-semibold text-slate-600"><SlidersHorizontal size={17} /><select value={status} onChange={(e) => setStatus(e.target.value as "all" | WorkOrderStatus)} className="h-11 rounded-xl border border-slate-200 bg-white px-3">{statusOptions.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
-        </div>
+        <div className="border-b border-[var(--farpha-border)] p-4"><FilterBar results={filtered.length}><Input aria-label="Pesquisar ordens" value={query} onChange={e => setQuery(e.target.value)} leadingIcon={<Search size={18}/>} placeholder="Ordem, exploração ou talhão…"/><Select aria-label="Filtrar por estado" value={status} onChange={e => setStatus(e.target.value as "all" | WorkOrderStatus)}>{statusOptions.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</Select></FilterBar></div>
 
-        <div className="hidden overflow-x-auto lg:block">
-          <table className="w-full min-w-[980px] text-left"><thead className="bg-slate-50 text-xs uppercase tracking-wider text-slate-500"><tr>{["Ordem", "Exploração / Talhão", "Data", "Responsável", "Prioridade", "Estado", "Ação"].map((h) => <th key={h} className="px-5 py-3 font-extrabold">{h}</th>)}</tr></thead><tbody className="divide-y divide-slate-100">{filtered.map((order) => <tr key={order.id} className="hover:bg-emerald-50/35"><td className="px-5 py-4"><p className="text-xs font-bold text-emerald-700">{order.id}</p><p className="mt-1 font-bold text-slate-900">{order.title}</p><p className="text-xs text-slate-500">{order.type}</p></td><td className="px-5 py-4"><p className="font-semibold text-slate-800">{order.farm}</p><p className="text-sm text-slate-500">{order.field}</p></td><td className="px-5 py-4 text-sm text-slate-700"><CalendarDays className="mr-2 inline" size={16} />{new Date(`${order.scheduledDate}T12:00:00`).toLocaleDateString("pt-PT")}</td><td className="px-5 py-4 text-sm font-semibold text-slate-700">{order.assignedTo}</td><td className="px-5 py-4"><PriorityLabel priority={order.priority} /></td><td className="px-5 py-4"><StatusBadge status={order.status} /></td><td className="px-5 py-4"><div className="flex items-center gap-2"><select aria-label={`Alterar estado de ${order.id}`} value={order.status} onChange={(e) => changeStatus(order.id, e.target.value as WorkOrderStatus)} className="h-9 rounded-lg border border-slate-200 bg-white px-2 text-xs font-semibold"><option value="draft">Rascunho</option><option value="planned">Planeada</option><option value="in_progress">Em execução</option><option value="completed">Concluída</option><option value="cancelled">Cancelada</option></select><button type="button" onClick={() => removeOrder(order.id)} aria-label={`Apagar ${order.id}`} className="rounded-lg p-2 text-red-600 hover:bg-red-50"><Trash2 size={16}/></button></div></td></tr>)}</tbody></table>
-        </div>
-
-        <div className="divide-y divide-slate-100 lg:hidden">{filtered.map((order) => <article key={order.id} className="space-y-3 p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-extrabold text-emerald-700">{order.id}</p><h3 className="font-extrabold text-slate-900">{order.title}</h3></div><StatusBadge status={order.status} /></div><div className="grid grid-cols-2 gap-3 text-sm"><div><p className="text-xs text-slate-500">Exploração</p><p className="font-semibold">{order.farm}</p></div><div><p className="text-xs text-slate-500">Talhão</p><p className="font-semibold">{order.field}</p></div><div><p className="text-xs text-slate-500">Data</p><p className="font-semibold">{new Date(`${order.scheduledDate}T12:00:00`).toLocaleDateString("pt-PT")}</p></div><div><p className="text-xs text-slate-500">Prioridade</p><PriorityLabel priority={order.priority} /></div></div><select value={order.status} onChange={(e) => changeStatus(order.id, e.target.value as WorkOrderStatus)} className="h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold"><option value="draft">Rascunho</option><option value="planned">Planeada</option><option value="in_progress">Em execução</option><option value="completed">Concluída</option><option value="cancelled">Cancelada</option></select></article>)}</div>
-        {filtered.length === 0 ? <div className="py-16 text-center"><p className="font-bold text-slate-800">Nenhuma ordem encontrada</p><p className="mt-1 text-sm text-slate-500">Ajuste os filtros ou crie uma nova ordem.</p></div> : null}
+        <DataTable rows={filtered} columns={columns} rowKey={order => order.id} caption="Ordens de trabalho" emptyTitle="Nenhuma ordem encontrada" emptyDescription="Ajuste os filtros ou crie uma nova ordem." mobileCard={order => <div className="space-y-3"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-extrabold text-[var(--farpha-brand-700)]">{order.id}</p><h3 className="font-extrabold">{order.title}</h3></div><StatusBadge status={order.status}/></div><div className="grid grid-cols-2 gap-3 text-sm"><div><p className="text-xs text-[var(--farpha-text-muted)]">Exploração</p><p className="font-semibold">{order.farm}</p></div><div><p className="text-xs text-[var(--farpha-text-muted)]">Talhão</p><p className="font-semibold">{order.field}</p></div><div><p className="text-xs text-[var(--farpha-text-muted)]">Data</p><p className="font-semibold">{new Date(`${order.scheduledDate}T12:00:00`).toLocaleDateString("pt-PT")}</p></div><div><p className="text-xs text-[var(--farpha-text-muted)]">Prioridade</p><PriorityLabel priority={order.priority}/></div></div><select aria-label={`Alterar estado de ${order.id}`} value={order.status} onChange={e => changeStatus(order.id, e.target.value as WorkOrderStatus)} className="h-10 w-full rounded-xl border border-[var(--farpha-border)] bg-[var(--farpha-surface)] px-3 text-sm font-semibold"><option value="draft">Rascunho</option><option value="planned">Planeada</option><option value="in_progress">Em execução</option><option value="completed">Concluída</option><option value="cancelled">Cancelada</option></select></div>}/>
       </Card>
 
       <CreateWorkOrderModal open={modalOpen} onClose={() => setModalOpen(false)} onCreate={addOrder} />

@@ -1,0 +1,2 @@
+import type { ReactNode } from "react";
+export default function DataList<T>({ items, itemKey, renderItem, divided = true }: { items: T[]; itemKey: (item: T) => string; renderItem: (item: T) => ReactNode; divided?: boolean }) { return <div role="list" className={divided ? "divide-y divide-[var(--farpha-border)]" : "grid gap-3"}>{items.map(item => <div role="listitem" key={itemKey(item)}>{renderItem(item)}</div>)}</div>; }

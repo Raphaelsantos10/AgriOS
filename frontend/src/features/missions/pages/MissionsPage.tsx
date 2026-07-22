@@ -10,6 +10,7 @@ import MissionDrawer from "../components/MissionDrawer";
 import MissionFilters from "../components/MissionFilters";
 import { createMission, deleteMission, getMissions, updateMission, updateMissionStatus } from "../services/missionsService";
 import type { Mission, MissionInput, MissionPriority, MissionStatus } from "../types/mission";
+import { Button, Card, EmptyState, LoadingState, PageHeader } from "../../../design-system";
 
 export default function MissionsPage() {
   const [missions, setMissions] = useState<Mission[]>([]);
@@ -104,24 +105,21 @@ export default function MissionsPage() {
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
-        <div><h1 className="text-3xl font-bold text-slate-900">Centro de Missões</h1><p className="mt-1 text-slate-500">Planeie, acompanhe e conclua operações agrícolas ligadas ao mapa.</p></div>
-        <button type="button" onClick={() => { setEditingMission(null); setDrawerOpen(true); }} className="flex items-center justify-center gap-2 rounded-xl bg-green-700 px-5 py-3 font-bold text-white hover:bg-green-800"><Plus size={19} />Nova missão</button>
-      </div>
+      <PageHeader eyebrow="Operações agrícolas" title="Centro de Missões" description="Planeie, acompanhe e conclua operações agrícolas ligadas ao mapa." actions={<Button onClick={() => { setEditingMission(null); setDrawerOpen(true); }}><Plus size={19}/> Nova missão</Button>}/>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {cards.map(({ label, value, icon: Icon, className }) => (
-          <article key={label} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <Card key={label} className="p-5">
             <div className={`inline-flex rounded-xl p-3 ${className}`}><Icon size={21} /></div>
             <p className="mt-4 text-sm text-slate-500">{label}</p><p className="mt-1 text-3xl font-bold text-slate-900">{value}</p>
-          </article>
+          </Card>
         ))}
       </div>
 
       <MissionFilters search={search} status={status} priority={priority} onSearchChange={setSearch} onStatusChange={setStatus} onPriorityChange={setPriority} />
 
-      {loading ? <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-slate-500">A carregar missões...</div> : filtered.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center"><ClipboardCheck className="mx-auto text-slate-300" size={44} /><h2 className="mt-4 text-xl font-bold text-slate-900">Nenhuma missão encontrada</h2><p className="mt-2 text-slate-500">Crie a primeira missão ou altere os filtros.</p></div>
+      {loading ? <LoadingState label="A carregar missões…"/> : filtered.length === 0 ? (
+        <EmptyState icon={ClipboardCheck} title="Nenhuma missão encontrada" description="Crie a primeira missão ou altere os filtros." actionLabel="Criar missão" onAction={() => { setEditingMission(null); setDrawerOpen(true); }}/>
       ) : (
         <div className="grid gap-4 xl:grid-cols-2">
           {filtered.map((mission) => <MissionCard key={mission.id} mission={mission} farm={farms.find((farm) => farm.id === mission.farm_id)} field={fields.find((field) => field.id === mission.field_id)} onOpen={setSelectedMission} />)}

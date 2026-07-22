@@ -1,0 +1,4 @@
+import { ChevronRight } from "lucide-react";
+import type { ReactNode } from "react";
+export type BreadcrumbItem = { label: string; href?: string; content?: ReactNode };
+export default function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) { return <nav aria-label="Percurso"><ol className="flex flex-wrap items-center gap-1 text-sm text-[var(--farpha-text-muted)]">{items.map((item, index) => <li key={`${item.label}-${index}`} className="flex items-center gap-1">{index ? <ChevronRight aria-hidden="true" size={15}/> : null}{item.href ? <a href={item.href} className="rounded px-1 py-0.5 font-medium hover:text-[var(--farpha-brand-700)]">{item.content ?? item.label}</a> : <span aria-current="page" className="px-1 py-0.5 font-semibold text-[var(--farpha-text)]">{item.content ?? item.label}</span>}</li>)}</ol></nav>; }

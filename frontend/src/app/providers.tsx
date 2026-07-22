@@ -1,5 +1,6 @@
 import { NotificationProvider, NotificationViewport } from "../features/notifications";
 import SupportAssistant from "../features/support/SupportAssistant";
+import { ToastProvider } from "../design-system";
 
 type Props = {
   children: React.ReactNode;
@@ -7,10 +8,10 @@ type Props = {
 
 export function Providers({ children }: Props) {
   return (
-    <NotificationProvider>
-      {children}
-      <NotificationViewport />
-      <SupportAssistant />
-    </NotificationProvider>
+      <ToastProvider><NotificationProvider>
+        {children}
+        <NotificationViewport />
+        <SupportAssistant />
+      </NotificationProvider></ToastProvider>
   );
 }

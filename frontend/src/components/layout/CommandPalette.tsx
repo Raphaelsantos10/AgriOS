@@ -57,7 +57,7 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-start justify-center bg-[#07110d]/65 px-4 pt-[10vh] backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Pesquisa global">
+    <div className="fixed inset-0 z-[var(--farpha-z-modal)] flex items-start justify-center bg-[#07110d]/65 px-4 pt-[10vh] backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Pesquisa global">
       <button type="button" aria-label="Fechar pesquisa" className="absolute inset-0" onClick={closePalette} />
       <section className="relative z-10 w-full max-w-2xl overflow-hidden rounded-[24px] border border-[var(--farpha-border)] bg-[var(--farpha-surface)] text-[var(--farpha-text)] shadow-[0_32px_100px_rgba(5,24,15,0.35)]">
         <div className="flex items-center gap-3 border-b border-[var(--farpha-border)] px-5 py-4">

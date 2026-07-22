@@ -19,6 +19,7 @@ import {
 import type { FarmInput } from "../services/farmsService";
 
 import FarmDrawer from "../components/FarmDrawer";
+import { Badge, Button, Card, EmptyState, FilterBar, Input, LoadingState, PageHeader } from "../../../design-system";
 
 export default function FarmsPage() {
   const [farms, setFarms] = useState<Farm[]>([]);
@@ -129,75 +130,20 @@ export default function FarmsPage() {
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">
-            Explorações
-          </h1>
+      <PageHeader eyebrow="Gestão agrícola" title="Explorações" description="Gestão das propriedades agrícolas registadas no FARPHA." actions={<Button onClick={handleOpenCreate}><Plus size={19}/> Nova exploração</Button>}/>
 
-          <p className="mt-1 text-slate-500">
-            Gestão das propriedades agrícolas cadastradas no AgriOS.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleOpenCreate}
-          className="flex items-center justify-center gap-2 rounded-xl bg-green-700 px-5 py-3 font-semibold text-white transition hover:bg-green-800"
-        >
-          <Plus size={19} />
-          Nova Exploração
-        </button>
-      </div>
-
-      <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-        <Search size={20} className="text-slate-400" />
-
-        <input
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          className="w-full bg-transparent outline-none"
-          placeholder="Pesquisar por exploração, proprietário ou cultura..."
-        />
-
-        {!loading && (
-          <span className="whitespace-nowrap text-sm font-semibold text-slate-500">
-            {filteredFarms.length} resultado(s)
-          </span>
-        )}
-      </div>
+      <FilterBar results={loading ? undefined : filteredFarms.length}><Input aria-label="Pesquisar explorações" value={search} onChange={(event) => setSearch(event.target.value)} leadingIcon={<Search size={18}/>} placeholder="Exploração, proprietário ou cultura…"/></FilterBar>
 
       {loading ? (
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <p className="text-slate-500">
-            A carregar explorações...
-          </p>
-        </div>
+        <LoadingState label="A carregar explorações…"/>
       ) : filteredFarms.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center shadow-sm">
-          <h2 className="text-xl font-bold text-slate-900">
-            Nenhuma exploração encontrada
-          </h2>
-
-          <p className="mt-2 text-slate-500">
-            Crie uma propriedade ou altere o termo da pesquisa.
-          </p>
-
-          <button
-            type="button"
-            onClick={handleOpenCreate}
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-green-700 px-5 py-3 font-semibold text-white hover:bg-green-800"
-          >
-            <Plus size={18} />
-            Criar primeira exploração
-          </button>
-        </div>
+        <EmptyState icon={Sprout} title="Nenhuma exploração encontrada" description="Crie uma propriedade ou altere o termo da pesquisa." actionLabel="Criar primeira exploração" onAction={handleOpenCreate}/>
       ) : (
         <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">
           {filteredFarms.map((farm) => (
-            <article
+            <Card
               key={farm.id}
-              className="group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+              interactive className="group p-6"
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
@@ -210,9 +156,7 @@ export default function FarmsPage() {
                   </p>
                 </div>
 
-                <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700">
-                  Online
-                </span>
+                <Badge tone="success">Online</Badge>
               </div>
 
               <div className="mt-5 space-y-3 text-sm text-slate-600">
@@ -267,7 +211,7 @@ export default function FarmsPage() {
                   <Trash2 size={18} />
                 </button>
               </div>
-            </article>
+            </Card>
           ))}
         </div>
       )}

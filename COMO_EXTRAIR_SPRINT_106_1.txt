@@ -1,0 +1,40 @@
+FARPHA — Sprint 106.1 — Correção página branca e Supabase
+
+ANTES DE INSTALAR: execute database/FARPHA_SUPABASE_BOOTSTRAP_V1.sql no SQL Editor.
+
+INSTALAÇÃO (Git Bash)
+
+cd ~
+
+taskkill //F //IM node.exe 2>/dev/null || true
+
+cd ~/Documents/Projetos
+
+BACKUP="AgriOS_backup_sprint106_$(date +%Y%m%d_%H%M%S)"
+
+mv AgriOS "$BACKUP"
+
+unzip -o ~/Downloads/FARPHA_Sprint_106_1_Correcao_Pagina_Branca_Supabase.zip -d ~/Documents/Projetos
+
+cp "$BACKUP/frontend/.env.local" ~/Documents/Projetos/AgriOS/frontend/.env.local
+
+cp -r "$BACKUP/.git" ~/Documents/Projetos/AgriOS/.git
+
+cd ~/Documents/Projetos/AgriOS/frontend
+
+npm install
+
+rm -rf node_modules/.vite
+
+npm run validate
+
+npm run dev
+
+PUBLICAR NO GITHUB
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "fix: Sprint 106.1 - corrigir pagina branca e bootstrap Supabase"
+git pull --rebase origin main
+git push origin main

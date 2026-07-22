@@ -1,0 +1,3 @@
+import { CircleAlert } from "lucide-react";
+import Button from "./Button";
+export default function ErrorState({ title = "Não foi possível carregar", description, onRetry }: { title?: string; description: string; onRetry?: () => void }) { return <div role="alert" className="flex min-h-48 flex-col items-center justify-center rounded-2xl border border-[var(--farpha-danger-200)] bg-[var(--farpha-danger-50)] p-7 text-center text-[var(--farpha-danger-700)]"><CircleAlert size={30}/><h3 className="mt-3 font-bold">{title}</h3><p className="mt-1 max-w-md text-sm">{description}</p>{onRetry ? <Button variant="danger" className="mt-5" onClick={onRetry}>Tentar novamente</Button> : null}</div>; }

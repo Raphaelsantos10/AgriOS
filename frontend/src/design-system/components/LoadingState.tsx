@@ -1,0 +1,2 @@
+import { LoaderCircle } from "lucide-react";
+export default function LoadingState({ label = "A carregar…", compact = false }: { label?: string; compact?: boolean }) { return <div role="status" aria-live="polite" className={`flex items-center justify-center gap-3 text-[var(--farpha-text-muted)] ${compact ? "p-3 text-sm" : "min-h-48 p-8"}`}><LoaderCircle className="animate-spin text-[var(--farpha-brand-600)]" size={compact ? 18 : 26}/><span className="font-semibold">{label}</span></div>; }

@@ -1,4 +1,4 @@
-const CACHE_VERSION = "farpha-pwa-v1";
+const CACHE_VERSION = "farpha-pwa-v2";
 const APP_SHELL = ["/", "/index.html", "/manifest.webmanifest", "/favicon-farpha.png", "/icon-192.png", "/icon-512.png"];
 
 self.addEventListener("install", (event) => {

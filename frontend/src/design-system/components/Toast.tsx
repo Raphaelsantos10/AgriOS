@@ -1,0 +1,9 @@
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
+import { X } from "lucide-react";
+type Tone = "info" | "success" | "warning" | "danger";
+type ToastItem = { id: number; title: string; description?: string; tone: Tone };
+type ToastApi = { show: (toast: Omit<ToastItem, "id">) => void };
+const Context = createContext<ToastApi | null>(null);
+export function ToastProvider({ children }: { children: ReactNode }) { const [items, setItems] = useState<ToastItem[]>([]); const nextId = useRef(0); const remove = useCallback((id: number) => setItems(current => current.filter(item => item.id !== id)), []); const show = useCallback((toast: Omit<ToastItem, "id">) => { const id = ++nextId.current; setItems(current => [...current.slice(-3), { ...toast, id }]); window.setTimeout(() => remove(id), 5000); }, [remove]); const value = useMemo(() => ({ show }), [show]); return <Context.Provider value={value}>{children}<div aria-label="Notificações" className="pointer-events-none fixed right-4 top-4 z-[var(--farpha-z-toast)] flex w-[min(calc(100vw-2rem),24rem)] flex-col gap-2">{items.map(item => <div key={item.id} role={item.tone === "danger" ? "alert" : "status"} className={`pointer-events-auto flex gap-3 rounded-2xl border border-current/15 p-4 shadow-[var(--farpha-shadow-lg)] farpha-status-${item.tone}`}><div className="min-w-0 flex-1"><p className="font-bold">{item.title}</p>{item.description ? <p className="mt-1 text-sm">{item.description}</p> : null}</div><button type="button" onClick={() => remove(item.id)} className="grid h-8 w-8 shrink-0 place-items-center rounded-lg hover:bg-black/5" aria-label="Fechar notificação"><X size={17}/></button></div>)}</div></Context.Provider>; }
+export function useToast() { const value = useContext(Context); if (!value) throw new Error("useToast deve ser utilizado dentro de ToastProvider"); return value; }

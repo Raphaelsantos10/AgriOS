@@ -1,0 +1,22 @@
+FARPHA — Correção de página branca e Supabase
+
+1. SQL Editor do Supabase:
+   No Git Bash, dentro de AgriOS/frontend, execute:
+   clip.exe < ../database/FARPHA_SUPABASE_BOOTSTRAP_V1.sql
+   Cole no SQL Editor e clique Run.
+
+2. Ative seu utilizador executando separadamente no SQL Editor:
+   update public.user_profiles set role='owner', active=true, updated_at=now()
+   where id=(select id from auth.users where email='SEU_EMAIL');
+
+3. Instalação limpa obrigatória:
+   cd ~/Documents/Projetos/AgriOS/frontend
+   taskkill //F //IM node.exe 2>/dev/null || true
+   mv node_modules "../node_modules_corrompido_$(date +%Y%m%d_%H%M%S)" 2>/dev/null || true
+   npm install
+   rm -rf node_modules/.vite
+   npm run validate
+   npm run dev
+
+4. Abra http://localhost:5173 e pressione Ctrl+Shift+R.
+   A correção remove automaticamente Service Workers e caches FARPHA no modo desenvolvimento.
