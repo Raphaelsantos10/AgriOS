@@ -1,0 +1,23 @@
+FARPHA SPRINT 107.8 — ATUALIZAR O GITHUB
+
+Execute apenas depois de npm run validate terminar sem erros:
+
+cd ~/Documents/Projetos/AgriOS
+
+git add -A
+git diff --cached --check
+
+if git diff --cached --name-only | grep -E '(^|/)\.env(\.|$)|service_role|OPENAI_API_KEY'; then
+  echo "ATENCAO: possível ficheiro sensível. Commit cancelado."
+  exit 1
+fi
+
+git commit -m "security: Sprint 107.8 - proteger infraestrutura e histórico"
+git pull --rebase origin main
+git push origin main
+git status
+
+Depois:
+1. Abra o GitHub.
+2. Entre em Actions.
+3. Confirme FARPHA CI, FARPHA Security e FARPHA Repository Audit a verde.

@@ -1,138 +1,100 @@
-# 🌱 FARPHA
+# FARPHA
 
-## Enterprise Smart Agriculture Platform
+**Intelligence for Agriculture**
 
-> Intelligence • GIS • AI • Automation • Precision Agriculture
+O FARPHA é uma plataforma AgTech/GIS para organizar explorações, talhões,
+operações, custos, conformidade e apoio à decisão agrícola numa experiência
+única para computador, tablet e telemóvel.
 
----
+## Estado atual
 
-## 📖 Sobre
+O projeto encontra-se em **fase pré-comercial**. A base funcional e visual está
+implementada, mas a publicação pública depende da conclusão do
+[Plano Mestre Pré-Publicação](docs/PRE_PUBLICATION_MASTER_PLAN.md), de testes com
+explorações reais e da validação das integrações externas.
 
-A FARPHA é uma plataforma inteligente para gestão agrícola que integra Inteligência Artificial, GIS, Agricultura de Precisão, Automação, IoT e análise de dados numa única solução.
+| Área | Estado |
+| --- | --- |
+| Página institucional, autenticação e onboarding | Implementado |
+| Explorações, talhões e edição GIS | Implementado, em auditoria de profundidade |
+| Operações, custos, inventário e conformidade | Implementado, em auditoria de persistência |
+| Supabase, autenticação e políticas RLS | Implementado, sujeito a validação contínua |
+| Centro de Ajuda, pedidos e fallback local | Implementado |
+| Inteligência FARPHA online | Integração segura criada; requer quota e validação agrícola |
+| Stripe e faturação comercial | Requer configuração de produção |
+| Digital Twin, IoT, satélite, drones e mobile nativo | Roadmap; não anunciar como concluído |
 
-O objetivo é fornecer aos produtores agrícolas uma plataforma moderna para gerir explorações, monitorizar culturas, automatizar processos e tomar decisões baseadas em dados.
+Dados, percentagens e resultados exibidos em experiências demonstrativas não
+representam resultados agrícolas comprovados.
 
----
+## Diferenciais técnicos
 
-## ✨ Principais funcionalidades
+- Gestão de explorações e talhões ligada ao território.
+- MapLibre, Turf, Terra Draw, GeoJSON e importação geográfica.
+- React 19, TypeScript, Vite, Tailwind CSS e React Query.
+- Supabase para autenticação, persistência, RLS e Edge Functions.
+- Inteligência server-side sem exposição da chave privada no navegador.
+- PWA, carregamento progressivo e módulos carregados de forma preguiçosa.
+- Testes, lint, build, smoke test, CodeQL, Dependabot e auditoria do repositório.
 
-- 🌾 Gestão de Explorações
-- 📍 Gestão de Talhões (GIS)
-- 🛰️ Agricultura de Precisão
-- 🤖 Inteligência Artificial
-- 📊 Analytics
-- 📅 Calendário Agrícola
-- 🚜 Gestão de Máquinas
-- 💧 Irrigação Inteligente
-- 🔥 Monitorização de Incêndios
-- 📈 Dashboard Executivo
-- ⚙️ Centro de Operações
-- 🔄 Automações
-- 🌦️ Meteorologia
-- 🌍 Digital Twin
+## Execução local
 
----
-
-## 🛠 Tecnologias
-
-### Frontend
-
-- React 19
-- TypeScript
-- Vite
-- Tailwind CSS
-- React Router
-- React Query
-
-### Backend
-
-- Supabase
-
-### GIS
-
-- MapLibre GL
-- Turf.js
-
-### UI
-
-- Lucide Icons
-- Framer Motion
-
----
-
-## 📂 Estrutura do Projeto
-
-```text
-AgriOS
-│
-├── frontend
-├── backend
-├── database
-├── docs
-├── design
-└── mobile
-```
-
----
-
-## 🚀 Como executar
-
-### Clonar
+Requisitos: Node.js conforme `frontend/.nvmrc` e npm.
 
 ```bash
 git clone https://github.com/Raphaelsantos10/AgriOS.git
-```
-
-### Entrar no frontend
-
-```bash
 cd AgriOS/frontend
-```
-
-### Instalar
-
-```bash
+cp .env.example .env.local
 npm install
-```
-
-### Executar
-
-```bash
+npm run validate
 npm run dev
 ```
 
----
+Configure `frontend/.env.local` com os valores públicos do seu projeto
+Supabase. Nunca coloque `service_role`, `OPENAI_API_KEY` ou outras chaves
+privadas no frontend.
 
-## 🗺️ Roadmap
+## Validação
 
-- ✅ Dashboard Inteligente
-- ✅ GIS
-- ✅ Analytics
-- ✅ Centro de Operações
-- ✅ Automation Engine
-- 🔄 IA Agrícola
-- 🔄 Digital Twin
-- 🔄 IoT
-- 🔄 Satélites
-- 🔄 Drones
-- 🔄 Aplicação Mobile
+```bash
+cd frontend
+npm run validate
+```
 
----
+O comando verifica toolchain, integridade do repositório, entrada pública,
+testes, lint, build, PWA, segurança, manifesto e smoke test.
 
-## 📷 Capturas de Ecrã
+## Estrutura
 
-> Em breve.
+```text
+AgriOS/
+├── .github/          # CI, CodeQL, releases, Dependabot e auditoria
+├── database/         # migrações SQL versionadas
+├── design/           # ativos oficiais da identidade FARPHA
+├── docs/             # arquitetura, segurança, sprints e operação
+├── frontend/         # aplicação React/TypeScript
+└── supabase/         # Edge Functions e configuração do backend
+```
 
----
+## Documentação essencial
 
-## 👨‍💻 Autor
+- [Plano Mestre Pré-Publicação](docs/PRE_PUBLICATION_MASTER_PLAN.md)
+- [Baseline de segurança](docs/security/REPOSITORY_SECURITY_BASELINE.md)
+- [Política de segurança](SECURITY.md)
+- [Runbook de produção](docs/PRODUCTION_RUNBOOK.md)
+- [Backup e recuperação](docs/BACKUP_RECOVERY.md)
+- [Histórico de alterações](CHANGELOG.md)
 
-Raphael Soares
+O conjunto definitivo de capturas, vídeo e demonstração pública será produzido
+na Sprint 109 depois da classificação de maturidade dos módulos, evitando
+apresentar telas demonstrativas como integrações reais.
 
-Portugal 🇵🇹
+## Autor
 
----
+Raphael Soares — Portugal
 
-## 📄 Licença
+## Licença
 
-MIT
+As versões já publicadas sob licença MIT mantêm os direitos concedidos por essa
+licença. A estratégia de licenciamento das versões comerciais futuras será
+avaliada antes da publicação do FARPHA.

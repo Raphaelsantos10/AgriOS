@@ -1,0 +1,37 @@
+FARPHA SPRINT 107.8 — INSTALAÇÃO COMPLETA NO GIT BASH
+
+Antes de começar:
+1. No terminal onde o FARPHA está aberto, prima Ctrl+C.
+2. Feche outros terminais que estejam a executar npm run dev.
+3. Confirme que FARPHA_Sprint_107_8_Auditoria_Repositorio.zip está em Downloads.
+
+Cole o bloco inteiro:
+
+cd ~/Documents/Projetos
+
+BACKUP_FARPHA="AgriOS_backup_107_7_$(date +%Y%m%d_%H%M%S)"
+
+mv AgriOS "$BACKUP_FARPHA" || {
+  echo "Não foi possível criar o backup. Feche o FARPHA, o VS Code e terminais abertos na pasta AgriOS."
+  exit 1
+}
+
+unzip -q ~/Downloads/FARPHA_Sprint_107_8_Auditoria_Repositorio.zip -d ~/Documents/Projetos
+
+if [ -f "$BACKUP_FARPHA/frontend/.env.local" ]; then
+  cp "$BACKUP_FARPHA/frontend/.env.local" AgriOS/frontend/.env.local
+fi
+
+if [ -d "$BACKUP_FARPHA/.git" ]; then
+  cp -r "$BACKUP_FARPHA/.git" AgriOS/.git
+fi
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run validate
+npm run dev
+
+IMPORTANTE:
+- Esta sprint não exige executar SQL no Supabase.
+- Não copie node_modules nem dist do backup.
+- O .env.local e o histórico Git são preservados.
