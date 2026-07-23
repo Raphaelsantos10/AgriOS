@@ -12,6 +12,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { navigationGroups } from "../../app/navigation";
 import AccountMenu from "../../features/account/components/AccountMenu";
 import NotificationBell from "../../features/notifications/components/NotificationBell";
+import { openSupportAssistant } from "../../features/support/supportCenterUtils";
 
 type HeaderProps = {
   onOpenMobileMenu: () => void;
@@ -54,7 +55,7 @@ export default function Header({ onOpenMobileMenu, onOpenCommand, darkMode, onTo
         <div className="hidden items-center gap-2 rounded-full border border-[var(--farpha-border)] bg-[var(--farpha-surface-muted)] px-3 py-2 text-xs font-semibold text-[var(--farpha-brand-600)] xl:flex" title="Todos os serviços estão operacionais">
           <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_0_4px_rgba(16,185,129,0.12)]" /> Online
         </div>
-        <button type="button" onClick={onOpenCommand} className="hidden rounded-xl border border-[var(--farpha-border)] p-2.5 text-[var(--farpha-text-muted)] transition hover:bg-[var(--farpha-surface-muted)] md:block" aria-label="Ajuda e comandos" title="Ajuda e atalhos"><HelpCircle size={19} /></button>
+        <button type="button" onClick={openSupportAssistant} className="hidden rounded-xl border border-[var(--farpha-border)] p-2.5 text-[var(--farpha-text-muted)] transition hover:bg-[var(--farpha-surface-muted)] md:block" aria-label="Abrir ajuda e suporte" title="Ajuda e suporte"><HelpCircle size={19} /></button>
         <button type="button" onClick={onToggleTheme} className="rounded-xl border border-[var(--farpha-border)] p-2.5 text-[var(--farpha-text-muted)] transition hover:bg-[var(--farpha-surface-muted)]" aria-label={darkMode ? "Ativar tema claro" : "Ativar tema escuro"} title={darkMode ? "Tema claro" : "Tema escuro"}>{darkMode ? <Sun size={19} /> : <Moon size={19} />}</button>
         <button type="button" onClick={() => navigate("/intelligence")} className="hidden rounded-xl border border-[var(--farpha-border)] p-2.5 text-[var(--farpha-brand-600)] transition hover:bg-[var(--farpha-surface-muted)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--farpha-brand-500)] md:block" aria-label="Abrir FARPHA Intelligence" title="Abrir assistente inteligente"><Sparkles size={19} /></button>
         <NotificationBell />

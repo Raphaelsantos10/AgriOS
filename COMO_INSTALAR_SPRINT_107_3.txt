@@ -1,0 +1,60 @@
+FARPHA — SPRINT 107.3
+ASSISTENTE FARPHA E CENTRAL DE APOIO
+
+ANTES DE COMEÇAR
+1. No terminal onde npm run dev está aberto, pressione Ctrl+C.
+2. Coloque FARPHA_Sprint_107_3_Assistente_Central_Apoio.zip em Downloads.
+3. Não apague nem mova a pasta AgriOS.
+4. Esta Sprint não exige executar SQL no Supabase.
+
+INSTALAÇÃO — COPIE TODO O BLOCO PARA O GIT BASH
+
+cd ~/Documents/Projetos
+
+BACKUP="AgriOS_backup_sprint107_3_$(date +%Y%m%d_%H%M%S)"
+mkdir -p "$BACKUP/frontend"
+
+cp -a AgriOS/frontend/src "$BACKUP/frontend/"
+cp -a AgriOS/frontend/public "$BACKUP/frontend/"
+cp -a AgriOS/frontend/scripts "$BACKUP/frontend/"
+
+for ITEM in package.json package-lock.json vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json index.html eslint.config.js .nvmrc; do
+  if [ -e "AgriOS/frontend/$ITEM" ]; then
+    cp -a "AgriOS/frontend/$ITEM" "$BACKUP/frontend/"
+  fi
+done
+
+unzip -o "$HOME/Downloads/FARPHA_Sprint_107_3_Assistente_Central_Apoio.zip" -d "$HOME/Documents/Projetos"
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run validate
+npm run dev
+
+# Se o navegador mantiver ficheiros antigos, use Ctrl+Shift+R uma vez.
+
+O ficheiro frontend/.env.local e a pasta .git existentes não são substituídos.
+
+CONFIRMAÇÃO NO NAVEGADOR
+1. Abra http://localhost:5173 e entre no FARPHA.
+2. Clique no botão Ajuda e suporte no canto inferior.
+3. Teste as perguntas rápidas em Inteligência.
+4. Clique no ícone de ajuda do cabeçalho e confirme que abre a mesma central.
+5. Abra o menu da conta e clique em Ajuda e suporte.
+6. Crie um pedido e confirme a referência FAR-.
+7. Teste os filtros Aberto, Enviado e Resolvido.
+8. Teste Enviar por email, WhatsApp, Marcar como resolvido e Reabrir.
+9. Verifique a interface nos temas claro e escuro.
+10. Confirme que o botão de instalação continua apenas na página pública.
+
+CONTACTOS
+No frontend/.env.local, configure valores reais:
+
+VITE_SUPPORT_EMAIL=apoio@farpha.pt
+VITE_SUPPORT_PHONE=+351 000 000 000
+VITE_SUPPORT_PHONE_HREF=+351000000000
+VITE_SUPPORT_WHATSAPP=351000000000
+VITE_SUPPORT_HOURS=Segunda a sexta, 09:00–18:00 (Portugal)
+
+Reinicie npm run dev depois de alterar o .env.local.
+

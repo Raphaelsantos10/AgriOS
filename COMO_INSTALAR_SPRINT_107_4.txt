@@ -1,0 +1,83 @@
+FARPHA — SPRINT 107.4
+CENTRAL DE APOIO SUPABASE
+
+PARTE 1 — INSTALAR OS FICHEIROS
+
+1. Pare npm run dev com Ctrl+C.
+2. Coloque FARPHA_Sprint_107_4_Central_Apoio_Supabase.zip em Downloads.
+3. Copie todo o bloco abaixo para o Git Bash:
+
+cd ~/Documents/Projetos
+
+BACKUP="AgriOS_backup_sprint107_4_$(date +%Y%m%d_%H%M%S)"
+mkdir -p "$BACKUP/frontend"
+cp -a AgriOS/frontend/src "$BACKUP/frontend/"
+
+# Remover apenas os dois ficheiros antigos que causavam conflito no Windows
+rm -f AgriOS/frontend/src/features/support/supportAssistant.ts
+rm -f AgriOS/frontend/src/features/support/supportAssistant.test.ts
+
+unzip -o "$HOME/Downloads/FARPHA_Sprint_107_4_Central_Apoio_Supabase.zip" -d "$HOME/Documents/Projetos"
+
+cd ~/Documents/Projetos/AgriOS/frontend
+rm -rf node_modules/.vite
+rm -rf node_modules/.tmp
+npm install
+npm run validate
+npm run dev -- --force
+
+O .env.local e a pasta .git não são substituídos.
+
+PARTE 2 — EXECUTAR O SQL NO SUPABASE
+
+1. Abra o projeto FARPHA no Supabase.
+2. Entre em SQL Editor.
+3. Clique em New query.
+4. Abra no computador:
+
+AgriOS/database/SPRINT_107_4_SUPPORT_CENTER.sql
+
+5. Copie todo o conteúdo do ficheiro.
+6. Cole no SQL Editor.
+7. Clique em Run.
+8. Confirme que aparece Success.
+
+PARTE 3 — ATIVAR O PRIMEIRO ADMINISTRADOR
+
+Depois da migração, abra uma nova query e execute:
+
+insert into public.support_admins (user_id)
+select id
+from auth.users
+where lower(email) = lower('raphaelsantos10@gmail.com')
+on conflict (user_id) do nothing;
+
+Confirme:
+
+select
+  users.email,
+  admins.created_at
+from public.support_admins admins
+join auth.users users on users.id = admins.user_id;
+
+Se utilizar outro email para administrar o FARPHA, substitua o endereço antes de executar.
+
+PARTE 4 — TESTAR
+
+1. Entre no FARPHA com a conta ativada como administrador.
+2. Abra Ajuda e suporte.
+3. Entre em Pedidos.
+4. Confirme a mensagem Caixa administrativa Supabase.
+5. Crie um pedido com uma conta comum.
+6. Confirme que ele aparece na conta administrativa.
+7. Altere para Em análise.
+8. Envie uma resposta na conversa.
+9. Confirme a notificação e a resposta na conta comum.
+10. Teste Aguardando utilizador, Resolvido e Encerrado.
+
+IMPORTANTE
+
+- Nunca coloque service_role no frontend ou no .env.local.
+- O frontend utiliza apenas VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.
+- A integração de Inteligência Artificial será feita posteriormente por Edge Function e Secrets.
+

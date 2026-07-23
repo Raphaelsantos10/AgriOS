@@ -3,6 +3,7 @@ import { ChevronDown, CircleHelp, CreditCard, LogOut, Settings, ShieldCheck, Use
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth";
 import { LOCAL_ACCESS_KEY } from "../../auth/utils/localAccess";
+import { openSupportAssistant } from "../../support/supportCenterUtils";
 
 const roleLabels = { owner: "Proprietário", manager: "Gestor", operator: "Operador", viewer: "Consulta" } as const;
 
@@ -52,7 +53,7 @@ export default function AccountMenu() {
         <MenuItem icon={<Settings size={17}/>} label="Configurações" onClick={() => go("")} />
         <MenuItem icon={<ShieldCheck size={17}/>} label="Segurança" onClick={() => go("seguranca")} />
         <MenuItem icon={<CreditCard size={17}/>} label="Plano e subscrição" onClick={() => go("subscricao")} />
-        <MenuItem icon={<CircleHelp size={17}/>} label="Ajuda" onClick={() => { setOpen(false); navigate("/diagnostico"); }} />
+        <MenuItem icon={<CircleHelp size={17}/>} label="Ajuda e suporte" onClick={() => { setOpen(false); openSupportAssistant(); }} />
       </div>
       <div className="border-t border-[var(--farpha-border)] p-2"><MenuItem danger icon={<LogOut size={17}/>} label={mode === "required" ? "Terminar sessão" : "Sair da demonstração"} onClick={mode === "required" ? () => void handleSignOut() : leaveLocalDemo} /></div>
     </section>}

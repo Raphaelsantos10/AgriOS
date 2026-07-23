@@ -1,0 +1,10 @@
+Execute somente depois de a página abrir normalmente e npm run validate terminar sem erros.
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "fix: Sprint 107.3.1 - corrigir página branca no Windows"
+git pull --rebase origin main
+git push origin main
+
+Se git pull apresentar conflito, pare e não use git reset --hard.

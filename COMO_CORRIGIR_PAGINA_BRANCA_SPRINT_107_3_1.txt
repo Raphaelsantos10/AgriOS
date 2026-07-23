@@ -1,0 +1,34 @@
+FARPHA — CORREÇÃO 107.3.1
+PÁGINA BRANCA NO WINDOWS
+
+1. Pare npm run dev com Ctrl+C.
+2. Coloque FARPHA_Sprint_107_3_1_Correcao_Pagina_Branca.zip em Downloads.
+3. Copie todo o bloco abaixo para o Git Bash:
+
+cd ~/Documents/Projetos
+
+BACKUP="AgriOS_backup_sprint107_3_1_$(date +%Y%m%d_%H%M%S)"
+mkdir -p "$BACKUP/frontend"
+cp -a AgriOS/frontend/src "$BACKUP/frontend/"
+
+unzip -o "$HOME/Downloads/FARPHA_Sprint_107_3_1_Correcao_Pagina_Branca.zip" -d "$HOME/Documents/Projetos"
+
+cd ~/Documents/Projetos/AgriOS/frontend
+rm -rf node_modules/.vite
+npm install
+npm run validate
+npm run dev -- --force
+
+4. Abra http://localhost:5173.
+5. Pressione Ctrl+Shift+R uma vez.
+
+O comando rm -rf acima remove somente o cache temporário node_modules/.vite.
+Não remove o projeto, o banco de dados, o .env.local nem a pasta .git.
+
+SE A PÁGINA CONTINUAR BRANCA
+No Git Bash, dentro de frontend, execute:
+
+npm run dev -- --force
+
+Envie todo o texto apresentado pelo terminal e a primeira mensagem vermelha da consola do navegador (F12 > Console).
+

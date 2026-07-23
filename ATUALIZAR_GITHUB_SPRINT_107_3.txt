@@ -1,0 +1,11 @@
+Execute somente depois de npm run validate terminar sem erros e de confirmar o assistente no navegador.
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "feat: Sprint 107.3 - assistente FARPHA e central de apoio"
+git pull --rebase origin main
+git push origin main
+
+Se git commit responder "nothing to commit", não repita o commit.
+Se git pull apresentar conflito, pare e não use git reset --hard.
