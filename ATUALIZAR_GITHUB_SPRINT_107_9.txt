@@ -1,0 +1,31 @@
+FARPHA — PUBLICAR A SPRINT 107.9 NO GITHUB
+==========================================
+
+Execute apenas depois de `npm run validate` e `npm run audit:prod` terminarem
+sem erros.
+
+Cole este bloco no Git Bash:
+
+cd ~/Documents/Projetos/AgriOS
+
+git status
+git add -A
+git diff --cached --check
+git status --short
+git commit -m "chore: Sprint 107.9 - consolidar identidade FARPHA"
+git pull --rebase origin main
+git push origin main
+git status
+
+Resultado esperado no fim:
+
+On branch main
+Your branch is up to date with 'origin/main'.
+nothing to commit, working tree clean
+
+Não use `git add --renormalize .` nesta Sprint.
+
+RENOMEAÇÃO DO REPOSITÓRIO
+
+O commit acima ainda deve ser enviado ao endereço AgriOS atual. Só depois,
+se desejar mudar também o URL público, siga RENOMEAR_REPOSITORIO_FARPHA.txt.

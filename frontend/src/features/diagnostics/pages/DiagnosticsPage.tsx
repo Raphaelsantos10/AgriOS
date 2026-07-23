@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import DiagnosticItem from "../components/DiagnosticItem";
 import DiagnosticSummary from "../components/DiagnosticSummary";
+import ModuleMaturityPanel from "../components/ModuleMaturityPanel";
 import { runDiagnostics } from "../services/diagnosticsService";
 import type { DiagnosticCategory, DiagnosticReport } from "../types/diagnostics";
 
@@ -145,6 +146,8 @@ export default function DiagnosticsPage() {
               </div>
             </section>
           ))}
+
+          <ModuleMaturityPanel />
         </>
       ) : null}
     </section>

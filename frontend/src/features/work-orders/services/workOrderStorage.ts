@@ -22,6 +22,10 @@ function persist(orders: WorkOrder[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
 }
 
+export function clearLocalWorkOrders() {
+  localStorage.removeItem(STORAGE_KEY);
+}
+
 export function createWorkOrder(input: WorkOrderDraft): WorkOrder {
   const orders = listWorkOrders();
   const now = new Date().toISOString();

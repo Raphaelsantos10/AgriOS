@@ -11,6 +11,8 @@ export function listAgriculturalCosts(): AgriculturalCost[] {
 
 function persist(costs: AgriculturalCost[]) { localStorage.setItem(STORAGE_KEY, JSON.stringify(costs)); }
 
+export function clearLocalAgriculturalCosts() { localStorage.removeItem(STORAGE_KEY); }
+
 export function createAgriculturalCost(draft: AgriculturalCostDraft) {
   const cost: AgriculturalCost = { ...draft, id: `CST-${Date.now().toString(36).toUpperCase()}`, createdAt: new Date().toISOString() };
   persist([cost, ...listAgriculturalCosts()]);

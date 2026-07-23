@@ -1,0 +1,41 @@
+FARPHA — INSTALAR A SPRINT 109
+================================
+
+Esta Sprint é cumulativa e não requer SQL nem alterações no Supabase.
+Pare `npm run dev` com Ctrl+C antes de começar.
+
+Cole TODO este bloco no Git Bash:
+
+cd ~/Documents/Projetos/AgriOS
+
+test -f frontend/.env.local && echo "ENV LOCAL ENCONTRADO E PRESERVADO" || echo "ATENÇÃO: frontend/.env.local não existe"
+
+unzip -q -o ~/Downloads/FARPHA_Sprint_109_Documentacao_Publica.zip -d ~/Documents/Projetos
+
+git rm -f --ignore-unmatch \
+  frontend/src/features/auth/MarketingSiteV2.tsx \
+  frontend/src/features/auth/MarketingSiteV3.tsx \
+  frontend/src/assets/react.svg \
+  frontend/src/assets/vite.svg \
+  frontend/src/assets/hero.png \
+  frontend/src/assets/brand/farpha-logo.png \
+  frontend/src/assets/brand/farpha-symbol.png
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run validate
+npm run audit:prod
+
+Para gerar as capturas atuais no seu próprio computador:
+
+npm run screenshots:capture
+npm run verify:media
+
+O comando utiliza o Google Chrome instalado, inicia um servidor temporário,
+gera as imagens e encerra o servidor. Não altera o `.env.local`.
+
+Para abrir normalmente:
+
+npm run dev
+
+Use Ctrl+C para parar. O terminal não fecha automaticamente.

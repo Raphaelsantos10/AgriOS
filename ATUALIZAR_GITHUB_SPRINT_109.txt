@@ -1,0 +1,21 @@
+FARPHA — PUBLICAR A SPRINT 109 NO GITHUB
+========================================
+
+Depois de rever as capturas e remover qualquer dado pessoal:
+
+cd ~/Documents/Projetos/AgriOS
+
+git status
+git add -A
+git diff --cached --check
+git status --short
+git commit -m "docs: Sprint 109 - consolidar apresentação pública"
+git pull --rebase origin main
+git push origin main
+git status
+
+Resultado esperado:
+
+On branch main
+Your branch is up to date with 'origin/main'.
+nothing to commit, working tree clean

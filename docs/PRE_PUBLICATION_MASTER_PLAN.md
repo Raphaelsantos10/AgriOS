@@ -18,10 +18,10 @@ substituir nem apagar as sprints anteriores.
 ## 2. Marca, apresentação e documentação
 
 - [ ] Definir o nome final do repositório FARPHA.
-- [ ] Eliminar referências e logótipos AgriOS antigos.
-- [ ] Consolidar um guia oficial de instalação e administração.
+- [x] Eliminar referências e logótipos AgriOS antigos da interface ativa.
+- [x] Consolidar índice, governança de marca e guias de continuidade.
 - [ ] Produzir capturas reais, vídeo e demonstração pública.
-- [ ] Separar documentação pública, técnica e administrativa.
+- [x] Separar e indexar documentação pública, técnica e administrativa.
 - [ ] Manter roadmap e limitações apresentados de forma honesta.
 
 ## 3. Matriz de maturidade
@@ -29,12 +29,12 @@ substituir nem apagar as sprints anteriores.
 Classificar cada módulo como **real**, **parcial**, **demonstrativo** ou
 **planeado**, indicando persistência, testes, APIs, permissões e limitações.
 
-- [ ] Explorações, talhões e GIS.
-- [ ] Operações, custos, inventário, máquinas e colheitas.
-- [ ] Clima, solo, incêndio, rega e ambiente.
-- [ ] Conformidade, IFAP/PEPAC, fiscal e laboral.
-- [ ] Inteligência, automações e agricultura de precisão.
-- [ ] Digital Twin, IoT, satélite, drones e mobile.
+- [x] Explorações, talhões e GIS.
+- [x] Operações, custos, inventário, máquinas e colheitas.
+- [x] Clima, solo, incêndio, rega e ambiente.
+- [x] Conformidade, IFAP/PEPAC, fiscal e laboral.
+- [x] Inteligência, automações e agricultura de precisão.
+- [x] Digital Twin, IoT, satélite, drones e mobile.
 
 ## 4. Dados reais e Supabase
 

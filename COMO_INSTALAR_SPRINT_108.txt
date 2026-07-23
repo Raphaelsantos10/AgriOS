@@ -1,0 +1,39 @@
+FARPHA — INSTALAR A SPRINT 108
+================================
+
+Esta Sprint é cumulativa: inclui as correções da Sprint 107.9.
+Não requer SQL nem alterações no Supabase.
+
+Antes de começar, pare `npm run dev` com Ctrl+C.
+
+Cole TODO este bloco no Git Bash:
+
+cd ~/Documents/Projetos/AgriOS
+
+test -f frontend/.env.local && echo "ENV LOCAL ENCONTRADO E PRESERVADO" || echo "ATENÇÃO: frontend/.env.local não existe"
+
+unzip -q -o ~/Downloads/FARPHA_Sprint_108_Matriz_Maturidade.zip -d ~/Documents/Projetos
+
+git rm -f --ignore-unmatch \
+  frontend/src/features/auth/MarketingSiteV2.tsx \
+  frontend/src/features/auth/MarketingSiteV3.tsx \
+  frontend/src/assets/react.svg \
+  frontend/src/assets/vite.svg \
+  frontend/src/assets/hero.png \
+  frontend/src/assets/brand/farpha-logo.png \
+  frontend/src/assets/brand/farpha-symbol.png
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run validate
+npm run audit:prod
+npm run dev
+
+Depois de abrir o FARPHA:
+
+1. Entre em Sistema > Diagnóstico.
+2. Desça até “Profundidade operacional dos módulos”.
+3. Teste os filtros Real, Parcial, Demonstrativo e Planeado.
+4. Clique em “Exportar matriz CSV”.
+
+Para parar o servidor, use Ctrl+C. O terminal não fecha automaticamente.

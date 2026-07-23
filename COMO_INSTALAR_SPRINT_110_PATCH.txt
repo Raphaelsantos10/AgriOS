@@ -1,0 +1,23 @@
+FARPHA — INSTALAR ATUALIZAÇÃO SPRINT 110
+========================================
+
+Este pacote é uma atualização para quem já possui a Sprint 109.2.
+Não contém nem substitui frontend/.env.local.
+
+Pare npm run dev com Ctrl+C e execute:
+
+cd ~/Documents/Projetos
+unzip -q -o ~/Downloads/FARPHA_110_PATCH.zip -d ~/Documents/Projetos
+
+cd ~/Documents/Projetos/AgriOS
+test -f database/SPRINT_110_OPERATIONAL_PERSISTENCE.sql \
+  && echo "SPRINT 110 INSTALADA" \
+  || echo "SPRINT 110 NÃO INSTALADA"
+
+cd frontend
+npm install
+npm run validate
+npm run audit:prod
+
+Depois execute database/SPRINT_110_OPERATIONAL_PERSISTENCE.sql no SQL Editor
+do Supabase e inicie com npm run dev.

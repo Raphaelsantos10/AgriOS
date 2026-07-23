@@ -1,0 +1,34 @@
+name: Melhoria do FARPHA
+description: Propor uma melhoria com valor agrícola ou operacional.
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Necessidade do utilizador
+      description: Que dificuldade real do agricultor, técnico ou organização resolve?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Resultado esperado
+    validations:
+      required: true
+  - type: dropdown
+    id: data
+    attributes:
+      label: Origem prevista dos dados
+      options:
+        - Dados introduzidos pelo utilizador
+        - Supabase
+        - API externa oficial
+        - Sensor ou IoT
+        - Ainda por definir
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Critérios de aceitação e riscos

@@ -20,22 +20,30 @@ const initialState: WorkOrderDraft = {
   notes: "",
 };
 
-export default function CreateWorkOrderModal({ open, onClose, onCreate, initialDraft }: { open: boolean; onClose: () => void; onCreate: (draft: WorkOrderDraft) => void; initialDraft?: Partial<WorkOrderDraft> }) {
+export default function CreateWorkOrderModal({ open, onClose, onCreate, initialDraft }: { open: boolean; onClose: () => void; onCreate: (draft: WorkOrderDraft) => void | Promise<void>; initialDraft?: Partial<WorkOrderDraft> }) {
   const [form, setForm] = useState(() => ({ ...initialState, ...initialDraft }));
   const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
 
   if (!open) return null;
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
     if (!form.title.trim() || !form.farm.trim() || !form.field.trim() || !form.assignedTo.trim()) {
       setError("Preencha o título, exploração, talhão e responsável.");
       return;
     }
-    onCreate(form);
-    setForm(initialState);
-    setError("");
-    onClose();
+    setBusy(true);
+    try {
+      await onCreate(form);
+      setForm(initialState);
+      setError("");
+      onClose();
+    } catch {
+      setError("Não foi possível guardar a ordem. Tente novamente.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -57,7 +65,7 @@ export default function CreateWorkOrderModal({ open, onClose, onCreate, initialD
           <Input label="Custo previsto (€)" type="number" min="0" step="0.01" value={form.estimatedCost} onChange={(e) => setForm({ ...form, estimatedCost: Number(e.target.value) })} />
           <label className="sm:col-span-2 block text-sm font-semibold text-slate-800">Observações<textarea className="mt-2 min-h-28 w-full rounded-xl border border-slate-200 p-3 outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></label>
           {error ? <p className="sm:col-span-2 rounded-xl bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">{error}</p> : null}
-          <div className="flex justify-end gap-3 sm:col-span-2"><Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button><Button type="submit">Criar ordem</Button></div>
+          <div className="flex justify-end gap-3 sm:col-span-2"><Button type="button" variant="secondary" onClick={onClose} disabled={busy}>Cancelar</Button><Button type="submit" loading={busy}>Criar ordem</Button></div>
         </form>
       </div>
     </div>

@@ -1,0 +1,20 @@
+FARPHA — HOTFIX SPRINT 109.2
+================================
+
+Corrige a validação da captura mobile de 390 x 844.
+Não requer SQL nem alterações no Supabase.
+
+Pare `npm run dev` com Ctrl+C e execute:
+
+cd ~/Documents/Projetos/AgriOS
+unzip -q -o ~/Downloads/FARPHA_Sprint_109_2_Capturas_Responsivas.zip -d ~/Documents/Projetos
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run screenshots:capture
+npm run verify:media
+npm run validate
+npm run audit:prod
+npm run dev
+
+As capturas são geradas novamente para atualizar também o respetivo manifesto.

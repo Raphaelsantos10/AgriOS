@@ -1,0 +1,13 @@
+FARPHA — PUBLICAR O HOTFIX 109.1
+================================
+
+Depois de confirmar a captura:
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add -A
+git diff --cached --check
+git commit -m "fix: Sprint 109.1 - corrigir captura da maturidade"
+git pull --rebase origin main
+git push origin main
+git status

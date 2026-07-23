@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "farpha-frontend",
   "private": true,
   "version": "2.1.0",
   "type": "module",
@@ -12,12 +12,17 @@
     "check:public-entry": "node scripts/check-public-experience.mjs",
     "lint": "eslint .",
     "smoke:prod": "node scripts/smoke-production-build.mjs",
+    "screenshots:capture": "node scripts/capture-product-screenshots.mjs",
     "test": "vitest run",
-    "validate": "npm run check:toolchain && npm run verify:repository && npm run check:public-entry && npm run test && npm run lint && npm run build && npm run verify:pwa && npm run verify:security && npm run verify:dist && npm run smoke:prod",
+    "validate": "node scripts/run-validation.mjs",
     "verify:pwa": "node scripts/verify-pwa.mjs",
+    "verify:brand": "node scripts/check-brand-consistency.mjs",
+    "verify:maturity": "node scripts/check-module-maturity.mjs",
+    "verify:media": "node scripts/check-documentation-media.mjs",
     "verify:repository": "node scripts/check-repository-integrity.mjs",
     "verify:security": "node scripts/check-production-security.mjs",
     "verify:dist": "node scripts/verify-build-manifest.mjs",
+    "verify:docs": "node scripts/check-documentation-links.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -54,6 +59,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
     "globals": "^17.7.0",
+    "playwright": "^1.61.1",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.62.0",
     "vite": "^8.1.1",

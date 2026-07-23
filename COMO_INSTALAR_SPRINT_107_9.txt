@@ -1,0 +1,43 @@
+FARPHA — INSTALAR A SPRINT 107.9
+================================
+
+Esta Sprint não requer SQL nem alterações no Supabase.
+
+Antes de começar:
+- pare `npm run dev` com Ctrl+C;
+- feche o VS Code se ele estiver a bloquear ficheiros;
+- confirme que o ZIP está em Downloads.
+
+Cole TODO este bloco no Git Bash:
+
+cd ~/Documents/Projetos/AgriOS
+
+test -f frontend/.env.local && echo "ENV LOCAL ENCONTRADO E PRESERVADO" || echo "ATENÇÃO: frontend/.env.local não existe"
+
+unzip -q -o ~/Downloads/FARPHA_Sprint_107_9_Identidade_Repositorio.zip -d ~/Documents/Projetos
+
+git rm -f --ignore-unmatch \
+  frontend/src/features/auth/MarketingSiteV2.tsx \
+  frontend/src/features/auth/MarketingSiteV3.tsx \
+  frontend/src/assets/react.svg \
+  frontend/src/assets/vite.svg \
+  frontend/src/assets/hero.png \
+  frontend/src/assets/brand/farpha-logo.png \
+  frontend/src/assets/brand/farpha-symbol.png
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run validate
+npm run audit:prod
+npm run dev
+
+O terminal permanece aberto. Quando aparecer o endereço local, abra-o no
+navegador. Para parar o servidor, use Ctrl+C.
+
+Depois de validar visualmente:
+- volte a ~/Documents/Projetos/AgriOS;
+- siga ATUALIZAR_GITHUB_SPRINT_107_9.txt.
+
+Não execute `git add --renormalize .` nesta Sprint. O `.gitattributes` já
+protege os próximos checkouts sem criar uma alteração artificial de centenas
+de ficheiros.

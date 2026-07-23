@@ -1,0 +1,62 @@
+{
+  "version": "2026-07-23T15:20:21.687Z",
+  "policy": "Somente capturas da aplicação realmente executada; conceitos devem ficar noutra pasta.",
+  "images": [
+    {
+      "file": "dashboard-operacional-dark.png",
+      "title": "Centro de Operações — tema escuro",
+      "capturedAt": "2026-07-21",
+      "source": "Captura manual fornecida pelo proprietário durante execução local",
+      "featured": true
+    },
+    {
+      "file": "diario-talhao-light.png",
+      "title": "Diário do talhão — formulário em tema claro",
+      "capturedAt": "2026-07-21",
+      "source": "Captura manual fornecida pelo proprietário durante execução local",
+      "featured": true
+    },
+    {
+      "file": "public-home-desktop.png",
+      "title": "Página institucional FARPHA — desktop",
+      "capturedAt": "2026-07-23T15:20:21.687Z",
+      "source": "Captura automatizada da aplicação local através de Playwright e Google Chrome",
+      "featured": false
+    },
+    {
+      "file": "login-desktop.png",
+      "title": "Autenticação FARPHA — entrar",
+      "capturedAt": "2026-07-23T15:20:21.687Z",
+      "source": "Captura automatizada da aplicação local através de Playwright e Google Chrome",
+      "featured": false
+    },
+    {
+      "file": "signup-desktop.png",
+      "title": "Autenticação FARPHA — criar conta",
+      "capturedAt": "2026-07-23T15:20:21.687Z",
+      "source": "Captura automatizada da aplicação local através de Playwright e Google Chrome",
+      "featured": false
+    },
+    {
+      "file": "dashboard-desktop.png",
+      "title": "Centro de Operações FARPHA — desktop",
+      "capturedAt": "2026-07-23T15:20:21.687Z",
+      "source": "Captura automatizada da aplicação local através de Playwright e Google Chrome",
+      "featured": false
+    },
+    {
+      "file": "maturity-diagnostics.png",
+      "title": "Diagnóstico — matriz de maturidade",
+      "capturedAt": "2026-07-23T15:20:21.687Z",
+      "source": "Captura automatizada da aplicação local através de Playwright e Google Chrome",
+      "featured": false
+    },
+    {
+      "file": "public-home-mobile.png",
+      "title": "Página institucional FARPHA — mobile",
+      "capturedAt": "2026-07-23T15:20:21.687Z",
+      "source": "Captura automatizada da aplicação local através de Playwright e Google Chrome",
+      "featured": false
+    }
+  ]
+}

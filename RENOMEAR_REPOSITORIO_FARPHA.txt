@@ -1,0 +1,24 @@
+RENOMEAR O REPOSITÓRIO AgriOS PARA FARPHA
+=========================================
+
+Este passo é manual e deve ser executado apenas depois de a Sprint 107.9 estar
+validada e publicada.
+
+1. No GitHub, abra Raphaelsantos10/AgriOS.
+2. Entre em Settings > General.
+3. Em Repository name, altere AgriOS para FARPHA e confirme.
+4. No Git Bash local, execute:
+
+cd ~/Documents/Projetos/AgriOS
+git remote set-url origin https://github.com/Raphaelsantos10/FARPHA.git
+git remote -v
+git fetch origin
+
+O nome da pasta local pode continuar AgriOS sem afetar a marca. Para também a
+renomear, feche npm/Vite/VS Code e use, a partir de ~/Documents/Projetos:
+
+mv AgriOS FARPHA
+cd FARPHA
+git status
+
+Atualize depois links de documentação, deploy, badges e integrações externas.

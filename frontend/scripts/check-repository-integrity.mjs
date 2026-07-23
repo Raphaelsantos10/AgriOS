@@ -13,11 +13,18 @@ const exists = async (path) => access(path).then(() => true).catch(() => false);
 
 const requiredFiles = [
   ".github/dependabot.yml",
+  ".github/PULL_REQUEST_TEMPLATE.md",
+  ".github/ISSUE_TEMPLATE/bug_report.yml",
+  ".github/ISSUE_TEMPLATE/feature_request.yml",
+  ".github/ISSUE_TEMPLATE/config.yml",
   ".github/workflows/ci.yml",
   ".github/workflows/codeql.yml",
   ".github/workflows/release.yml",
   ".github/workflows/repository-audit.yml",
+  ".gitattributes",
   ".gitignore",
+  "CONTRIBUTING.md",
+  "RENOMEAR_REPOSITORIO_FARPHA.txt",
   "README.md",
   "SECURITY.md",
   "CHANGELOG.md",
@@ -27,9 +34,32 @@ const requiredFiles = [
   "database/SPRINT_107_6_FARPHA_INTELLIGENCE.sql",
   "database/migrations/20260721_create_billing.sql",
   "docs/PRE_PUBLICATION_MASTER_PLAN.md",
+  "docs/MODULE_MATURITY_MATRIX.md",
+  "docs/PUBLIC_DEMO_GUIDE.md",
+  "docs/USER_GUIDE.md",
+  "docs/ADMIN_GUIDE.md",
+  "docs/TECHNICAL_OVERVIEW.md",
+  "docs/screenshots/manifest.json",
+  "docs/DOCUMENTATION_INDEX.md",
+  "docs/ARCHIVE_POLICY.md",
+  "docs/brand/FARPHA_IDENTITY_GOVERNANCE.md",
   "docs/security/REPOSITORY_SECURITY_BASELINE.md",
   "docs/sprints/SPRINT_107_7_ASSISTENTE_RESILIENTE.md",
   "docs/sprints/SPRINT_107_8_AUDITORIA_REPOSITORIO.md",
+  "docs/sprints/SPRINT_107_9_IDENTIDADE_REPOSITORIO.md",
+  "docs/sprints/SPRINT_108_MATRIZ_MATURIDADE.md",
+  "docs/sprints/SPRINT_109_DOCUMENTACAO_PUBLICA.md",
+  "COMO_INSTALAR_SPRINT_107_9.txt",
+  "ATUALIZAR_GITHUB_SPRINT_107_9.txt",
+  "frontend/scripts/check-brand-consistency.mjs",
+  "frontend/scripts/check-module-maturity.mjs",
+  "frontend/scripts/check-documentation-media.mjs",
+  "frontend/scripts/check-documentation-links.mjs",
+  "frontend/scripts/capture-product-screenshots.mjs",
+  "COMO_INSTALAR_SPRINT_108.txt",
+  "ATUALIZAR_GITHUB_SPRINT_108.txt",
+  "COMO_INSTALAR_SPRINT_109.txt",
+  "ATUALIZAR_GITHUB_SPRINT_109.txt",
   "supabase/functions/farpha-intelligence/index.ts",
 ];
 
@@ -66,13 +96,20 @@ try {
   trackedFiles = await listSourceFiles(repositoryRoot);
 }
 
-const forbiddenTracked = trackedFiles.filter((file) =>
+const sourceFiles = await listSourceFiles(repositoryRoot);
+const privateOrGenerated = (file) =>
   file.startsWith("frontend/node_modules/")
   || file.startsWith("frontend/dist/")
   || /(^|\/)\.env(?:\.local|\.production|\.development)?$/.test(file)
   || file.endsWith(".pem")
   || file.endsWith(".p12")
-  || file.endsWith(".key"),
+  || file.endsWith(".key");
+const auditedFiles = [...new Set([...trackedFiles, ...sourceFiles])]
+  .filter((file) => !privateOrGenerated(file))
+  .sort();
+
+const forbiddenTracked = trackedFiles.filter((file) =>
+  privateOrGenerated(file),
 );
 if (forbiddenTracked.length) {
   throw new Error(`Ficheiros que não podem ser versionados:\n- ${forbiddenTracked.join("\n- ")}`);
@@ -94,7 +131,7 @@ const secretPatterns = [
 ];
 
 const findings = [];
-for (const file of trackedFiles.filter((path) => readableExtensions.test(path))) {
+for (const file of auditedFiles.filter((path) => readableExtensions.test(path))) {
   const absolute = join(repositoryRoot, file);
   if (!(await exists(absolute))) continue;
   const content = await readFile(absolute, "utf8");
@@ -107,12 +144,30 @@ if (findings.length) {
   throw new Error(`Possíveis segredos encontrados:\n- ${findings.join("\n- ")}`);
 }
 
-const sprintFiles = trackedFiles.filter((file) => file.startsWith("docs/sprints/"));
+const sprintFiles = auditedFiles.filter((file) => file.startsWith("docs/sprints/"));
 if (sprintFiles.length < 80) {
   throw new Error(`Histórico incompleto: apenas ${sprintFiles.length} documentos de sprint.`);
 }
 
+const changelog = await readFile(join(repositoryRoot, "CHANGELOG.md"), "utf8");
+const changelogLines = changelog.split(/\r?\n/).length;
+for (const historicalMarker of [
+  "Sprint 107.9",
+  "Sprint 107.8",
+  "Sprint 107.7",
+  "Sprint 35",
+  "Sprint 72",
+]) {
+  if (!changelog.includes(historicalMarker)) {
+    throw new Error(`Histórico do CHANGELOG incompleto: falta ${historicalMarker}.`);
+  }
+}
+if (changelogLines < 1_400) {
+  throw new Error(`CHANGELOG possivelmente truncado: apenas ${changelogLines} linhas.`);
+}
+
 console.log(
   `Repositório aprovado: ${requiredFiles.length} ficheiros estruturais, `
-  + `${trackedFiles.length} ficheiros auditados, ${sprintFiles.length} documentos de sprint e nenhum segredo evidente.`,
+  + `${auditedFiles.length} ficheiros auditados, ${sprintFiles.length} documentos de sprint, `
+  + `${changelogLines} linhas de histórico e nenhum segredo evidente.`,
 );

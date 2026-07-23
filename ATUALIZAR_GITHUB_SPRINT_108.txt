@@ -1,0 +1,21 @@
+FARPHA — PUBLICAR A SPRINT 108 NO GITHUB
+========================================
+
+Execute depois da validação e da inspeção da página Diagnóstico:
+
+cd ~/Documents/Projetos/AgriOS
+
+git status
+git add -A
+git diff --cached --check
+git status --short
+git commit -m "docs: Sprint 108 - mapear maturidade operacional"
+git pull --rebase origin main
+git push origin main
+git status
+
+Resultado esperado:
+
+On branch main
+Your branch is up to date with 'origin/main'.
+nothing to commit, working tree clean

@@ -1,0 +1,35 @@
+name: Erro no FARPHA
+description: Registar um comportamento incorreto ou uma regressão.
+title: "fix: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: O que aconteceu?
+      description: Explique o resultado observado e o resultado esperado.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Como reproduzir?
+      placeholder: "1. Abrir...\n2. Selecionar...\n3. Confirmar..."
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Ambiente
+      options:
+        - Produção
+        - Desenvolvimento local
+        - PWA instalada
+        - Supabase
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidências sem dados privados
+      description: Capturas, erros e versão. Remova chaves e dados agrícolas pessoais.

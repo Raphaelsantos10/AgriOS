@@ -1,9 +1,12 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { BarChart3, Download, FileText } from "lucide-react";
 import Button from "../../../design-system/components/Button";
 import Card from "../../../design-system/components/Card";
-import { listAgriculturalCosts } from "../services/agriculturalCostStorage";
-import type { AgriculturalCostCategory } from "../types/agriculturalCost";
+import OperationalDataSourceBadge from "../../../components/OperationalDataSourceBadge";
+import { useAuth } from "../../auth/AuthContext";
+import { resolveOperationalDataSource } from "../../shared/operationalDataSource";
+import { agriculturalCostService } from "../services/agriculturalCostService";
+import type { AgriculturalCost, AgriculturalCostCategory } from "../types/agriculturalCost";
 import { categoryLabels } from "../utils/agriculturalCosts";
 import { buildFinancialSummary, downloadFinancialReportCsv, filterFinancialCosts, type FinancialReportFilters } from "../utils/financialReport";
 
@@ -11,18 +14,33 @@ const inputClass = "h-11 rounded-xl border border-slate-200 bg-white px-3 text-s
 const initialFilters: FinancialReportFilters = { startDate: "", endDate: "", farm: "", field: "", category: "all" };
 
 export default function FinancialReportPage() {
-  const [costs] = useState(() => listAgriculturalCosts());
+  const { mode } = useAuth();
+  const source = resolveOperationalDataSource(mode);
+  const [costs, setCosts] = useState<AgriculturalCost[]>([]);
+  const [error, setError] = useState("");
   const [filters, setFilters] = useState(initialFilters);
   const filtered = useMemo(() => filterFinancialCosts(costs, filters), [costs, filters]);
   const summary = useMemo(() => buildFinancialSummary(filtered), [filtered]);
   const categoryRows = (Object.entries(summary.byCategory) as Array<[AgriculturalCostCategory, number]>).filter(([, value]) => value > 0).sort((a, b) => b[1] - a[1]);
   const fieldRows = Object.entries(summary.byField).sort((a, b) => b[1] - a[1]);
 
+  const loadCosts = useCallback(async () => {
+    setError("");
+    try { setCosts(await agriculturalCostService.list(source)); }
+    catch { setError("Não foi possível carregar os custos do relatório. Confirme a migração da Sprint 110."); }
+  }, [source]);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => void loadCosts(), 0);
+    return () => window.clearTimeout(timeout);
+  }, [loadCosts]);
+
   return <div className="mx-auto max-w-[1500px] space-y-6">
     <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
       <div><p className="text-xs font-extrabold uppercase tracking-[0.2em] text-emerald-700">Sprint 60 · Análise de custos</p><h1 className="mt-1 text-3xl font-black text-slate-950">Relatório financeiro</h1><p className="mt-2 max-w-3xl text-sm text-slate-600">Análise baseada exclusivamente nos custos registados pelo utilizador. Receitas, margem e lucro ainda não estão disponíveis.</p></div>
-      <Button onClick={() => downloadFinancialReportCsv(costs, filters, new Date().toISOString())}><Download size={18}/> Exportar relatório CSV</Button>
+      <div className="flex flex-wrap items-center gap-3"><OperationalDataSourceBadge source={source}/><Button onClick={() => downloadFinancialReportCsv(costs, filters, new Date().toISOString())}><Download size={18}/> Exportar relatório CSV</Button></div>
     </header>
+    {error ? <div role="alert" className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-800">{error} <button type="button" onClick={() => void loadCosts()} className="ml-2 underline">Tentar novamente</button></div> : null}
 
     <Card className="p-5">
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">

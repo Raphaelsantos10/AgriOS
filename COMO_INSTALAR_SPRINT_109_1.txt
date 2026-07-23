@@ -1,0 +1,21 @@
+FARPHA — HOTFIX SPRINT 109.1
+================================
+
+Corrige a captura maturity-diagnostics.png que ficava com apenas 97 px.
+Não requer SQL nem alterações no Supabase.
+
+Pare `npm run dev` com Ctrl+C e execute:
+
+cd ~/Documents/Projetos/AgriOS
+unzip -q -o ~/Downloads/FARPHA_Sprint_109_1_Correcao_Capturas.zip -d ~/Documents/Projetos
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run screenshots:capture
+npm run verify:media
+npm run validate
+npm run audit:prod
+npm run dev
+
+O novo maturity-diagnostics.png será capturado na janela completa, com altura
+suficiente para documentação. Use Ctrl+C para parar o servidor.

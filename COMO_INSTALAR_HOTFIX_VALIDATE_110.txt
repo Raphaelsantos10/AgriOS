@@ -1,0 +1,14 @@
+FARPHA — HOTFIX DO COMANDO VALIDATE NO WINDOWS
+===============================================
+
+Pare o comando bloqueado com Ctrl+C.
+
+Depois de extrair FARPHA_110_VALIDATE_FIX.zip, execute:
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm pkg set scripts.validate="node scripts/run-validation.mjs"
+npm run validate
+npm run audit:prod
+
+O novo executor mostra [1/14], [2/14] e assim sucessivamente. Se alguma etapa
+falhar, apresenta exatamente o nome da etapa em vez de ficar parado.

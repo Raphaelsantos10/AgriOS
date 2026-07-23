@@ -1,0 +1,11 @@
+FARPHA — PUBLICAR O HOTFIX 109.2
+================================
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add -A
+git diff --cached --check
+git commit -m "fix: Sprint 109.2 - validar capturas responsivas"
+git pull --rebase origin main
+git push origin main
+git status
