@@ -24,4 +24,8 @@ describe("experiência de login FARPHA", () => {
   it("não expõe o erro técnico de fornecedor desativado", () => {
     expect(normalizeAuthError("Unsupported provider: provider is not enabled")).not.toContain("Unsupported");
   });
+  it("explica cancelamentos e endereços de retorno sem expor detalhes técnicos", () => {
+    expect(normalizeAuthError("access_denied: user cancelled")).toContain("cancelado");
+    expect(normalizeAuthError("redirect_uri_mismatch")).toContain("endereço de retorno");
+  });
 });

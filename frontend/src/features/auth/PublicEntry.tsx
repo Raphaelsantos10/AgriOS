@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AuthExperience, { type AuthView } from "./AuthExperience";
 import MarketingSiteV4 from "./MarketingSiteV4";
 import { saveSelectedPlan, type FarphaPlan } from "./utils/marketingExperience";
+import { readOAuthError } from "./utils/socialAuth";
 
 function viewFromHash(): AuthView {
   return window.location.hash === "#criar-conta" ? "signup" : "login";
@@ -9,6 +10,7 @@ function viewFromHash(): AuthView {
 
 export default function PublicEntry() {
   const [authView, setAuthView] = useState<AuthView | null>(() => {
+    if (readOAuthError(window.location.search, window.location.hash)) return "login";
     if (
       window.location.hash === "#entrar" ||
       window.location.hash === "#criar-conta"

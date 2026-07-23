@@ -1,0 +1,16 @@
+FARPHA — ATUALIZAR O GITHUB DEPOIS DA SPRINT 107.6
+
+Execute apenas depois de npm run validate terminar sem erros:
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "feat: Sprint 107.6 - base segura da Inteligencia FARPHA"
+git pull --rebase origin main
+git push origin main
+
+NOTA
+====
+
+Os Secrets do Supabase não fazem parte do Git. Confirme antes do commit que
+frontend/.env.local não aparece no git status.

@@ -1,9 +1,19 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../services/supabase";
 import { normalizeRole, resolveAuthMode, type AuthMode, type FarphaRole } from "./utils/authPolicy";
 import type { FarphaPlan } from "./utils/marketingExperience";
+import {
+  buildOAuthReturnUrl,
+  initialSocialProviderStates,
+  readOAuthError,
+  requestedSocialProviders,
+  resolveSocialProviderStates,
+  type SocialProvider,
+  type SocialProviderSettings,
+  type SocialProviderStates,
+} from "./utils/socialAuth";
 
 export type UserProfile = { id: string; email: string; fullName: string; role: FarphaRole; active: boolean };
 export type SignUpInput = { email: string; password: string; fullName: string; operationType: string; selectedPlan?: FarphaPlan };
@@ -12,7 +22,9 @@ type AuthContextValue = {
   mode: AuthMode; loading: boolean; session: Session | null; profile: UserProfile | null; recovery: boolean; error: string | null;
   signIn: (email: string, password: string) => Promise<boolean>;
   signUp: (input: SignUpInput) => Promise<SignUpResult>;
-  signInSocial: (provider: "google" | "azure") => Promise<boolean>;
+  socialProviders: SocialProviderStates;
+  refreshSocialProviders: () => Promise<void>;
+  signInSocial: (provider: SocialProvider) => Promise<boolean>;
   signOut: () => Promise<void>;
   requestReset: (email: string) => Promise<boolean>;
   updatePassword: (password: string) => Promise<boolean>;
@@ -20,15 +32,23 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 const mode = resolveAuthMode(import.meta.env.VITE_AUTH_REQUIRED === "true", import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
+const requestedProviders = requestedSocialProviders(
+  import.meta.env.VITE_GOOGLE_AUTH_ENABLED === "true",
+  import.meta.env.VITE_MICROSOFT_AUTH_ENABLED === "true",
+);
 
-async function socialProviderEnabled(provider: "google" | "azure") {
+async function fetchSocialProviderSettings() {
   const baseUrl = String(import.meta.env.VITE_SUPABASE_URL ?? "").replace(/\/$/, "");
   const anonKey = String(import.meta.env.VITE_SUPABASE_ANON_KEY ?? "");
-  if (!baseUrl || !anonKey) return false;
-  const response = await fetch(`${baseUrl}/auth/v1/settings`, { headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` } });
+  if (!baseUrl || !anonKey) throw new Error("social_provider_check_failed");
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 6000);
+  const response = await fetch(`${baseUrl}/auth/v1/settings`, {
+    headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
+    signal: controller.signal,
+  }).finally(() => window.clearTimeout(timeout));
   if (!response.ok) throw new Error("social_provider_check_failed");
-  const settings = await response.json() as { external?: Record<string, boolean> };
-  return settings.external?.[provider] === true;
+  return response.json() as Promise<SocialProviderSettings>;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -36,7 +56,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(mode === "required");
   const [recovery, setRecovery] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() => readOAuthError(window.location.search, window.location.hash));
+  const [socialProviders, setSocialProviders] = useState<SocialProviderStates>(() => initialSocialProviderStates(requestedProviders));
+
+  const refreshSocialProviders = useCallback(async () => {
+    if (mode !== "required") {
+      setSocialProviders(resolveSocialProviderStates({ google: false, azure: false }, {}));
+      return;
+    }
+    setSocialProviders(initialSocialProviderStates(requestedProviders));
+    try {
+      setSocialProviders(resolveSocialProviderStates(requestedProviders, await fetchSocialProviderSettings()));
+    } catch {
+      setSocialProviders(resolveSocialProviderStates(requestedProviders));
+    }
+  }, []);
+
+  useEffect(() => {
+    const oauthError = readOAuthError(window.location.search, window.location.hash);
+    if (!oauthError) return;
+    window.history.replaceState(null, "", `${window.location.pathname}#entrar`);
+  }, []);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => void refreshSocialProviders(), 0);
+    return () => window.clearTimeout(timeout);
+  }, [refreshSocialProviders]);
 
   useEffect(() => {
     if (mode !== "required") return;
@@ -48,14 +93,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(Boolean(data.session));
     });
     const { data } = supabase.auth.onAuthStateChange((event, nextSession) => {
-      if (nextSession?.user.id !== session?.user.id) setProfile(null);
+      setProfile(null);
       setSession(nextSession);
       setLoading(Boolean(nextSession));
       setRecovery(event === "PASSWORD_RECOVERY");
       setError(null);
     });
     return () => { active = false; data.subscription.unsubscribe(); };
-  }, [session?.user.id]);
+  }, []);
 
   useEffect(() => {
     if (mode !== "required" || !session?.user) return;
@@ -70,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [session]);
 
   const value = useMemo<AuthContextValue>(() => ({
-    mode, loading, session, profile, recovery, error,
+    mode, loading, session, profile, recovery, error, socialProviders, refreshSocialProviders,
     signIn: async (email, password) => {
       setError(null);
       const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -85,16 +130,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     signInSocial: async (provider) => {
       setError(null);
-      try {
-        if (!await socialProviderEnabled(provider)) {
-          setError(`provider_not_enabled_${provider}`);
-          return false;
-        }
-      } catch {
+      const providerState = socialProviders[provider];
+      if (providerState === "not_enabled" || providerState === "disabled") {
+        setError(`provider_not_enabled_${provider}`);
+        return false;
+      }
+      if (providerState === "checking") {
+        setError("social_provider_check_pending");
+        return false;
+      }
+      if (providerState === "unreachable") {
         setError("social_provider_check_failed");
         return false;
       }
-      const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo: window.location.origin, ...(provider === "azure" ? { scopes: "email" } : {}) } });
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: buildOAuthReturnUrl(window.location.origin, import.meta.env.BASE_URL),
+          ...(provider === "azure" ? { scopes: "email" } : {}),
+        },
+      });
       setError(error?.message ?? null);
       return !error;
     },
@@ -112,7 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!error) setRecovery(false);
       return !error;
     },
-  }), [error, loading, profile, recovery, session]);
+  }), [error, loading, profile, recovery, refreshSocialProviders, session, socialProviders]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

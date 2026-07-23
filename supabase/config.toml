@@ -1,0 +1,4 @@
+project_id = "farpha"
+
+[functions.farpha-intelligence]
+verify_jwt = true

@@ -13,7 +13,7 @@ import { readSelectedPlan } from "./utils/marketingExperience";
 export type AuthView = "login" | "signup";
 
 export default function AuthExperience({ initialView, onBack }: { initialView: AuthView; onBack: () => void }) {
-  const { mode, signIn, signUp, signInSocial, requestReset, error } = useAuth();
+  const { mode, signIn, signUp, signInSocial, requestReset, error, socialProviders, refreshSocialProviders } = useAuth();
   const [view, setView] = useState<AuthView>(initialView);
   const [step, setStep] = useState(1);
   const [busy, setBusy] = useState(false);
@@ -31,8 +31,8 @@ export default function AuthExperience({ initialView, onBack }: { initialView: A
   const [selectedPlan] = useState(() => readSelectedPlan(localStorage));
 
   const emailError = emailValidationMessage(email, emailTouched);
-  const google = import.meta.env.VITE_GOOGLE_AUTH_ENABLED === "true";
-  const microsoft = import.meta.env.VITE_MICROSOFT_AUTH_ENABLED === "true";
+  const google = socialProviders.google !== "disabled";
+  const microsoft = socialProviders.azure !== "disabled";
   const passwordValid = password.length >= 10 && /[a-z]/.test(password) && /[A-Z]/.test(password) && /\d/.test(password);
 
   function changeView(next: AuthView) {
@@ -111,8 +111,9 @@ export default function AuthExperience({ initialView, onBack }: { initialView: A
   }
 
   const socialButtons = <div className="grid gap-2">
-    {google && <button type="button" onClick={() => void social("google")} disabled={busy} className="flex min-h-12 items-center justify-center gap-3 rounded-xl border border-[#173c2a]/15 bg-white px-4 font-black text-[#173c2a] transition hover:bg-[#f4f7f1] disabled:cursor-wait disabled:opacity-60"><span className="text-lg font-black text-blue-600">G</span>Continuar com Google</button>}
-    {microsoft && <button type="button" onClick={() => void social("azure")} disabled={busy} className="flex min-h-12 items-center justify-center gap-3 rounded-xl border border-[#173c2a]/15 bg-white px-4 font-black text-[#173c2a] transition hover:bg-[#f4f7f1] disabled:cursor-wait disabled:opacity-60"><span className="grid grid-cols-2 gap-px">{["#f25022", "#7fba00", "#00a4ef", "#ffb900"].map((color) => <i key={color} className="h-2 w-2" style={{ background: color }}/>)}</span>Continuar com Microsoft</button>}
+    {google && <SocialButton provider="google" state={socialProviders.google} busy={busy} onClick={() => void social("google")}/>}
+    {microsoft && <SocialButton provider="azure" state={socialProviders.azure} busy={busy} onClick={() => void social("azure")}/>}
+    {[socialProviders.google, socialProviders.azure].some((state) => state === "not_enabled" || state === "unreachable") && <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs leading-5 text-amber-900"><p>Um método externo ainda não está disponível. Pode entrar por email ou pedir ao administrador para concluir a configuração.</p><button type="button" onClick={() => void refreshSocialProviders()} className="mt-1 font-black underline decoration-amber-500 underline-offset-2">Verificar novamente</button></div>}
   </div>;
 
   return <main className="grid min-h-dvh bg-[#f7f5ed] text-[#142a1c] lg:h-dvh lg:grid-cols-[minmax(0,.96fr)_minmax(500px,1.04fr)] lg:overflow-hidden">
@@ -162,6 +163,14 @@ export default function AuthExperience({ initialView, onBack }: { initialView: A
 }
 
 function Divider() { return <div className="my-4 flex items-center gap-3 text-xs text-[#879289]"><span className="h-px flex-1 bg-[#dce3dc]"/><span>ou continue com email</span><span className="h-px flex-1 bg-[#dce3dc]"/></div>; }
+
+function SocialButton({ provider, state, busy, onClick }: { provider: "google" | "azure"; state: "disabled" | "checking" | "ready" | "not_enabled" | "unreachable"; busy: boolean; onClick: () => void }) {
+  const microsoft = provider === "azure";
+  const providerName = microsoft ? "Microsoft" : "Google";
+  const disabled = busy || state !== "ready";
+  const label = state === "checking" ? `A verificar ${providerName}…` : state === "ready" ? `Continuar com ${providerName}` : `${providerName} indisponível`;
+  return <button type="button" onClick={onClick} disabled={disabled} aria-label={label} className="flex min-h-12 items-center justify-center gap-3 rounded-xl border border-[#173c2a]/15 bg-white px-4 font-black text-[#173c2a] transition hover:bg-[#f4f7f1] disabled:cursor-not-allowed disabled:bg-[#f7f8f5] disabled:text-[#7b867e] disabled:opacity-80">{microsoft ? <span aria-hidden="true" className="grid grid-cols-2 gap-px">{["#f25022", "#7fba00", "#00a4ef", "#ffb900"].map((color) => <i key={color} className="h-2 w-2" style={{ background: color }}/>)}</span> : <span aria-hidden="true" className="text-lg font-black text-blue-600">G</span>}{label}</button>;
+}
 
 function Password({ value, setValue, visible, setVisible, caps, detectCaps, autoComplete }: { value: string; setValue: (value: string) => void; visible: boolean; setVisible: (value: boolean) => void; caps: boolean; detectCaps: (event: KeyboardEvent<HTMLInputElement>) => void; autoComplete: string }) {
   return <Input label="Palavra-passe" type={visible ? "text" : "password"} autoComplete={autoComplete} required value={value} onChange={(event) => setValue(event.target.value)} onKeyUp={detectCaps} onKeyDown={detectCaps} leadingIcon={<LockKeyhole size={17}/>} hint={caps ? "Caps Lock está ativo." : undefined} trailingAction={<button type="button" className="farpha-touch-target grid place-items-center rounded-lg text-[#657168]" onClick={() => setVisible(!visible)} aria-label={visible ? "Ocultar palavra-passe" : "Mostrar palavra-passe"} aria-pressed={visible}>{visible ? <EyeOff size={18}/> : <Eye size={18}/>}</button>}/>;

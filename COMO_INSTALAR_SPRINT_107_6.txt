@@ -1,0 +1,42 @@
+FARPHA — INSTALAÇÃO COMPLETA DA SPRINT 107.6
+
+O ZIP deve estar na pasta Downloads com o nome:
+FARPHA_Sprint_107_6_Inteligencia_Segura.zip
+
+ANTES DE COMEÇAR
+================
+
+1. No terminal onde o FARPHA está a executar, pressione Ctrl+C.
+2. Feche janelas do Explorador de Ficheiros abertas dentro da pasta AgriOS.
+3. Feche o VS Code se ele estiver a bloquear a pasta.
+
+COPIE TODO ESTE BLOCO PARA O GIT BASH
+=====================================
+
+cd ~/Documents/Projetos
+BACKUP_FARPHA="AgriOS_backup_107_5_$(date +%Y%m%d_%H%M%S)"
+mv AgriOS "$BACKUP_FARPHA"
+unzip -q ~/Downloads/FARPHA_Sprint_107_6_Inteligencia_Segura.zip -d ~/Documents/Projetos
+cp ~/Documents/Projetos/"$BACKUP_FARPHA"/frontend/.env.local ~/Documents/Projetos/AgriOS/frontend/.env.local
+cp -r ~/Documents/Projetos/"$BACKUP_FARPHA"/.git ~/Documents/Projetos/AgriOS/.git
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run validate
+npm run dev
+
+SE O COMANDO MV DER "PERMISSION DENIED"
+=======================================
+
+Ainda existe um programa a utilizar a pasta. Pressione Ctrl+C em todos os
+terminais do FARPHA, feche o VS Code e o Explorador de Ficheiros e execute o
+bloco novamente. Não responda A/all ao unzip sobre a pasta antiga.
+
+ATIVAÇÃO DA INTELIGÊNCIA
+========================
+
+Depois da instalação, siga obrigatoriamente:
+
+AgriOS/CONFIGURAR_INTELIGENCIA_FARPHA_SUPABASE.txt
+
+Sem SQL, Edge Function e Secret, o FARPHA continua a funcionar com o guia
+local. Nenhuma chave privada deve ser colocada no frontend.

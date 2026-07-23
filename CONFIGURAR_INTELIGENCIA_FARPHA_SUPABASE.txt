@@ -1,0 +1,153 @@
+FARPHA — CONFIGURAR A INTELIGÊNCIA SEGURA NO SUPABASE
+Sprint 107.6
+
+IMPORTANTE
+==========
+
+- Nunca envie a sua chave de IA pelo chat.
+- Nunca escreva a chave em .env.local ou numa variável VITE_*.
+- O valor OPENAI_API_KEY pertence exclusivamente aos Secrets da Edge Function.
+- A chave SUPABASE_SERVICE_ROLE_KEY já é fornecida pelo ambiente Supabase à
+  função. Não a copie para o frontend.
+
+PASSO 1 — CRIAR AS TABELAS
+===========================
+
+1. Entre no projeto FARPHA no Supabase.
+2. Abra SQL Editor.
+3. Clique em New query.
+4. No computador, abra:
+
+   AgriOS/database/SPRINT_107_6_FARPHA_INTELLIGENCE.sql
+
+5. Copie o conteúdo completo, incluindo a primeira linha com "--".
+6. Cole no SQL Editor e clique em Run.
+7. O resultado deve ser "Success. No rows returned".
+
+PASSO 2 — CRIAR A CHAVE DA OPENAI
+==================================
+
+1. Entre em https://platform.openai.com/api-keys
+2. Crie uma chave exclusiva para o FARPHA.
+3. Copie a chave uma única vez.
+4. Não a cole no GitHub, no Git Bash, no frontend nem numa captura de ecrã.
+
+A utilização da API pode ter custos separados da subscrição do ChatGPT.
+
+PASSO 3 — GUARDAR OS SECRETS NO SUPABASE
+=========================================
+
+1. No Supabase, abra Edge Functions.
+2. Abra Secrets ou Manage secrets.
+3. Crie:
+
+   OPENAI_API_KEY
+   Valor: a chave criada no passo anterior
+
+4. Crie:
+
+   OPENAI_MODEL
+   Valor: gpt-5.6
+
+5. Crie:
+
+   FARPHA_AI_REQUESTS_PER_HOUR
+   Valor: 20
+
+6. Crie FARPHA_ALLOWED_ORIGINS com os endereços exatos separados por vírgula.
+   Para desenvolvimento:
+
+   http://localhost:5173,http://127.0.0.1:5173
+
+   Quando publicar, acrescente o domínio oficial, sem barra no final:
+
+   http://localhost:5173,http://127.0.0.1:5173,https://SEU-DOMINIO-FARPHA
+
+PASSO 4 — PUBLICAR A EDGE FUNCTION
+===================================
+
+Abra o Git Bash e execute:
+
+cd ~/Documents/Projetos/AgriOS
+npx supabase login
+npx supabase link --project-ref cafvzjljkxtssbqzqzbi
+npx supabase functions deploy farpha-intelligence
+
+O navegador poderá abrir para confirmar o login do Supabase.
+
+Se o seu projeto tiver outro identificador, copie-o em:
+Supabase -> Project Settings -> General -> Reference ID
+
+PASSO 5 — CONFIRMAR O FRONTEND
+===============================
+
+No ficheiro:
+
+AgriOS/frontend/.env.local
+
+confirme estas linhas:
+
+VITE_SUPABASE_URL=https://cafvzjljkxtssbqzqzbi.supabase.co
+VITE_SUPABASE_ANON_KEY=SUA_CHAVE_PUBLICAVEL
+VITE_AUTH_REQUIRED=true
+VITE_FARPHA_AI_ENABLED=true
+
+Não acrescente OPENAI_API_KEY ou SUPABASE_SERVICE_ROLE_KEY.
+
+PASSO 6 — TESTAR
+================
+
+No Git Bash:
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run validate
+npm run dev
+
+1. Entre numa conta FARPHA.
+2. Abra Ajuda e suporte.
+3. Abra Inteligência.
+4. Pergunte: "Como crio a minha primeira exploração?"
+5. Deve aparecer "Inteligência segura" e uma resposta.
+6. A indicação mostra quantas perguntas restam nessa hora.
+
+TESTE DE FALLBACK
+=================
+
+Se a função, a Internet ou a IA estiver indisponível, o FARPHA apresenta uma
+mensagem clara e responde com o guia local. Pedidos e contacto com o
+administrador continuam disponíveis.
+
+ERROS MAIS COMUNS
+=================
+
+"Execute o SQL da Sprint 107.6"
+  Execute novamente o ficheiro SQL completo no SQL Editor.
+
+"A chave da Inteligência ainda não foi configurada"
+  Confirme OPENAI_API_KEY nos Secrets e volte a publicar a função.
+
+"Este endereço ainda não foi autorizado"
+  Acrescente o endereço exato em FARPHA_ALLOWED_ORIGINS e publique novamente.
+
+"Limite de perguntas atingido"
+  Aguarde uma hora ou ajuste FARPHA_AI_REQUESTS_PER_HOUR de forma responsável.
+
+"Edge Function não encontrada"
+  Execute novamente:
+  npx supabase functions deploy farpha-intelligence
+
+DOCUMENTAÇÃO OFICIAL
+====================
+
+Supabase Edge Functions:
+https://supabase.com/docs/guides/functions
+
+Supabase Secrets:
+https://supabase.com/docs/guides/functions/secrets
+
+Supabase autenticação de funções:
+https://supabase.com/docs/guides/functions/auth
+
+OpenAI Responses API:
+https://developers.openai.com/api/docs/guides/text

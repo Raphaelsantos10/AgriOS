@@ -1,0 +1,488 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "sha256",
+  "fileCount": 96,
+  "totalBytes": 4450170,
+  "files": [
+    {
+      "path": "_headers",
+      "bytes": 286,
+      "sha256": "f6797b4f92aa71ff817a3da8f5278474bb8999d769bdd62d985293a7a6505f7b"
+    },
+    {
+      "path": "apple-touch-icon.png",
+      "bytes": 59601,
+      "sha256": "331e640ac53ca06ebbd9557219d04111f9f9f1dd38abb90fb484baf41a794583"
+    },
+    {
+      "path": "assets/AccountSettingsPage-N3p_j_Nj.js",
+      "bytes": 16111,
+      "sha256": "9211a0f98b2844ea384b623885888dc9a0aa48965cfc022cd40fa8c4da43d068"
+    },
+    {
+      "path": "assets/AgriculturalCalendarPage-BQchiOSa.js",
+      "bytes": 9031,
+      "sha256": "58e00bc6d2b93fcb6e8c4099c217ea24f1d05c8d2bfdd53ffa65049a688f7529"
+    },
+    {
+      "path": "assets/agriculturalCosts-fwkLcz-z.js",
+      "bytes": 1481,
+      "sha256": "39058f2ce63ef5c41c964e5717c6a0c3b4c5311814b732395ea8a4a8b92f2c20"
+    },
+    {
+      "path": "assets/AgriculturalCostsPage-Cmla385T.js",
+      "bytes": 7449,
+      "sha256": "4e8cc111c304a19cf3443f1a4e331bc802377f6c261d38713196d850d29690a8"
+    },
+    {
+      "path": "assets/AnalyticsPage-C5M3jpWP.js",
+      "bytes": 13051,
+      "sha256": "24825b92fb8f9c2f0193ba9b8ee2e34c6792d73b729ec5eb3835f8d2b28938bb"
+    },
+    {
+      "path": "assets/AuditAssistantPage-DYMxOSid.js",
+      "bytes": 27626,
+      "sha256": "25096f040af3cfb84d17d0146ecd5c1091388d847e668398fe52683c366facfa"
+    },
+    {
+      "path": "assets/AutomationCenterPage-DyO2iB56.js",
+      "bytes": 11645,
+      "sha256": "9537ae3599e505ee9c732875440343aefd5463154728c7a54afe4b151361c974"
+    },
+    {
+      "path": "assets/calculateSuitability-BeEjLp8U.js",
+      "bytes": 2488,
+      "sha256": "22114e04a50a5f026a7daea31638276b06953799cbda15ee6e49ca029182c1af"
+    },
+    {
+      "path": "assets/ComplianceCenterPage-B0Zr1fGM.js",
+      "bytes": 10179,
+      "sha256": "134498f5666cf80ec00b2a234c00c37fef85e5feba5f0ec342dbe90a054e3ffc"
+    },
+    {
+      "path": "assets/complianceDocuments-DN5XnDbg.js",
+      "bytes": 2107,
+      "sha256": "186abedebf8806da96ad835caa5b1a627bcddb9488f05f14ea8af838451f4868"
+    },
+    {
+      "path": "assets/ComplianceDocumentsPage-DM5roJly.js",
+      "bytes": 9607,
+      "sha256": "48c37be08eccbeb729cd90de335a6aab848fc4feecd64e36f9f20dc0e2d999dc"
+    },
+    {
+      "path": "assets/complianceProfile-BrXruKMS.js",
+      "bytes": 5055,
+      "sha256": "d7094ef2ac0a50eba4dab8c1d329e55442ff18578beafa35900bcf8055961ecb"
+    },
+    {
+      "path": "assets/complianceStorage-C9zhNmN4.js",
+      "bytes": 571,
+      "sha256": "a3af838e2ade4c1e2120ca79b7d420afeb27032c1dade96d7de5efafa4353f60"
+    },
+    {
+      "path": "assets/CreateWorkOrderModal-DAyh_qRf.js",
+      "bytes": 4589,
+      "sha256": "83a307aecfd3665516ef068c395ebf10bfba3594ee6631171dd8465af545f2ae"
+    },
+    {
+      "path": "assets/CropLibraryPage-BzLn8TXR.js",
+      "bytes": 14516,
+      "sha256": "d62d4dd92c1ea9cbad939cb4d428cf8479c39980cdbb1bfe964781c64c6e9f97"
+    },
+    {
+      "path": "assets/cropService-Bjzrp0By.js",
+      "bytes": 1216,
+      "sha256": "126af81818c28cbf0ee2ba0645fe5a4d968306b2ad54b56df4ac262f6599366a"
+    },
+    {
+      "path": "assets/CropSuitabilityPage-CcKv0Lzt.js",
+      "bytes": 8421,
+      "sha256": "83ce47ecec10ca5307a0f1c4337f88b9487018cd6210a4d6cb8375c5328e4d88"
+    },
+    {
+      "path": "assets/Dashboard-DTFD75gb.js",
+      "bytes": 26273,
+      "sha256": "b78bfb5f01212743cb73b09bcbd79059e834631c8a50c28d1004f70d68ec867e"
+    },
+    {
+      "path": "assets/DiagnosticsPage-BC4AZ9lD.js",
+      "bytes": 11227,
+      "sha256": "acec7cda2c4d04ea18cab96162967f705b60bb0aa845e2f661e3180bc72c846a"
+    },
+    {
+      "path": "assets/DigitalTwinPage-DMdgeFt5.js",
+      "bytes": 9609,
+      "sha256": "ac76e5eb25e7981005f8e42c32ec87fce41f2590e8da80a4fbce73ae67e5e2bb"
+    },
+    {
+      "path": "assets/environmentService-CRUMR2S_.js",
+      "bytes": 357,
+      "sha256": "30d7c9cd9402c8bb21a148a816a9dba2d1235fe1e20e1fff64685fa3292dad0e"
+    },
+    {
+      "path": "assets/FarmDetailsPage-DEvOdwLf.js",
+      "bytes": 87964,
+      "sha256": "87ac50a48836bb7b2ccd20a6409e830575723bed352cd2edb7fba44daade32fc"
+    },
+    {
+      "path": "assets/FarmDrawer-BqlORNrF.js",
+      "bytes": 11140,
+      "sha256": "b797026d7049303b9a2f9c6ca96d61d3fb8a0dd5e635e7a00b48a3317e4747ce"
+    },
+    {
+      "path": "assets/FarmsPage-DFbUZVLS.js",
+      "bytes": 4321,
+      "sha256": "ed523b782c3f1cc1b4f182921833b4d75ea8191aee3a3fb5ae8fc62f8cf81d52"
+    },
+    {
+      "path": "assets/farmsService-CZna1PDc.js",
+      "bytes": 1193,
+      "sha256": "ba152caaaef0ff93818951409f4c38e5f35160adb31272e7db45162dff1071f9"
+    },
+    {
+      "path": "assets/farpha-agriculture-hero-v2-BiTfgc8b.webp",
+      "bytes": 167662,
+      "sha256": "7eaecd872d5debcc75be668c3cfdf0edbfddc4de4cc913dc738c0fb209b9edb3"
+    },
+    {
+      "path": "assets/farpha-logo-Bl4r1JRJ.png",
+      "bytes": 261879,
+      "sha256": "546536cefac77760d70b43e2a5b2a3a3cae60a42f1ecd46aff8bb35ce2cc66ae"
+    },
+    {
+      "path": "assets/farpha-logo-official-dark--b98-wXv.png",
+      "bytes": 245733,
+      "sha256": "846e77f5e57087113f63565a10685ffc42f04ec6773971e3d0a4d7538a9e6ea9"
+    },
+    {
+      "path": "assets/farpha-symbol-NfHXdXYO.png",
+      "bytes": 128649,
+      "sha256": "6e5f08f301b1c8f32e083e4f367bf94e4f8e83fe8d77efe60d64cf4d1cdd3e11"
+    },
+    {
+      "path": "assets/farpha-symbol-official-dark-Bqd51OPS.png",
+      "bytes": 121193,
+      "sha256": "5000b87e79011673d76754db51f4e80378bd29864b7a6fea55d40718be345560"
+    },
+    {
+      "path": "assets/fieldDiary-BShFf3Er.js",
+      "bytes": 1948,
+      "sha256": "33c990bd6f741f4d67aa27d132884502b8dfb8f362ff92331b68f473872a05ea"
+    },
+    {
+      "path": "assets/FieldDiaryPage-CdRd47JQ.js",
+      "bytes": 10883,
+      "sha256": "0d025e0d1d97143699ddac76dbaaad24a3752852d0376f018f9ccd441bec5a0d"
+    },
+    {
+      "path": "assets/fieldDiaryStorage-C8RFG8wt.js",
+      "bytes": 437,
+      "sha256": "6f0b53cb2764aee592ca695ecf35df8ca63ab4fd43336047c356e4305c4f46f5"
+    },
+    {
+      "path": "assets/FieldEnvironmentPage-nh8YQxea.js",
+      "bytes": 13478,
+      "sha256": "98e859a87d9f92396c43a8e0c2c9802e66535757e7acba8dedb586ca9c431daa"
+    },
+    {
+      "path": "assets/FieldFireIntelligencePage-0PtOVqpb.js",
+      "bytes": 15665,
+      "sha256": "be4ce79ba9fa32af47a6fe9642cf29a2974bf6290d953d128b5f163f0c5b2a94"
+    },
+    {
+      "path": "assets/fieldsService-DNaVc1tj.js",
+      "bytes": 1207,
+      "sha256": "525ba6c57f22c78837cea54f9571f08424f7a1ba654fdcbd8635cc761914bfae"
+    },
+    {
+      "path": "assets/FinancialReportPage-CF7NMNp0.js",
+      "bytes": 8685,
+      "sha256": "27c41d89fd23c9fa7b88a5403aa28ab6bea491872cab404530b3b0771e53f1f0"
+    },
+    {
+      "path": "assets/fireService-apP4loqq.js",
+      "bytes": 557,
+      "sha256": "1e260f5bea269d7f5f0cc5c566f8e953f9d87abc9ff03811fee4b04cde997ee2"
+    },
+    {
+      "path": "assets/fiscalLabour-BrGig8fk.js",
+      "bytes": 1604,
+      "sha256": "96d5be53ee47c007249d7422bcd5bb62643feab8de08d0ea9bf64a3bac9f7737"
+    },
+    {
+      "path": "assets/FiscalLabourPage-BcDEjsbw.js",
+      "bytes": 11699,
+      "sha256": "240dd421d2025334af2ead39ad9829479b743abcfc274f782e1bdc96c7caca69"
+    },
+    {
+      "path": "assets/harvest-BRpEDbjK.js",
+      "bytes": 3468,
+      "sha256": "24d75d7cf36a667edb9433d18d68dc0b9118a2469597d9495b52d1e5060f3c42"
+    },
+    {
+      "path": "assets/HarvestPage-ZJy1Ve8a.js",
+      "bytes": 13002,
+      "sha256": "88afa431e33d389070ca3c8d577d494686a1ddd1f895e503ebfb04f542e3c5c7"
+    },
+    {
+      "path": "assets/IcnfCartographyPage-DenDWPz-.js",
+      "bytes": 6124,
+      "sha256": "8428ac439d05ed2352f65646e37a203b7dd488f4f20e18479d641615d47a016f"
+    },
+    {
+      "path": "assets/IfapPepacPage-DaXA0X0z.js",
+      "bytes": 10200,
+      "sha256": "7df84db7e67889f012b97065134b7d074c529256d91cacddd51d44b170c3aaf1"
+    },
+    {
+      "path": "assets/ifapStorage-BBtSD_eP.js",
+      "bytes": 790,
+      "sha256": "7fff9303b55791750fb136e3d011819419282701b93500a1c9b253a9a7048d0f"
+    },
+    {
+      "path": "assets/index-CI4xPEpX.css",
+      "bytes": 156654,
+      "sha256": "12c4a032971c270d56e645218654f039566dd8c7e72bf945de501511434e07e4"
+    },
+    {
+      "path": "assets/index-Oq6hDa33.js",
+      "bytes": 201793,
+      "sha256": "fea539813e42304b01d48b68b0c4f544c19b556d25ad24528f010df41a77b404"
+    },
+    {
+      "path": "assets/IntelligencePage-CLzSgvf4.js",
+      "bytes": 14771,
+      "sha256": "9c5f79500e3353826e89f5688a9fa153f23f81d5a6db579a55dc996c7f910f76"
+    },
+    {
+      "path": "assets/InventoryPage-DwF5UPu_.js",
+      "bytes": 9626,
+      "sha256": "974c7a12f883e8da2d3176cf8a44aac9467df42cb3461c7c6903384aec065391"
+    },
+    {
+      "path": "assets/inventoryStorage-BbVPWufG.js",
+      "bytes": 813,
+      "sha256": "f2ceaf633bb37bfbd48174840f76aeec5ea57f88770dd2ee18f89ab6cdb3ef92"
+    },
+    {
+      "path": "assets/irrigationCalculator--5xSBeic.js",
+      "bytes": 1565,
+      "sha256": "8423795cbc29cdef7555047b814270682dd8b908a93d69842b524e7801d0e984"
+    },
+    {
+      "path": "assets/IrrigationPage-BxHx0ZfS.js",
+      "bytes": 13051,
+      "sha256": "5b9351d8940b7e8aadd2825cb02b6fc24cf30a8ebb93c3cc4b140f84d99ff179"
+    },
+    {
+      "path": "assets/irrigationService-BIEKtGmK.js",
+      "bytes": 663,
+      "sha256": "d9459ca5d9da0419182587332aba06851e6a682a765c5ebb210af6416befd791"
+    },
+    {
+      "path": "assets/lib-DmzBr1pK.js",
+      "bytes": 140523,
+      "sha256": "703c4878389cbaa26d6b858cbd176df2871787375bf1da03f5884674b6aa8716"
+    },
+    {
+      "path": "assets/MachineryPage-D2CH-elc.js",
+      "bytes": 11375,
+      "sha256": "e79d1dbfe8681ad600130f816f9af05297752817df545ddbddc2835b8fa1ab61"
+    },
+    {
+      "path": "assets/machineryStorage-mLeyYB66.js",
+      "bytes": 979,
+      "sha256": "f291b4d3d8a0871b6ba9bd6322e90812e97db05fe168ea80714f0300365052b8"
+    },
+    {
+      "path": "assets/maplibre-vendor-B2k4QVOw.css",
+      "bytes": 69808,
+      "sha256": "250bbffd7789f7fc4abb05eec8d12a19dcba9c3426578e9ee1185934f4c8c238"
+    },
+    {
+      "path": "assets/maplibre-vendor-rTAToIS1.js",
+      "bytes": 1027743,
+      "sha256": "ed64860055f57f32782017b81a882b3ff86793ee25278f8549a451d243ecd5b7"
+    },
+    {
+      "path": "assets/MapView-t1Jjo1-6.js",
+      "bytes": 36533,
+      "sha256": "7581292ed0380dd5ce80f34dd7cae822caefc263bd973ff180b979d587e7a7ba"
+    },
+    {
+      "path": "assets/MissionsPage-Dzs_e2sc.js",
+      "bytes": 7485,
+      "sha256": "0ba22edda7c6914f6d2d895d5fcf8c9c0e3cafdda5e6d43ef86ab6a7dfc7d729"
+    },
+    {
+      "path": "assets/missionsService-JCaz2-fo.js",
+      "bytes": 14351,
+      "sha256": "88e2ebf231b8c17268939591e0eacc407e36ece4e5b7a092ffe1707748896bc3"
+    },
+    {
+      "path": "assets/NotFoundPage-BYZ1OF0s.js",
+      "bytes": 1771,
+      "sha256": "3b808c90fcade1bfb444519050cff5911b5213c73db3c7f309826cfa78bb98f2"
+    },
+    {
+      "path": "assets/OfficialFireRiskPage-Br2IP-pH.js",
+      "bytes": 9291,
+      "sha256": "a80545a3e7c1ed0b20eb77243e2b389e674679811c5ab459fae289c343400c74"
+    },
+    {
+      "path": "assets/OperationsCenterPage-D5kqzJTR.js",
+      "bytes": 4836,
+      "sha256": "d813b3efe55cfe06118286120a05d457349bed9071b417a6c9865fa0d672e38e"
+    },
+    {
+      "path": "assets/OperationsTimeline-CKg30WKU.js",
+      "bytes": 4515,
+      "sha256": "3be79efd7643f83cc364a4a574ada5ee94375d8c1d01b9a18c5fc718605ba1dd"
+    },
+    {
+      "path": "assets/PrecisionAgriculturePage-TU-PXPE5.js",
+      "bytes": 12078,
+      "sha256": "76d5b80484f0deaec7bf14a820b455e45c2de2d74957aafdaf6adf3bae11800f"
+    },
+    {
+      "path": "assets/ProductionReadinessPage-bU0jAacv.js",
+      "bytes": 14211,
+      "sha256": "a9f7674d34f9519952f92adc2638eaacc16b6fdcea18394502fe1675dbc094df"
+    },
+    {
+      "path": "assets/ProductivityDashboardPage-CNXB0zLx.js",
+      "bytes": 7132,
+      "sha256": "4b596c09f22cdecf3d577a1f2473e0100676de6df640841b521491e2c2e792cb"
+    },
+    {
+      "path": "assets/react-vendor-CnQ8cts2.js",
+      "bytes": 189637,
+      "sha256": "a4932778ca5e91eb739d5df053cd7d6cd1fd178441a2ae2941316d6f91564f1e"
+    },
+    {
+      "path": "assets/RecommendationsPage-cLdNxOX7.js",
+      "bytes": 11636,
+      "sha256": "489cf4ae5991c9fd23e518d9b8804b33ae8c44b662ea55843f0ff45e91d90a17"
+    },
+    {
+      "path": "assets/rolldown-runtime-Bh1tDfsg.js",
+      "bytes": 567,
+      "sha256": "1b13387cb23dc39bf70e31677c21f6db5cad3377b96f286b6ee444496e5bfea7"
+    },
+    {
+      "path": "assets/SoilIntelligencePage-UkQblwg-.js",
+      "bytes": 9726,
+      "sha256": "5be900b334d616ac347c3f7808eb8f8c98c95029dde6a49da242f2f5a20d1704"
+    },
+    {
+      "path": "assets/supabase-vendor-BTW8HNq5.js",
+      "bytes": 204135,
+      "sha256": "59b638e0a5a436cbfbca4e2f11347472bd15e4347a53ee06911b8280141c0c1d"
+    },
+    {
+      "path": "assets/traceability-8AKWYaeb.js",
+      "bytes": 4500,
+      "sha256": "53db2172dc904a9f356e7cdcaab70af7db51684f978180b250d0908b4ca8c884"
+    },
+    {
+      "path": "assets/TraceabilityPage-B_9XyKIE.js",
+      "bytes": 9030,
+      "sha256": "18a91f2ce035bb5720465df0e9419e0ef475385a22c5878484a5611ad5044085"
+    },
+    {
+      "path": "assets/TreatmentsPage-DsHDlDRS.js",
+      "bytes": 11718,
+      "sha256": "382466abbb1f36f729a68584f3461a3a8318f1dbbd006ed3f98f6f84c93d5c53"
+    },
+    {
+      "path": "assets/treatmentStorage-CwR1QUl5.js",
+      "bytes": 2439,
+      "sha256": "f2546749dcb9a0c60c2f135fe40e2444ef24221f47528098a0417ea0bab9245c"
+    },
+    {
+      "path": "assets/turf-vendor-CSA1g6lg.js",
+      "bytes": 358834,
+      "sha256": "b8446685eee45da1657aa002344db2fa5389741233a755016ea6ff9ebf9e397c"
+    },
+    {
+      "path": "assets/ui-vendor-CBktvo3x.js",
+      "bytes": 34421,
+      "sha256": "97a306ef42fb7ccfdcb833161ac40962979c0d847353daa3f6cc2f55d836663e"
+    },
+    {
+      "path": "assets/WaterEnvironmentPage-BHTULcKJ.js",
+      "bytes": 11411,
+      "sha256": "ec935bde6fa62235f86085748a4905f8913215edd14d071688ae514617665740"
+    },
+    {
+      "path": "assets/waterEnvironmentStorage-D15qCPyi.js",
+      "bytes": 1004,
+      "sha256": "e3f028422858187d8bb43d14f045de1d4323fa55f6080e3fcf93aa53845f4916"
+    },
+    {
+      "path": "assets/weatherCache-DziyiUzz.js",
+      "bytes": 323,
+      "sha256": "bf552405d4aa02177e395774c597b70c729291c8090c784c1939329db696d328"
+    },
+    {
+      "path": "assets/WeatherPage-B1HLm2cw.js",
+      "bytes": 10116,
+      "sha256": "c1e3e322e7bb035a80587ad81182561f934a595a0992e1c69e81b2e4adf19c2e"
+    },
+    {
+      "path": "assets/weatherService-CfqVdQkf.js",
+      "bytes": 1215,
+      "sha256": "042044425158847d07b9b5e31a0be24e30aed6412aebe85316f4fe0951f5907c"
+    },
+    {
+      "path": "assets/WorkOrdersPage-BNpzpslt.js",
+      "bytes": 8682,
+      "sha256": "bccf4f52f9ae885f57771242a7dfbf8494114ce5567a48123501f5e93a90dc0f"
+    },
+    {
+      "path": "build-info.json",
+      "bytes": 138,
+      "sha256": "f986d90c877d181df148c0e8485945b3c0b32f717d8aadf4124a680426d9302d"
+    },
+    {
+      "path": "favicon-farpha.png",
+      "bytes": 2826,
+      "sha256": "60f5006297dfa1cf1a17e710c9cd00c9f6561b89e941c845829ba21ceb9ae02c"
+    },
+    {
+      "path": "favicon.svg",
+      "bytes": 9522,
+      "sha256": "61bc9a161de58248288e6905425d7180f0624c2865007b97d763fdac12043a66"
+    },
+    {
+      "path": "icon-192.png",
+      "bytes": 66798,
+      "sha256": "3babf4c2347d035e3651ab34c092a21e1c63293a9bd0d360fc0d848cbbef96e4"
+    },
+    {
+      "path": "icon-512.png",
+      "bytes": 349631,
+      "sha256": "259a33cfb1d387ce01de84309c961bfeca0ccc3386702b7ea3987af908de16cd"
+    },
+    {
+      "path": "icons.svg",
+      "bytes": 5031,
+      "sha256": "b45fa506195cfcdef406ba9f0c77b36ddc1a7c224040926ec70abc2fdea7b93a"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1384,
+      "sha256": "8ab3d6fd37c0827560b97a510bdb237962e4af948151f6edef0ef60e3f254d80"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "bytes": 589,
+      "sha256": "b44f40974018cdee59cc93319790c32a271d6fc2bd0f1e6218a1ad67a2f4c447"
+    },
+    {
+      "path": "sw.js",
+      "bytes": 1313,
+      "sha256": "dff8023e6ab68e1dc119c19c75ad4141dc4c109b5657c5daa3f236f7b0353d16"
+    }
+  ]
+}

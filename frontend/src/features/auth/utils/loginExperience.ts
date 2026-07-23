@@ -11,8 +11,11 @@ export function normalizeAuthError(message?: string | null) {
   if (value.includes("network") || value.includes("fetch")) return "Não foi possível contactar o serviço. Verifique a ligação.";
   if (value.includes("provider_not_enabled_google")) return "O acesso Google ainda não está ativado no Supabase. Peça ao administrador para concluir a configuração.";
   if (value.includes("provider_not_enabled_azure")) return "O acesso Microsoft ainda não está ativado no Supabase. Peça ao administrador para concluir a configuração.";
+  if (value.includes("social_provider_check_pending")) return "A configuração deste método de acesso ainda está a ser verificada.";
   if (value.includes("unsupported provider") || value.includes("provider is not enabled")) return "Este método de acesso ainda não está ativado no Supabase.";
   if (value.includes("social_provider_check_failed")) return "Não foi possível confirmar este método de acesso. Tente novamente ou utilize o email.";
+  if (value.includes("access_denied") || value.includes("user denied") || value.includes("cancelled")) return "O acesso foi cancelado. Pode tentar novamente ou utilizar o email.";
+  if (value.includes("redirect") || value.includes("callback")) return "O endereço de retorno não está autorizado. Peça ao administrador para rever as URLs de autenticação.";
   return "Não foi possível concluir a autenticação. Tente novamente.";
 }
 

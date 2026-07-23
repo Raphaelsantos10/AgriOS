@@ -1,8 +1,0 @@
-SPRINT 92 — PUBLICAR NO GITHUB
-
-cd ~/Documents/Projetos/AgriOS
-git status
-git add .
-git commit -m "fix: Sprint 92 - ativar acesso ao assistente inteligente"
-git pull --rebase origin main
-git push origin main

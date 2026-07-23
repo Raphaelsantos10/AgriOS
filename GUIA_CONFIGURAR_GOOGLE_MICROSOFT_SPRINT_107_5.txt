@@ -1,0 +1,129 @@
+FARPHA — SPRINT 107.5
+CONFIGURAR GOOGLE E MICROSOFT NO SUPABASE
+
+IMPORTANTE
+
+Nunca coloque Client Secret, Secret Value ou service_role no frontend/.env.local.
+Esses segredos ficam apenas no Google Cloud, Microsoft Entra e Supabase.
+
+CALLBACK DO PROJETO FARPHA
+
+https://cafvzjljkxtssbqzqzbi.supabase.co/auth/v1/callback
+
+============================================================
+PARTE 1 — URLs DO FARPHA NO SUPABASE
+============================================================
+
+1. Abra o projeto FARPHA no Supabase.
+2. Entre em Authentication → URL Configuration.
+3. Durante o desenvolvimento, use:
+
+Site URL:
+http://localhost:5173
+
+Redirect URLs:
+http://localhost:5173
+http://localhost:5173/**
+
+4. Quando publicar, troque Site URL pelo domínio oficial.
+5. Adicione também o domínio oficial exato em Redirect URLs.
+6. Em produção, prefira URLs exatas em vez de curingas.
+
+============================================================
+PARTE 2 — GOOGLE
+============================================================
+
+1. Abra Google Cloud → Google Auth Platform.
+2. Configure Branding, Audience e Data Access.
+3. Em Data Access, confirme os escopos:
+   - openid
+   - userinfo.email
+   - userinfo.profile
+4. Crie um OAuth Client do tipo Web application.
+5. Em Authorized JavaScript origins, adicione:
+
+http://localhost:5173
+
+6. Quando publicar, adicione também a origem oficial do FARPHA.
+7. Em Authorized redirect URIs, adicione exatamente:
+
+https://cafvzjljkxtssbqzqzbi.supabase.co/auth/v1/callback
+
+8. Copie Client ID e Client Secret.
+9. No Supabase, abra Authentication → Providers → Google.
+10. Ative Google.
+11. Cole Client ID e Client Secret.
+12. Guarde.
+
+============================================================
+PARTE 3 — MICROSOFT
+============================================================
+
+1. Abra Microsoft Entra admin center.
+2. Entre em App registrations → New registration.
+3. Para permitir contas empresariais e pessoais, selecione a opção que aceita:
+   - contas em qualquer diretório organizacional;
+   - contas Microsoft pessoais.
+4. Em Redirect URI, escolha Web e adicione exatamente:
+
+https://cafvzjljkxtssbqzqzbi.supabase.co/auth/v1/callback
+
+5. Registe a aplicação.
+6. Copie Application (client) ID.
+7. Abra Certificates & secrets → New client secret.
+8. Copie o campo Value. Não copie Secret ID.
+9. No Supabase, abra Authentication → Providers → Azure.
+10. Ative Azure.
+11. Cole Client ID e Secret Value.
+12. Para contas pessoais e empresariais, mantenha o tenant comum:
+
+https://login.microsoftonline.com/common
+
+13. Guarde.
+
+O FARPHA já pede o escopo email exigido pelo Supabase.
+
+============================================================
+PARTE 4 — .env.local
+============================================================
+
+Abra:
+
+AgriOS/frontend/.env.local
+
+Confirme:
+
+VITE_SUPABASE_URL=https://cafvzjljkxtssbqzqzbi.supabase.co
+VITE_SUPABASE_ANON_KEY=SUA_CHAVE_PUBLICA_ANON_OU_PUBLISHABLE
+VITE_AUTH_REQUIRED=true
+VITE_GOOGLE_AUTH_ENABLED=true
+VITE_MICROSOFT_AUTH_ENABLED=true
+
+Guarde o ficheiro e reinicie:
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm run dev -- --force
+
+============================================================
+PARTE 5 — TESTAR
+============================================================
+
+1. Abra http://localhost:5173.
+2. Clique em Entrar.
+3. Aguarde a verificação dos provedores.
+4. Confirme que os botões dizem:
+   - Continuar com Google
+   - Continuar com Microsoft
+5. Teste Google e conclua a autorização.
+6. Confirme o regresso ao FARPHA e o onboarding de conta nova.
+7. Termine a sessão.
+8. Teste Microsoft.
+9. Termine a sessão.
+10. Confirme que email e palavra-passe continuam a funcionar.
+
+Se aparecer “indisponível”, clique em Verificar novamente.
+Se continuar indisponível, reveja primeiro o provedor no Supabase e o callback.
+
+NOTA
+
+Esta Sprint não pede SQL novo. Não volte a executar migrações apenas para ativar Google ou Microsoft.

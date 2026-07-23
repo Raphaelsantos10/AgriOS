@@ -1,0 +1,31 @@
+FARPHA — ATUALIZAR GITHUB — SPRINT 107.5
+
+Execute somente depois de:
+
+- npm run validate terminar sem erro;
+- testar Google;
+- testar Microsoft;
+- confirmar que o .env.local não aparece em git status.
+
+No Git Bash:
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git status
+git commit -m "feat: Sprint 107.5 - estabilizar login Google e Microsoft"
+git pull --rebase origin main
+git push origin main
+
+Verificação final:
+
+git status
+
+Resultado esperado:
+
+nothing to commit, working tree clean
+
+IMPORTANTE
+
+Nunca execute git add -f frontend/.env.local.
+Nunca envie Client Secret, Secret Value ou service_role para o GitHub.

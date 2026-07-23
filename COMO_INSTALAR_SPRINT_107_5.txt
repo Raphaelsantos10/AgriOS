@@ -1,0 +1,48 @@
+FARPHA — SPRINT 107.5
+AUTENTICAÇÃO GOOGLE E MICROSOFT ESTABILIZADA
+
+PARTE 1 — INSTALAR TODO O PACOTE
+
+1. Pare npm run dev com Ctrl+C.
+2. Coloque FARPHA_Sprint_107_5_Autenticacao_Social.zip em Downloads.
+3. Copie todo o bloco abaixo para o Git Bash:
+
+cd ~/Documents/Projetos
+
+BACKUP="AgriOS_backup_sprint107_5_$(date +%Y%m%d_%H%M%S)"
+mkdir -p "$BACKUP/frontend"
+cp -a AgriOS/frontend/src "$BACKUP/frontend/"
+[ -f AgriOS/frontend/.env.local ] && cp AgriOS/frontend/.env.local "$BACKUP/frontend/.env.local"
+
+unzip -o "$HOME/Downloads/FARPHA_Sprint_107_5_Autenticacao_Social.zip" -d "$HOME/Documents/Projetos"
+
+[ -f "$BACKUP/frontend/.env.local" ] && cp "$BACKUP/frontend/.env.local" "$HOME/Documents/Projetos/AgriOS/frontend/.env.local"
+
+cd ~/Documents/Projetos/AgriOS/frontend
+rm -rf node_modules/.vite
+rm -rf node_modules/.tmp
+npm install
+npm run validate
+npm run dev -- --force
+
+O .env.local é preservado e a pasta .git não é substituída.
+
+PARTE 2 — CONFIGURAR OS PROVEDORES
+
+Abra e siga:
+
+AgriOS/GUIA_CONFIGURAR_GOOGLE_MICROSOFT_SPRINT_107_5.txt
+
+PARTE 3 — RESULTADO ESPERADO
+
+- Google e Microsoft aparecem no login e no cadastro.
+- Durante alguns instantes mostram “A verificar”.
+- Só ficam ativos quando o Supabase confirma que estão configurados.
+- Um provedor incompleto mostra “indisponível” sem abrir uma página JSON.
+- Cancelamentos e erros voltam ao login com mensagem amigável.
+- Login por email, cadastro, recuperação, onboarding e Central de Apoio continuam funcionais.
+
+SQL
+
+Esta sprint não exige SQL novo.
+Mantenha instalados os SQL das Sprints 106.7 e 107.4.

@@ -8,6 +8,12 @@ import { useAuth } from "../auth";
 import { useNotifications } from "../notifications/context/useNotifications";
 import { supportConfig } from "./supportConfig";
 import {
+  askFarphaIntelligence,
+  currentIntelligenceContext,
+  FARPHA_AI_CONVERSATION_KEY,
+  intelligenceErrorMessage,
+} from "./farphaIntelligence";
+import {
   checkSupportAdmin,
   changeSyncedTicketStatus,
   listSupportConversation,
@@ -62,8 +68,11 @@ export default function SupportAssistant() {
   const [tab, setTab] = useState<Tab>("assistant");
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState<Message[]>([
-    { id: 1, author: "assistant", text: "Olá! Sou a Inteligência FARPHA. Posso orientar a utilização, localizar recursos, preparar um diagnóstico ou encaminhar para a equipa." },
+    { id: 1, author: "assistant", text: "Olá! Sou a Inteligência FARPHA. Posso orientar a utilização, esclarecer dúvidas, localizar recursos, preparar um diagnóstico ou encaminhar para a equipa." },
   ]);
+  const [intelligenceBusy, setIntelligenceBusy] = useState(false);
+  const [intelligenceNotice, setIntelligenceNotice] = useState("");
+  const [remainingQuestions, setRemainingQuestions] = useState<number | null>(null);
   const [tickets, setTickets] = useState<SupportTicket[]>(() => readSupportTickets(localStorage));
   const [filter, setFilter] = useState<TicketFilter>("Todos");
   const [creating, setCreating] = useState(false);
@@ -139,22 +148,56 @@ export default function SupportAssistant() {
     };
   }, [mode, open, push, refreshRemote, tab, userId]);
 
-  function ask(text: string) {
+  async function ask(text: string) {
     const clean = text.trim();
-    if (!clean) return;
+    if (!clean || intelligenceBusy) return;
     const base = messageId.current;
     messageId.current += 2;
-    setMessages((current) => [
-      ...current,
-      { id: base, author: "user", text: clean },
-      { id: base + 1, author: "assistant", ...answerSupportQuestion(clean) },
-    ]);
+    setMessages((current) => [...current, { id: base, author: "user", text: clean }]);
     setQuestion("");
+    const onlineEnabled = import.meta.env.VITE_FARPHA_AI_ENABLED !== "false";
+    if (mode !== "required" || !session || !onlineEnabled || !navigator.onLine) {
+      setMessages((current) => [...current, { id: base + 1, author: "assistant", ...answerSupportQuestion(clean) }]);
+      setIntelligenceNotice(
+        mode !== "required"
+          ? "Guia local ativo. Ative a autenticação Supabase para utilizar a Inteligência online."
+          : !navigator.onLine
+            ? "Sem ligação. O guia local respondeu neste dispositivo."
+            : "Inteligência online desativada pela configuração pública.",
+      );
+      return;
+    }
+
+    setIntelligenceBusy(true);
+    setIntelligenceNotice("");
+    try {
+      const storageKey = `${FARPHA_AI_CONVERSATION_KEY}:${session.user.id}`;
+      const conversationId = sessionStorage.getItem(storageKey) || undefined;
+      const context = currentIntelligenceContext(
+        window.location,
+        document.title,
+        navigator.language,
+        Intl.DateTimeFormat().resolvedOptions().timeZone,
+      );
+      const result = await askFarphaIntelligence(clean, conversationId, context);
+      sessionStorage.setItem(storageKey, result.conversationId);
+      setRemainingQuestions(result.remaining);
+      setMessages((current) => [...current, { id: base + 1, author: "assistant", text: result.answer }]);
+      setIntelligenceNotice(`Resposta protegida · ${result.remaining} perguntas disponíveis nesta hora.`);
+    } catch (error) {
+      setMessages((current) => [
+        ...current,
+        { id: base + 1, author: "assistant", ...answerSupportQuestion(clean) },
+      ]);
+      setIntelligenceNotice(intelligenceErrorMessage(error));
+    } finally {
+      setIntelligenceBusy(false);
+    }
   }
 
   function submit(event: FormEvent) {
     event.preventDefault();
-    ask(question);
+    void ask(question);
   }
 
   function navigate(path: string) {
@@ -258,13 +301,20 @@ export default function SupportAssistant() {
 
       {tab === "assistant" && <>
         <div className="min-h-0 flex-1 overflow-y-auto bg-[var(--farpha-background)] p-4">
-          <p className="mb-3 text-[10px] font-black uppercase tracking-[.16em] text-[var(--farpha-text-muted)]">Área atual · {window.location.pathname}</p>
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-[10px] font-black uppercase tracking-[.16em] text-[var(--farpha-text-muted)]">Área atual · {window.location.pathname}</p>
+            <span className={`rounded-full px-2 py-1 text-[10px] font-black ${mode === "required" && import.meta.env.VITE_FARPHA_AI_ENABLED !== "false" ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200" : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200"}`}>
+              {intelligenceBusy ? "A analisar…" : mode === "required" && import.meta.env.VITE_FARPHA_AI_ENABLED !== "false" ? "Inteligência segura" : "Guia local"}
+            </span>
+          </div>
           <div className="space-y-3">{messages.map((message) => <article key={message.id} className={`max-w-[90%] rounded-2xl p-3 text-sm leading-6 ${message.author === "user" ? "ml-auto bg-[#276545] text-white" : "border border-[var(--farpha-border)] bg-[var(--farpha-surface)] text-[var(--farpha-text)] shadow-sm"}`}><p>{message.text}</p>{message.path && <button onClick={() => navigate(message.path!)} className="mt-2 inline-flex items-center gap-1 font-black text-emerald-700 dark:text-emerald-300">{message.action}<ChevronRight size={15}/></button>}</article>)}</div>
-          {messages.length === 1 && <div className="mt-4 grid gap-2">{quickActions.map((item) => <button key={item} onClick={() => ask(item)} className="flex min-h-11 items-center justify-between rounded-xl border border-[var(--farpha-border)] bg-[var(--farpha-surface)] px-3 text-left text-xs font-bold text-[var(--farpha-text)] hover:border-emerald-500">{item}<ChevronRight size={15}/></button>)}</div>}
+          {intelligenceBusy && <div role="status" className="mt-3 flex max-w-[90%] items-center gap-2 rounded-2xl border border-[var(--farpha-border)] bg-[var(--farpha-surface)] p-3 text-xs text-[var(--farpha-text-muted)]"><LoaderCircle size={16} className="animate-spin"/>A Inteligência FARPHA está a preparar uma resposta segura…</div>}
+          {intelligenceNotice && <p role="status" className="mt-3 rounded-xl bg-[var(--farpha-surface-muted)] p-2 text-[10px] leading-4 text-[var(--farpha-text-muted)]">{intelligenceNotice}</p>}
+          {messages.length === 1 && <div className="mt-4 grid gap-2">{quickActions.map((item) => <button key={item} disabled={intelligenceBusy} onClick={() => void ask(item)} className="flex min-h-11 items-center justify-between rounded-xl border border-[var(--farpha-border)] bg-[var(--farpha-surface)] px-3 text-left text-xs font-bold text-[var(--farpha-text)] hover:border-emerald-500 disabled:opacity-50">{item}<ChevronRight size={15}/></button>)}</div>}
           <button onClick={() => { setTab("tickets"); setCreating(true); }} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-emerald-600/40 p-3 text-sm font-black text-emerald-700 dark:text-emerald-300"><Ticket size={17}/>Ainda precisa de ajuda? Criar pedido</button>
           <div ref={endRef}/>
         </div>
-        <form onSubmit={submit} className="border-t border-[var(--farpha-border)] bg-[var(--farpha-surface)] p-3"><div className="flex gap-2"><input ref={inputRef} value={question} onChange={(event) => setQuestion(event.target.value)} maxLength={300} placeholder="Descreva o que pretende fazer" aria-label="Pergunta para a Inteligência FARPHA" className="min-w-0 flex-1 rounded-xl border border-[var(--farpha-border)] bg-[var(--farpha-surface-muted)] px-3 py-3 text-sm text-[var(--farpha-text)] outline-none focus:border-emerald-500"/><button className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#276545] text-white" aria-label="Enviar pergunta"><Send size={18}/></button></div><p className="mt-2 flex items-start gap-1 text-[10px] text-[var(--farpha-text-muted)]"><ShieldCheck size={12} className="mt-0.5 shrink-0"/>Orientação local e privada. Não introduza palavras-passe ou dados bancários.</p></form>
+        <form onSubmit={submit} className="border-t border-[var(--farpha-border)] bg-[var(--farpha-surface)] p-3"><div className="flex gap-2"><input ref={inputRef} value={question} onChange={(event) => setQuestion(event.target.value)} disabled={intelligenceBusy} maxLength={2000} placeholder="Descreva o que pretende fazer" aria-label="Pergunta para a Inteligência FARPHA" className="min-w-0 flex-1 rounded-xl border border-[var(--farpha-border)] bg-[var(--farpha-surface-muted)] px-3 py-3 text-sm text-[var(--farpha-text)] outline-none focus:border-emerald-500 disabled:opacity-60"/><button disabled={intelligenceBusy || !question.trim()} className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#276545] text-white disabled:opacity-45" aria-label="Enviar pergunta">{intelligenceBusy ? <LoaderCircle size={18} className="animate-spin"/> : <Send size={18}/>}</button></div><p className="mt-2 flex items-start gap-1 text-[10px] text-[var(--farpha-text-muted)]"><ShieldCheck size={12} className="mt-0.5 shrink-0"/>Sessão autenticada, histórico protegido e fallback local. Não introduza palavras-passe, dados bancários ou chaves. {remainingQuestions !== null ? `Limite restante: ${remainingQuestions}.` : ""}</p></form>
       </>}
 
       {tab === "tickets" && <div className="min-h-0 flex-1 overflow-y-auto p-4">
