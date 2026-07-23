@@ -2,6 +2,8 @@ import { adminClient, appUrl, authenticatedUser, cors, json, stripe } from "../_
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
+  if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   const user = await authenticatedUser(req);
   if (!user) return json({ error: "Autenticacao necessaria." }, 401);
   const result = await adminClient().from("billing_customers").select("stripe_customer_id").eq("user_id", user.id).maybeSingle();
@@ -9,4 +11,3 @@ Deno.serve(async (req) => {
   const session = await stripe.billingPortal.sessions.create({ customer: result.data.stripe_customer_id, return_url: appUrl("/configuracoes#subscricao") });
   return json({ url: session.url });
 });
-

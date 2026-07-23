@@ -1,5 +1,17 @@
 # Changelog
 
+## Sprint 107 — Auditoria e estabilização completa
+
+- Auditoria da branch principal iniciada a partir da Sprint 106.3 publicada no GitHub.
+- Dependências de produção auditadas sem vulnerabilidades conhecidas de nível alto.
+- Validação completa aprovada: TypeScript, 188 testes, lint, build, PWA, segurança, integridade e smoke test.
+- Navegação protegida contra módulos ainda sem rota; Sensores passa a aparecer como “Breve”.
+- Identidade fixa da barra lateral substituída pelo utilizador autenticado e respetiva função.
+- Portal de cliente Stripe corrigido para aceitar preflight CORS e rejeitar métodos indevidos.
+- Migração da Sprint 106.7 adicionada ao controlo de versão.
+- Nova migração de segurança remove políticas de desenvolvimento abertas e aplica isolamento por proprietário.
+- Auditoria documenta limites atuais: módulos locais, Stripe não publicado e ausência do frontend 106.7 na branch auditada.
+
 ## Sprint 95 — Caixa de notificações organizada
 
 - Abas “Novas” e “Todas” com contadores independentes.

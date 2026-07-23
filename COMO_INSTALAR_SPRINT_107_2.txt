@@ -1,0 +1,72 @@
+FARPHA — SPRINT 107.2
+PÁGINA PÚBLICA IMERSIVA, LOGIN E CADASTRO
+
+ANTES DE COMEÇAR
+1. No terminal onde npm run dev está aberto, pressione Ctrl+C.
+2. Confirme que FARPHA_Sprint_107_2_Experiencia_Visual_Imersiva_CORRIGIDA.zip está em Downloads.
+3. Não mova nem apague a pasta AgriOS. Esta instalação atualiza os ficheiros no local correto.
+4. Esta Sprint não exige executar SQL no Supabase.
+
+INSTALAÇÃO — COPIE TODO O BLOCO PARA O GIT BASH
+
+cd ~/Documents/Projetos
+
+BACKUP="AgriOS_backup_sprint107_2_$(date +%Y%m%d_%H%M%S)"
+mkdir -p "$BACKUP/frontend"
+
+cp -a AgriOS/frontend/src "$BACKUP/frontend/"
+cp -a AgriOS/frontend/public "$BACKUP/frontend/"
+cp -a AgriOS/frontend/scripts "$BACKUP/frontend/"
+
+for ITEM in package.json package-lock.json vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json index.html eslint.config.js .nvmrc; do
+  if [ -e "AgriOS/frontend/$ITEM" ]; then
+    cp -a "AgriOS/frontend/$ITEM" "$BACKUP/frontend/"
+  fi
+done
+
+unzip -o "$HOME/Downloads/FARPHA_Sprint_107_2_Experiencia_Visual_Imersiva_CORRIGIDA.zip" -d "$HOME/Documents/Projetos"
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run validate
+npm run dev
+
+# Se a página antiga ainda estiver aberta, use Ctrl+Shift+R no navegador.
+
+O ficheiro frontend/.env.local e a pasta .git existentes não são substituídos pelo ZIP.
+
+CONFIRMAÇÃO NO NAVEGADOR
+1. Abra http://localhost:5173.
+2. Confirme a navegação: Soluções, Mapa, Como funciona, Resultados, Planos e Contacto.
+3. No mapa demonstrativo, clique em Clima, Incêndio, Saúde, Rega e Produtividade.
+4. Em Como funciona, clique em Observe, Planeie, Execute e Comprove.
+5. Role a página: os indicadores e as barras devem evoluir suavemente.
+6. Clique em Entrar e confirme que o formulário fica completo sem utilizar F11.
+7. Clique em Criar conta, avance pelas duas etapas e teste as mensagens de validação.
+8. Reduza a janela ou abra no telemóvel para confirmar o menu móvel e a rolagem.
+
+AUTENTICAÇÃO SOCIAL
+No frontend/.env.local, utilize:
+
+VITE_AUTH_REQUIRED=true
+VITE_GOOGLE_AUTH_ENABLED=true
+VITE_MICROSOFT_AUTH_ENABLED=true
+
+No mesmo projeto Supabase indicado por VITE_SUPABASE_URL:
+- Authentication > Providers > Google deve estar ativado e guardado.
+- Authentication > Providers > Azure deve estar ativado e guardado.
+- As Callback URLs devem estar configuradas no Google Cloud e Microsoft Entra.
+- Authentication > URL Configuration deve incluir http://localhost:5173 e http://localhost:5173/** durante o desenvolvimento.
+
+Se um provedor não estiver ativo, o FARPHA apresenta uma mensagem amigável em vez da página JSON de erro.
+
+CONTACTOS PÚBLICOS E AJUDA
+Configure valores reais no frontend/.env.local:
+
+VITE_SUPPORT_EMAIL=apoio@farpha.pt
+VITE_SUPPORT_PHONE=+351 000 000 000
+VITE_SUPPORT_PHONE_HREF=+351000000000
+VITE_SUPPORT_WHATSAPP=351000000000
+VITE_SUPPORT_HOURS=Segunda a sexta, 09:00–18:00 (Portugal)
+
+Reinicie npm run dev após alterar o .env.local.

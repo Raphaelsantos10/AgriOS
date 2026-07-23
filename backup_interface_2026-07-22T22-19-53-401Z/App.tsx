@@ -5,7 +5,6 @@ import AppErrorBoundary from "../components/errors/AppErrorBoundary";
 import PageLoader from "../components/ui/PageLoader";
 import Layout from "./layout";
 import { AuthGate, AuthProvider } from "../features/auth";
-import SupportAssistant from "../features/support/SupportAssistant";
 
 const Dashboard = lazy(() => import("../features/dashboard/pages/Dashboard"));
 const OperationsCenterPage = lazy(() => import("../features/operations/pages/OperationsCenterPage"));
@@ -145,7 +144,6 @@ export default function App() {
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
-          <SupportAssistant />
         </Layout></AuthGate>
         </AuthProvider>
       </BrowserRouter>

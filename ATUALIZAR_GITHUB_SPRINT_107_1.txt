@@ -1,0 +1,11 @@
+Execute apenas depois de npm run validate terminar sem erros e de confirmar a interface no navegador.
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "fix: Sprint 107.1 - estabilizar experiência pública e autenticação"
+git pull --rebase origin main
+git push origin main
+
+Se git commit responder "nothing to commit", não repita o commit.
+Se git pull apresentar conflito, pare e não use git reset --hard.

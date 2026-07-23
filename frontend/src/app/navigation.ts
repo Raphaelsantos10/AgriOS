@@ -189,6 +189,7 @@ export const navigationGroups: NavigationGroup[] = [
         label: "Sensores",
         path: "/sensores",
         icon: RadioTower,
+        disabled: true,
       },
       {
         label: "Máquinas",

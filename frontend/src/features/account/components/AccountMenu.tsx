@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown, CircleHelp, CreditCard, LogOut, Settings, ShieldCheck, UserRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth";
+import { LOCAL_ACCESS_KEY } from "../../auth/utils/localAccess";
 
 const roleLabels = { owner: "Proprietário", manager: "Gestor", operator: "Operador", viewer: "Consulta" } as const;
 
@@ -34,7 +35,7 @@ export default function AccountMenu() {
   }
   function leaveLocalDemo() {
     if (!window.confirm("Sair do modo de demonstração e voltar ao site inicial?")) return;
-    localStorage.setItem("farpha-local-access", "signed-out");
+    localStorage.removeItem(LOCAL_ACCESS_KEY);
     window.location.assign("/");
   }
 

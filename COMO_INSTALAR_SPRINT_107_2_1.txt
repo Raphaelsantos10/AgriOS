@@ -1,0 +1,61 @@
+FARPHA — SPRINT 107.2.1
+ACABAMENTO VISUAL, IDENTIDADE E CONTINUIDADE DO CADASTRO
+
+ANTES DE COMEÇAR
+1. No terminal onde npm run dev está aberto, pressione Ctrl+C.
+2. Confirme que FARPHA_Sprint_107_2_1_Acabamento_Visual.zip está em Downloads.
+3. Não mova nem apague a pasta AgriOS.
+4. Esta Sprint não exige executar SQL no Supabase.
+
+INSTALAÇÃO — COPIE TODO O BLOCO PARA O GIT BASH
+
+cd ~/Documents/Projetos
+
+BACKUP="AgriOS_backup_sprint107_2_1_$(date +%Y%m%d_%H%M%S)"
+mkdir -p "$BACKUP/frontend"
+
+cp -a AgriOS/frontend/src "$BACKUP/frontend/"
+cp -a AgriOS/frontend/public "$BACKUP/frontend/"
+cp -a AgriOS/frontend/scripts "$BACKUP/frontend/"
+
+for ITEM in package.json package-lock.json vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json index.html eslint.config.js .nvmrc; do
+  if [ -e "AgriOS/frontend/$ITEM" ]; then
+    cp -a "AgriOS/frontend/$ITEM" "$BACKUP/frontend/"
+  fi
+done
+
+unzip -o "$HOME/Downloads/FARPHA_Sprint_107_2_1_Acabamento_Visual.zip" -d "$HOME/Documents/Projetos"
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm install
+npm run validate
+npm run dev
+
+# Se o navegador conservar a versão anterior, use Ctrl+Shift+R uma vez.
+
+O ficheiro frontend/.env.local e a pasta .git existentes não são substituídos pelo ZIP.
+
+CONFIRMAÇÃO NO NAVEGADOR
+1. Abra http://localhost:5173.
+2. Confirme a marca FARPHA na barra superior e no rodapé.
+3. Clique em Soluções, Mapa, Como funciona, Resultados, Planos e Contacto.
+4. Teste as cinco camadas da demonstração do mapa.
+5. Escolha Free, Plus ou Pro e confirme que o plano aparece em Criar conta.
+6. Alterne entre Entrar e Criar conta e teste a janela em computador e telemóvel.
+7. Confirme que a página pública já não apresenta instruções técnicas VITE_SUPPORT_*.
+
+AUTENTICAÇÃO SOCIAL
+No frontend/.env.local, confirme:
+
+VITE_AUTH_REQUIRED=true
+VITE_GOOGLE_AUTH_ENABLED=true
+VITE_MICROSOFT_AUTH_ENABLED=true
+
+No projeto Supabase indicado por VITE_SUPABASE_URL:
+- Authentication > Providers > Google deve estar ativado e guardado.
+- Authentication > Providers > Azure deve estar ativado e guardado.
+- As Callback URLs devem estar configuradas no Google Cloud e Microsoft Entra.
+- Authentication > URL Configuration deve incluir http://localhost:5173 e http://localhost:5173/** durante o desenvolvimento.
+
+Se Microsoft ainda apresentar "provider is not enabled", ative e guarde o provedor Azure no Supabase. Não é um erro do código da Sprint.
+

@@ -1,0 +1,11 @@
+Execute apenas depois de npm run validate terminar sem erros e de confirmar a página pública, o login e o cadastro no navegador.
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "feat: Sprint 107.2 - experiência visual imersiva e autenticação"
+git pull --rebase origin main
+git push origin main
+
+Se git commit responder "nothing to commit", não repita o commit.
+Se git pull apresentar conflito, pare e não use git reset --hard.

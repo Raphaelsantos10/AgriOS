@@ -1,68 +1,63 @@
-import { useState, type FormEvent, type KeyboardEvent } from "react";
-import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, LockKeyhole, Mail, ShieldCheck } from "lucide-react";
-import { Button, Checkbox, FormMessage, Input } from "../../design-system";
-import FarphaLogo from "../../components/brand/FarphaLogo";
-import { REMEMBER_SESSION_KEY } from "../../services/supabase";
-import { useAuth } from "./AuthContext";
-import { emailValidationMessage, isValidEmail, normalizeAuthError } from "./utils/loginExperience";
-import MarketingSite from "./MarketingSite";
+import { useEffect, useState } from "react";
+import AuthExperience, { type AuthView } from "./AuthExperience";
+import MarketingSiteV4 from "./MarketingSiteV4";
+import { saveSelectedPlan, type FarphaPlan } from "./utils/marketingExperience";
+
+function viewFromHash(): AuthView {
+  return window.location.hash === "#criar-conta" ? "signup" : "login";
+}
 
 export default function PublicEntry() {
-  const [loginOpen, setLoginOpen] = useState(() => window.location.hash === "#entrar");
-  const openLogin = () => { setLoginOpen(true); window.history.replaceState(null, "", "#entrar"); };
-  const closeLogin = () => { setLoginOpen(false); window.history.replaceState(null, "", window.location.pathname); };
-  if (loginOpen) return <LoginPanel onBack={closeLogin}/>;
-  return <MarketingSite onEnter={openLogin}/>;
-  /*return <main className="min-h-dvh overflow-x-hidden bg-[#f6f8f5] text-[#14241a]">
-    <nav className="sticky top-0 z-50 border-b border-emerald-950/10 bg-[#f6f8f5]/90 backdrop-blur-xl"><div className="mx-auto flex h-18 max-w-[1240px] items-center justify-between px-5 lg:px-8"><Brand/><div className="hidden items-center gap-8 text-sm font-bold text-slate-600 md:flex"><a href="#recursos" className="hover:text-emerald-800">Recursos</a><a href="#seguranca" className="hover:text-emerald-800">Segurança</a><a href="#planos" className="hover:text-emerald-800">Planos</a><button onClick={openLogin} className="rounded-xl border border-emerald-800/20 px-4 py-2.5 text-emerald-900 hover:bg-emerald-50">Entrar</button><button onClick={openLogin} className="rounded-xl bg-[#214f39] px-4 py-2.5 text-white shadow-lg shadow-emerald-950/10">Começar agora</button></div><button onClick={() => setMobileMenu((v) => !v)} className="rounded-xl border border-emerald-950/10 p-2.5 md:hidden" aria-label="Abrir menu">{mobileMenu ? <X/> : <Menu/>}</button></div>{mobileMenu && <div className="border-t bg-white p-4 md:hidden"><div className="grid gap-2"><a href="#recursos" onClick={() => setMobileMenu(false)} className="rounded-xl px-4 py-3 font-bold">Recursos</a><a href="#seguranca" onClick={() => setMobileMenu(false)} className="rounded-xl px-4 py-3 font-bold">Segurança</a><button onClick={openLogin} className="rounded-xl bg-[#214f39] px-4 py-3 font-black text-white">Entrar no FARPHA</button></div></div>}</nav>
+  const [authView, setAuthView] = useState<AuthView | null>(() => {
+    if (
+      window.location.hash === "#entrar" ||
+      window.location.hash === "#criar-conta"
+    ) {
+      return viewFromHash();
+    }
+    return null;
+  });
 
-    <section className="relative overflow-hidden"><div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_15%,rgba(167,226,46,.18),transparent_30%),radial-gradient(circle_at_20%_70%,rgba(39,101,69,.10),transparent_32%)]"/><div className="relative mx-auto grid min-h-[720px] max-w-[1240px] items-center gap-12 px-5 py-20 lg:grid-cols-[1.02fr_.98fr] lg:px-8"><div><span className="inline-flex items-center gap-2 rounded-full border border-emerald-800/15 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[.16em] text-emerald-800 shadow-sm"><Sparkles size={14}/> Sistema operacional agrícola</span><h1 className="mt-7 max-w-3xl text-5xl font-black leading-[.98] tracking-[-.055em] text-[#10271a] sm:text-6xl lg:text-7xl">Decisões melhores para uma agricultura mais inteligente.</h1><p className="mt-7 max-w-2xl text-lg leading-8 text-slate-600">Centralize explorações, talhões, clima, operações, custos, conformidade e inteligência num único ambiente seguro.</p><div className="mt-9 flex flex-col gap-3 sm:flex-row"><button onClick={openLogin} className="flex items-center justify-center gap-2 rounded-2xl bg-[#214f39] px-6 py-4 font-black text-white shadow-xl shadow-emerald-950/15">Entrar no FARPHA <ArrowRight size={19}/></button><a href="#recursos" className="flex items-center justify-center gap-2 rounded-2xl border border-emerald-900/15 bg-white px-6 py-4 font-black text-emerald-950">Conhecer recursos <ChevronRight size={18}/></a></div><div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-bold text-slate-500"><span className="flex items-center gap-1.5"><Check size={15} className="text-emerald-700"/> PWA instalável</span><span className="flex items-center gap-1.5"><Check size={15} className="text-emerald-700"/> Autenticação em dois fatores</span><span className="flex items-center gap-1.5"><Check size={15} className="text-emerald-700"/> Funciona em PC e mobile</span></div></div><ProductPreview/></div></section>
+  useEffect(() => {
+    const syncView = () => {
+      if (window.location.hash === "#entrar" || window.location.hash === "#criar-conta") setAuthView(viewFromHash());
+      else setAuthView(null);
+    };
+    window.addEventListener("hashchange", syncView);
+    return () => window.removeEventListener("hashchange", syncView);
+  }, []);
 
-    <section id="recursos" className="bg-[#0a1710] py-24 text-white"><div className="mx-auto max-w-[1240px] px-5 lg:px-8"><p className="text-xs font-black uppercase tracking-[.2em] text-[#a7e22e]">Uma operação conectada</p><h2 className="mt-3 max-w-3xl text-4xl font-black tracking-tight text-white md:text-5xl">Do mapa à decisão, tudo no mesmo painel.</h2><div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4"><Feature icon={<MapPinned/>} title="Explorações e GIS" text="Mapeie propriedades e talhões com contexto operacional."/><Feature icon={<CloudSun/>} title="Clima e risco" text="Previsões e alertas relevantes para o trabalho de campo."/><Feature icon={<BarChart3/>} title="Gestão e custos" text="Acompanhe produtividade, inventário e resultados."/><Feature icon={<Sparkles/>} title="Inteligência FARPHA" text="Transforme dados dispersos em prioridades explicáveis."/></div></div></section>
-
-    <section id="seguranca" className="py-24"><div className="mx-auto grid max-w-[1240px] gap-12 px-5 lg:grid-cols-2 lg:items-center lg:px-8"><div><span className="grid h-14 w-14 place-items-center rounded-2xl bg-emerald-100 text-emerald-800"><ShieldCheck size={30}/></span><h2 className="mt-6 text-4xl font-black tracking-tight">A conta do utilizador no centro da segurança.</h2><p className="mt-5 text-lg leading-8 text-slate-600">Login protegido, recuperação de palavra-passe por email, autenticação TOTP e controlo das outras sessões.</p></div><div className="grid gap-3">{["Segundo fator por aplicativo autenticador","Confirmação antes de terminar a sessão","Permissões por função","Backups e diagnóstico de produção"].map((item) => <div key={item} className="flex items-center gap-3 rounded-2xl border border-emerald-950/10 bg-white p-5 font-bold shadow-sm"><span className="grid h-8 w-8 place-items-center rounded-full bg-emerald-100 text-emerald-800"><Check size={17}/></span>{item}</div>)}</div></div></section>
-
-    <section id="planos" className="bg-emerald-50 py-20"><div className="mx-auto max-w-[1100px] px-5 text-center"><p className="text-xs font-black uppercase tracking-[.2em] text-emerald-800">Planos FARPHA</p><h2 className="mt-3 text-4xl font-black">Comece gratuitamente. Evolua quando precisar.</h2><p className="mx-auto mt-4 max-w-2xl text-slate-600">Plus e Pro incluem 30 dias de teste, cartão cadastrado com segurança no Stripe e cancelamento a qualquer momento.</p><div className="mt-10 grid gap-4 text-left md:grid-cols-3">{[["Free","€0","Recursos essenciais para começar."],["Plus","€19,90/mês","Operações, custos, alertas e relatórios."],["Pro","€49,90/mês","Toda a plataforma FARPHA liberada."]].map(([name,price,text]) => <article key={name} className="rounded-2xl border border-emerald-950/10 bg-white p-6 shadow-sm"><p className="text-sm font-black text-emerald-800">{name}</p><p className="mt-2 text-3xl font-black">{price}</p><p className="mt-3 text-sm text-slate-600">{text}</p></article>)}</div><button onClick={openLogin} className="mt-8 rounded-2xl bg-[#214f39] px-7 py-4 font-black text-white">Acessar minha conta</button></div></section>
-    <footer className="bg-[#06100b] py-8 text-emerald-100/60"><div className="mx-auto flex max-w-[1240px] flex-col gap-4 px-5 text-xs sm:flex-row sm:items-center sm:justify-between lg:px-8"><Brand light/><p>FARPHA · Agricultura inteligente e responsável</p></div></footer>
-  </main>;*/
-}
-
-function LoginPanel({ onBack }: { onBack: () => void }) {
-  const { mode, signIn, signInSocial, requestReset, error } = useAuth();
-  const [email, setEmail] = useState(() => localStorage.getItem("farpha-remembered-email") ?? "");
-  const [password, setPassword] = useState(""); const [busy, setBusy] = useState(false); const [notice, setNotice] = useState("");
-  const [showPassword, setShowPassword] = useState(false); const [capsLock, setCapsLock] = useState(false);
-  const [emailTouched, setEmailTouched] = useState(false); const [remember, setRemember] = useState(() => localStorage.getItem(REMEMBER_SESSION_KEY) === "true");
-  const emailError = emailValidationMessage(email, emailTouched);
-  async function submit(event: FormEvent) {
-    event.preventDefault(); setEmailTouched(true); setNotice("");
-    if (!isValidEmail(email) || !password) return;
-    localStorage.setItem(REMEMBER_SESSION_KEY, String(remember));
-    if (remember) localStorage.setItem("farpha-remembered-email", email.trim()); else localStorage.removeItem("farpha-remembered-email");
-    setBusy(true); await signIn(email.trim(), password); setBusy(false);
+  function openAuth(view: AuthView) {
+    setAuthView(view);
+    window.history.replaceState(
+      null,
+      "",
+      view === "signup" ? "#criar-conta" : "#entrar"
+    );
   }
-  async function reset() {
-    setEmailTouched(true); setNotice(""); if (!isValidEmail(email)) return;
-    setBusy(true); if (await requestReset(email.trim())) setNotice("Se existir uma conta para este email, receberá uma ligação segura para criar uma nova palavra-passe."); setBusy(false);
-  }
-  function detectCapsLock(event: KeyboardEvent<HTMLInputElement>) { setCapsLock(event.getModifierState("CapsLock")); }
-  const google = import.meta.env.VITE_GOOGLE_AUTH_ENABLED === "true"; const microsoft = import.meta.env.VITE_MICROSOFT_AUTH_ENABLED === "true";
-  function enterDemo() { localStorage.setItem("farpha-local-access", "active"); window.location.assign("/"); }
-  return <main className="grid min-h-dvh bg-[#0a1710] lg:grid-cols-[1.05fr_.95fr]">
-    <section className="relative hidden overflow-hidden p-12 text-white lg:flex lg:flex-col lg:justify-between" aria-label="Apresentação FARPHA"><div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(167,226,46,.18),transparent_30%),linear-gradient(145deg,#0a1710,#173c2a)]"/><div className="relative"><Brand light/></div><div className="relative max-w-xl"><p className="text-xs font-black uppercase tracking-[.2em] text-[#a7e22e]">Bem-vindo de volta</p><h1 className="mt-4 text-5xl font-black leading-tight tracking-tight">A sua exploração continua aqui.</h1><p className="mt-5 text-lg leading-8 text-emerald-100/65">Aceda a mapas, operações, alertas e decisões num ambiente protegido.</p><div className="mt-8 grid gap-3 text-sm text-emerald-50/75">{["Sessões protegidas e segundo fator", "Dados agrícolas centralizados", "Experiência consistente em todos os dispositivos"].map(item => <p key={item} className="flex items-center gap-2"><Check size={17} className="text-[#a7e22e]"/>{item}</p>)}</div></div><p className="relative text-xs text-emerald-100/40">FARPHA · Acesso seguro</p></section>
-    <section className="flex min-h-dvh items-center justify-center bg-[radial-gradient(circle_at_top_right,rgba(167,226,46,.12),transparent_30%),var(--farpha-background)] p-5 sm:p-8"><div className="w-full max-w-[460px]"><Button onClick={onBack} variant="ghost" className="mb-5 -ml-3" aria-label="Voltar ao site"><ArrowLeft size={17}/> Voltar ao site</Button><div className="rounded-[var(--farpha-radius-xl)] border border-[var(--farpha-border)] bg-[var(--farpha-surface)] p-6 shadow-[var(--farpha-shadow-lg)] sm:p-8"><div className="lg:hidden"><Brand/></div><p className="mt-7 text-xs font-black uppercase tracking-[.18em] text-[var(--farpha-brand-600)] lg:mt-0">Acesso seguro</p><h1 className="farpha-heading-2 mt-2">{mode === "local" ? "Explorar a demonstração" : "Entrar na sua conta"}</h1><p className="mt-2 text-sm leading-6 text-[var(--farpha-text-muted)]">{mode === "local" ? "Conheça o FARPHA neste dispositivo, sem criar conta ou efetuar cobranças." : "Utilize as credenciais fornecidas pela sua organização."}</p>
-      {mode === "local" ? <div className="mt-7"><Button onClick={enterDemo} size="lg" className="w-full">Entrar em modo demonstração <ArrowRight size={18}/></Button><div className="mt-4"><FormMessage tone="warning">Os dados da demonstração ficam apenas neste dispositivo.</FormMessage></div></div> : <>
-        {(google || microsoft) && <div className="mt-7 grid gap-2">{google && <Button variant="secondary" className="w-full" onClick={() => void signInSocial("google")} disabled={busy}>Continuar com Google</Button>}{microsoft && <Button variant="secondary" className="w-full" onClick={() => void signInSocial("azure")} disabled={busy}>Continuar com Microsoft</Button>}<div className="my-2 flex items-center gap-3 text-xs text-[var(--farpha-text-muted)]"><span className="h-px flex-1 bg-[var(--farpha-border)]"/><span>ou continue com email</span><span className="h-px flex-1 bg-[var(--farpha-border)]"/></div></div>}
-        <form onSubmit={submit} className="mt-6 space-y-4" noValidate>
-          <Input label="Email" type="email" inputMode="email" autoComplete="email" required value={email} onChange={event => { setEmail(event.target.value); setNotice(""); }} onBlur={() => setEmailTouched(true)} error={emailError} success={emailTouched && !emailError ? "Email válido" : undefined} leadingIcon={<Mail aria-hidden="true" size={17}/>} placeholder="nome@empresa.pt"/>
-          <Input label="Palavra-passe" type={showPassword ? "text" : "password"} autoComplete="current-password" required value={password} onChange={event => { setPassword(event.target.value); setNotice(""); }} onKeyUp={detectCapsLock} onKeyDown={detectCapsLock} leadingIcon={<LockKeyhole aria-hidden="true" size={17}/>} hint={capsLock ? "Caps Lock está ativo." : undefined} trailingAction={<button type="button" className="farpha-touch-target grid place-items-center rounded-lg text-[var(--farpha-text-muted)] hover:bg-[var(--farpha-surface-muted)]" onClick={() => setShowPassword(value => !value)} aria-label={showPassword ? "Ocultar palavra-passe" : "Mostrar palavra-passe"} aria-pressed={showPassword}>{showPassword ? <EyeOff size={18}/> : <Eye size={18}/>}</button>} />
-          <div className="flex items-start justify-between gap-4"><Checkbox checked={remember} onChange={event => setRemember(event.target.checked)} label="Lembrar-me" hint="Mantém a sessão neste dispositivo."/><button type="button" onClick={() => void reset()} disabled={busy} className="shrink-0 text-sm font-bold text-[var(--farpha-brand-700)] hover:underline disabled:opacity-60">Esqueci a palavra-passe</button></div>
-          {error ? <FormMessage tone="danger">{normalizeAuthError(error)}</FormMessage> : null}{notice ? <FormMessage tone="success">{notice}</FormMessage> : null}
-          <Button type="submit" size="lg" loading={busy} loadingLabel="A autenticar…" className="w-full">Entrar <ArrowRight size={18}/></Button>
-        </form>
-      </>}
-      <p className="mt-6 flex items-center justify-center gap-2 text-center text-[11px] text-[var(--farpha-text-muted)]"><ShieldCheck aria-hidden="true" size={14}/>Acesso protegido e compatível com autenticação em dois fatores.</p></div></div></section>
-  </main>;
-}
 
-function Brand({ light = false }: { light?: boolean }) { return <FarphaLogo eager className={`h-12 w-auto max-w-[190px] ${light ? "brightness-0 invert" : ""}`}/>; }
+  function startRegistration(plan?: FarphaPlan) {
+    saveSelectedPlan(localStorage, plan);
+    openAuth("signup");
+  }
+
+  function closeAuth() {
+    setAuthView(null);
+    window.history.replaceState(
+      null,
+      "",
+      window.location.pathname + window.location.search
+    );
+  }
+
+  if (authView) {
+    return <AuthExperience key={authView} initialView={authView} onBack={closeAuth} />;
+  }
+
+  return (
+    <MarketingSiteV4
+      onEnter={() => openAuth("login")}
+      onStart={startRegistration}
+    />
+  );
+}

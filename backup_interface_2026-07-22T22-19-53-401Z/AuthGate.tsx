@@ -3,8 +3,6 @@ import { Leaf, LoaderCircle, ShieldCheck } from "lucide-react";
 import { useAuth } from "./AuthContext";
 import MfaGate from "./MfaGate";
 import PublicEntry from "./PublicEntry";
-import FirstRunOnboarding from "./FirstRunOnboarding";
-import { hasCurrentLocalAccess, LOCAL_ACCESS_KEY } from "./utils/localAccess";
 
 function Frame({ children }: { children: ReactNode }) {
   return <main className="grid min-h-dvh place-items-center bg-[radial-gradient(circle_at_top,#315d3c,#10271a_65%)] p-5"><section className="w-full max-w-md rounded-3xl border border-white/15 bg-white p-7 shadow-2xl"><div className="mb-7 flex items-center gap-3"><span className="grid h-12 w-12 place-items-center rounded-2xl bg-[#214d32] text-[#c7ef45]"><Leaf /></span><div><p className="text-xl font-black text-[#173321]">FARPHA</p><p className="text-xs font-semibold uppercase tracking-[.16em] text-slate-500">Agricultura inteligente</p></div></div>{children}</section></main>;
@@ -17,11 +15,11 @@ function Recovery() {
 
 export default function AuthGate({ children }: { children: ReactNode }) {
   const { mode, loading, session, profile, recovery, signOut, error } = useAuth();
-  if (mode === "local") return hasCurrentLocalAccess(localStorage.getItem(LOCAL_ACCESS_KEY)) ? <>{children}</> : <PublicEntry/>;
+  if (mode === "local") return localStorage.getItem("farpha-local-access") === "signed-out" ? <PublicEntry/> : <>{children}</>;
   if (mode === "misconfigured") return <Frame><ShieldCheck className="mb-4 text-amber-600" size={34}/><h1 className="text-xl font-black">Autenticação por configurar</h1><p className="mt-3 text-sm text-slate-600">Preencha VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY no ficheiro frontend/.env.local ou desative VITE_AUTH_REQUIRED.</p></Frame>;
   if (loading) return <Frame><div className="flex items-center gap-3 font-bold"><LoaderCircle className="animate-spin"/>A validar sessão segura…</div></Frame>;
   if (recovery) return <Recovery/>;
   if (!session) return <PublicEntry/>;
   if (!profile || !profile.active) return <Frame><ShieldCheck className="mb-4 text-amber-600"/><h1 className="text-xl font-black">Acesso pendente</h1><p className="mt-3 text-sm text-slate-600">O administrador deve ativar o seu perfil. {error && `Detalhe: ${error}`}</p><button onClick={()=>void signOut()} className="mt-6 font-bold text-[#315d3c]">Terminar sessão</button></Frame>;
-  return <MfaGate><FirstRunOnboarding profile={profile}>{children}</FirstRunOnboarding></MfaGate>;
+  return <MfaGate>{children}</MfaGate>;
 }

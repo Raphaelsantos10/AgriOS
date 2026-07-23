@@ -1,7 +1,8 @@
 import { readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const assetsDirectory = new URL("../dist/assets/", import.meta.url);
+const assetsDirectory = fileURLToPath(new URL("../dist/assets/", import.meta.url));
 const maximumJavaScriptBytes = 1050 * 1024;
 
 const assetNames = await readdir(assetsDirectory);
@@ -14,7 +15,7 @@ if (javascriptAssets.length === 0) {
 const assets = await Promise.all(
   javascriptAssets.map(async (name) => ({
     name,
-    bytes: (await stat(join(assetsDirectory.pathname, name))).size,
+    bytes: (await stat(join(assetsDirectory, name))).size,
   })),
 );
 

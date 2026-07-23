@@ -2,7 +2,15 @@ import { ChevronLeft, ChevronRight, Circle } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 import { navigationGroups } from "../../app/navigation";
+import { useAuth } from "../../features/auth";
 import FarphaLogo from "../brand/FarphaLogo";
+
+const roleLabels = {
+  owner: "Proprietário",
+  manager: "Gestor",
+  operator: "Operador",
+  viewer: "Consulta",
+} as const;
 
 type SidebarProps = {
   collapsed: boolean;
@@ -17,6 +25,17 @@ export default function Sidebar({
   onCloseMobile,
   onToggleCollapsed,
 }: SidebarProps) {
+  const { profile } = useAuth();
+  const displayName = profile?.fullName || "Utilizador FARPHA";
+  const initials = displayName
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase() || "UF";
+  const roleLabel = profile ? roleLabels[profile.role] : "Modo demonstração";
+
   return (
     <>
       {mobileOpen ? (
@@ -150,11 +169,11 @@ export default function Sidebar({
             <div className="rounded-2xl border border-white/[0.08] bg-white/[0.035] p-3.5 shadow-inner shadow-black/10">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#b6e83e]/25 bg-[linear-gradient(145deg,#295f43,#153c2a)] text-sm font-extrabold text-white shadow-[0_0_18px_rgba(182,232,62,0.08)]">
-                  RS
+                  {initials}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold">Raphael Soares</p>
-                  <p className="truncate text-xs text-emerald-100/45">Administrador</p>
+                  <p className="truncate text-sm font-semibold">{displayName}</p>
+                  <p className="truncate text-xs text-emerald-100/45">{roleLabel}</p>
                 </div>
                 <Circle size={9} fill="#9bd832" className="text-[#9bd832]" />
               </div>
