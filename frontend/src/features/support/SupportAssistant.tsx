@@ -11,6 +11,7 @@ import {
   askFarphaIntelligence,
   currentIntelligenceContext,
   FARPHA_AI_CONVERSATION_KEY,
+  FARPHA_AI_CONTEXT_KEY,
   intelligenceErrorMessage,
 } from "./farphaIntelligence";
 import {
@@ -38,7 +39,15 @@ import {
   type SupportTicketStatus,
 } from "./supportCenterUtils";
 
-type Message = { id: number; author: "assistant" | "user"; text: string; path?: string; action?: string; source?: "online" | "local" };
+type Message = {
+  id: number;
+  author: "assistant" | "user";
+  text: string;
+  path?: string;
+  action?: string;
+  source?: "online" | "local";
+  metadata?: string;
+};
 type Tab = "assistant" | "tickets" | "contact";
 type TicketFilter = "Todos" | SupportTicketStatus;
 
@@ -73,6 +82,9 @@ export default function SupportAssistant() {
   const [intelligenceBusy, setIntelligenceBusy] = useState(false);
   const [intelligenceNotice, setIntelligenceNotice] = useState("");
   const [remainingQuestions, setRemainingQuestions] = useState<number | null>(null);
+  const [shareOperationalContext, setShareOperationalContext] = useState(
+    () => localStorage.getItem(FARPHA_AI_CONTEXT_KEY) === "true",
+  );
   const [tickets, setTickets] = useState<SupportTicket[]>(() => readSupportTickets(localStorage));
   const [filter, setFilter] = useState<TicketFilter>("Todos");
   const [creating, setCreating] = useState(false);
@@ -180,12 +192,22 @@ export default function SupportAssistant() {
         document.title,
         navigator.language,
         Intl.DateTimeFormat().resolvedOptions().timeZone,
+        shareOperationalContext,
       );
       const result = await askFarphaIntelligence(clean, conversationId, context);
       sessionStorage.setItem(storageKey, result.conversationId);
       setRemainingQuestions(result.remaining);
-      setMessages((current) => [...current, { id: base + 1, author: "assistant", source: "online", text: result.answer }]);
-      setIntelligenceNotice(`Resposta protegida · ${result.remaining} perguntas disponíveis nesta hora.`);
+      const sourceLabel = result.contextSources.length > 0
+        ? `Contexto: ${result.contextSources.join(", ")}`
+        : "Sem dados operacionais";
+      setMessages((current) => [...current, {
+        id: base + 1,
+        author: "assistant",
+        source: "online",
+        text: result.answer,
+        metadata: `${result.latencyMs} ms · ${result.inputTokens + result.outputTokens} tokens · ${sourceLabel}`,
+      }]);
+      setIntelligenceNotice(`Resposta protegida · ${result.remaining} perguntas disponíveis nesta hora · ${result.dailyTokensRemaining} tokens disponíveis hoje.`);
     } catch (error) {
       setMessages((current) => [
         ...current,
@@ -310,14 +332,29 @@ export default function SupportAssistant() {
               {intelligenceBusy ? "A analisar…" : mode === "required" && import.meta.env.VITE_FARPHA_AI_ENABLED !== "false" ? "Inteligência segura" : "Guia local"}
             </span>
           </div>
-          <div className="space-y-3">{messages.map((message) => <article key={message.id} className={`max-w-[90%] rounded-2xl p-3 text-sm leading-6 ${message.author === "user" ? "ml-auto bg-[#276545] text-white" : "border border-[var(--farpha-border)] bg-[var(--farpha-surface)] text-[var(--farpha-text)] shadow-sm"}`}>{message.author === "assistant" && message.source && <p className="mb-1 text-[9px] font-black uppercase tracking-[.14em] text-[var(--farpha-text-muted)]">{message.source === "online" ? "Inteligência online" : "Guia local verificado"}</p>}<p>{message.text}</p>{message.path && <button onClick={() => navigate(message.path!)} className="mt-2 inline-flex items-center gap-1 font-black text-emerald-700 dark:text-emerald-300">{message.action}<ChevronRight size={15}/></button>}</article>)}</div>
+          <div className="space-y-3">{messages.map((message) => <article key={message.id} className={`max-w-[90%] rounded-2xl p-3 text-sm leading-6 ${message.author === "user" ? "ml-auto bg-[#276545] text-white" : "border border-[var(--farpha-border)] bg-[var(--farpha-surface)] text-[var(--farpha-text)] shadow-sm"}`}>{message.author === "assistant" && message.source && <p className="mb-1 text-[9px] font-black uppercase tracking-[.14em] text-[var(--farpha-text-muted)]">{message.source === "online" ? "Inteligência online" : "Guia local verificado"}</p>}<p>{message.text}</p>{message.metadata && <p className="mt-2 border-t border-[var(--farpha-border)] pt-2 text-[9px] leading-4 text-[var(--farpha-text-muted)]">{message.metadata}</p>}{message.path && <button onClick={() => navigate(message.path!)} className="mt-2 inline-flex items-center gap-1 font-black text-emerald-700 dark:text-emerald-300">{message.action}<ChevronRight size={15}/></button>}</article>)}</div>
           {intelligenceBusy && <div role="status" className="mt-3 flex max-w-[90%] items-center gap-2 rounded-2xl border border-[var(--farpha-border)] bg-[var(--farpha-surface)] p-3 text-xs text-[var(--farpha-text-muted)]"><LoaderCircle size={16} className="animate-spin"/>A Inteligência FARPHA está a preparar uma resposta segura…</div>}
           {intelligenceNotice && <p role="status" className="mt-3 rounded-xl bg-[var(--farpha-surface-muted)] p-2 text-[10px] leading-4 text-[var(--farpha-text-muted)]">{intelligenceNotice}</p>}
           {messages.length === 1 && <div className="mt-4 grid gap-2">{quickActions.map((item) => <button key={item} disabled={intelligenceBusy} onClick={() => void ask(item)} className="flex min-h-11 items-center justify-between rounded-xl border border-[var(--farpha-border)] bg-[var(--farpha-surface)] px-3 text-left text-xs font-bold text-[var(--farpha-text)] hover:border-emerald-500 disabled:opacity-50">{item}<ChevronRight size={15}/></button>)}</div>}
           <button onClick={() => { setTab("tickets"); setCreating(true); }} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-emerald-600/40 p-3 text-sm font-black text-emerald-700 dark:text-emerald-300"><Ticket size={17}/>Ainda precisa de ajuda? Criar pedido</button>
           <div ref={endRef}/>
         </div>
-        <form onSubmit={submit} className="border-t border-[var(--farpha-border)] bg-[var(--farpha-surface)] p-3"><div className="flex gap-2"><input ref={inputRef} value={question} onChange={(event) => setQuestion(event.target.value)} disabled={intelligenceBusy} maxLength={2000} placeholder="Descreva o que pretende fazer" aria-label="Pergunta para a Inteligência FARPHA" className="min-w-0 flex-1 rounded-xl border border-[var(--farpha-border)] bg-[var(--farpha-surface-muted)] px-3 py-3 text-sm text-[var(--farpha-text)] outline-none focus:border-emerald-500 disabled:opacity-60"/><button disabled={intelligenceBusy || !question.trim()} className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#276545] text-white disabled:opacity-45" aria-label="Enviar pergunta">{intelligenceBusy ? <LoaderCircle size={18} className="animate-spin"/> : <Send size={18}/>}</button></div><p className="mt-2 flex items-start gap-1 text-[10px] text-[var(--farpha-text-muted)]"><ShieldCheck size={12} className="mt-0.5 shrink-0"/>Sessão autenticada, histórico protegido e fallback local. Não introduza palavras-passe, dados bancários ou chaves. {remainingQuestions !== null ? `Limite restante: ${remainingQuestions}.` : ""}</p></form>
+        <form onSubmit={submit} className="border-t border-[var(--farpha-border)] bg-[var(--farpha-surface)] p-3">
+          <label className="mb-2 flex cursor-pointer items-start gap-2 rounded-xl bg-[var(--farpha-surface-muted)] p-2 text-[10px] leading-4 text-[var(--farpha-text-muted)]">
+            <input
+              type="checkbox"
+              checked={shareOperationalContext}
+              onChange={(event) => {
+                const enabled = event.target.checked;
+                setShareOperationalContext(enabled);
+                localStorage.setItem(FARPHA_AI_CONTEXT_KEY, String(enabled));
+              }}
+              className="mt-0.5 h-4 w-4 accent-emerald-700"
+            />
+            <span><strong className="text-[var(--farpha-text)]">Usar contexto da exploração</strong><br/>Partilhar apenas totais autorizados de explorações, talhões, ordens e custos. Nomes, coordenadas e descrições não são enviados.</span>
+          </label>
+          <div className="flex gap-2"><input ref={inputRef} value={question} onChange={(event) => setQuestion(event.target.value)} disabled={intelligenceBusy} maxLength={2000} placeholder="Descreva o que pretende fazer" aria-label="Pergunta para a Inteligência FARPHA" className="min-w-0 flex-1 rounded-xl border border-[var(--farpha-border)] bg-[var(--farpha-surface-muted)] px-3 py-3 text-sm text-[var(--farpha-text)] outline-none focus:border-emerald-500 disabled:opacity-60"/><button disabled={intelligenceBusy || !question.trim()} className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#276545] text-white disabled:opacity-45" aria-label="Enviar pergunta">{intelligenceBusy ? <LoaderCircle size={18} className="animate-spin"/> : <Send size={18}/>}</button></div><p className="mt-2 flex items-start gap-1 text-[10px] text-[var(--farpha-text-muted)]"><ShieldCheck size={12} className="mt-0.5 shrink-0"/>Sessão autenticada, histórico protegido e fallback local. Não introduza palavras-passe, dados bancários ou chaves. {remainingQuestions !== null ? `Limite restante: ${remainingQuestions}.` : ""}</p>
+        </form>
       </>}
 
       {tab === "tickets" && <div className="min-h-0 flex-1 overflow-y-auto p-4">

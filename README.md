@@ -17,10 +17,11 @@ explorações reais e da validação das integrações externas.
 | --- | --- |
 | Página institucional, autenticação e onboarding | Implementado |
 | Explorações, talhões e edição GIS | Implementado, em auditoria de profundidade |
-| Operações, custos, inventário e conformidade | Implementado, em auditoria de persistência |
+| Ordens de trabalho e custos | Persistência Supabase com RLS; requer migração Sprint 110 |
+| Inventário e conformidade | Implementado, em auditoria de persistência |
 | Supabase, autenticação e políticas RLS | Implementado, sujeito a validação contínua |
 | Centro de Ajuda, pedidos e fallback local | Implementado |
-| Inteligência FARPHA online | Integração segura criada; requer quota e validação agrícola |
+| Inteligência FARPHA no Centro de Ajuda | Contexto consentido e métricas implementados; requer quota e validação agrícola |
 | Stripe e faturação comercial | Requer configuração de produção |
 | Digital Twin, IoT, satélite, drones e mobile nativo | Roadmap; não anunciar como concluído |
 
@@ -54,7 +55,7 @@ representam resultados agrícolas comprovados.
 - MapLibre, Turf, Terra Draw, GeoJSON e importação geográfica.
 - React 19, TypeScript, Vite, Tailwind CSS e React Query.
 - Supabase para autenticação, persistência, RLS e Edge Functions.
-- Inteligência server-side sem exposição da chave privada no navegador.
+- Inteligência server-side com consentimento de contexto, métricas e sem exposição da chave privada.
 - PWA, carregamento progressivo e módulos carregados de forma preguiçosa.
 - Testes, lint, build, smoke test, CodeQL, Dependabot e auditoria do repositório.
 

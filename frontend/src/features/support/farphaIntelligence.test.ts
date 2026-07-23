@@ -17,12 +17,25 @@ describe("Inteligência FARPHA", () => {
     expect(context.page).toBe("Painel agrícola");
     expect(context.locale).toBe("pt-PT");
     expect(context.timeZone).toBe("Europe/Lisbon");
+    expect(context.shareOperationalContext).toBe(false);
+  });
+
+  it("só autoriza contexto operacional após consentimento explícito", () => {
+    const context = currentIntelligenceContext(
+      { pathname: "/operacoes" },
+      "Operações",
+      "pt-PT",
+      "Europe/Lisbon",
+      true,
+    );
+    expect(context.shareOperationalContext).toBe(true);
   });
 
   it("traduz falhas de configuração sem expor detalhes técnicos", () => {
     expect(intelligenceErrorMessage(new FarphaIntelligenceError("ai_secret_missing"))).toContain("Secrets");
     expect(intelligenceErrorMessage(new FarphaIntelligenceError("database_unavailable"))).toContain("107.6");
     expect(intelligenceErrorMessage(new FarphaIntelligenceError("hourly_limit"))).toContain("limite");
+    expect(intelligenceErrorMessage(new FarphaIntelligenceError("daily_token_limit"))).toContain("diário");
     expect(intelligenceErrorMessage(new FarphaIntelligenceError("provider_quota_exhausted"))).toContain("sem saldo");
   });
 

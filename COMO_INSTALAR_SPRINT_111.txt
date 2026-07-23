@@ -1,0 +1,56 @@
+FARPHA — INSTALAR A SPRINT 111
+================================
+
+Esta atualização é cumulativa e preserva frontend/.env.local e .git porque
+esses ficheiros privados não estão no ZIP.
+
+1. Pare npm run dev com Ctrl+C.
+2. Confirme que o ZIP está em Downloads.
+3. Execute este bloco único no Git Bash:
+
+cd ~/Documents/Projetos &&
+test -f ~/Downloads/FARPHA_Sprint_111_Inteligencia_Contextual.zip &&
+unzip -q -o ~/Downloads/FARPHA_Sprint_111_Inteligencia_Contextual.zip -d ~/Documents/Projetos &&
+cd ~/Documents/Projetos/AgriOS &&
+test -f database/SPRINT_111_CONTEXTUAL_INTELLIGENCE.sql &&
+echo "SPRINT 111 INSTALADA CORRETAMENTE" &&
+cd frontend &&
+npm install &&
+npm run validate &&
+npm run audit:prod
+
+Se aparecer "SPRINT 111 INSTALADA CORRETAMENTE", continue no Supabase:
+
+1. Abra SQL Editor -> New query.
+2. Abra no computador:
+   AgriOS/database/SPRINT_111_CONTEXTUAL_INTELLIGENCE.sql
+3. Copie o ficheiro completo, cole no SQL Editor e clique em Run.
+4. O resultado deve listar sete colunas de telemetria.
+
+Em Edge Functions -> Secrets, confirme:
+
+OPENAI_API_KEY                  sua chave privada já guardada
+OPENAI_MODEL                    mantenha o modelo já validado
+FARPHA_AI_REQUESTS_PER_HOUR     20
+FARPHA_AI_DAILY_TOKEN_LIMIT     50000
+FARPHA_ALLOWED_ORIGINS          os endereços autorizados
+
+Nunca coloque OPENAI_API_KEY em .env.local nem numa variável VITE_*.
+
+Depois publique novamente a função no Git Bash:
+
+cd ~/Documents/Projetos/AgriOS
+npx supabase functions deploy farpha-intelligence --project-ref cafvzjljkxtssbqzqzbi
+
+Teste:
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm run dev
+
+Entre na conta, abra Ajuda e suporte -> Inteligência e faça dois testes:
+
+1. Com "Usar contexto da exploração" desmarcado.
+2. Com a opção marcada.
+
+No segundo teste, a resposta deve identificar as fontes agregadas utilizadas.
+Sem saldo de API, o guia local continuará a responder normalmente.

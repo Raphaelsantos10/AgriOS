@@ -7,8 +7,8 @@ describe("matriz de maturidade FARPHA", () => {
   it("classifica todos os módulos e mantém os totais auditados", () => {
     expect(moduleMaturityRegistry).toHaveLength(44);
     expect(countMaturity(moduleMaturityRegistry)).toEqual({
-      real: 12,
-      partial: 24,
+      real: 14,
+      partial: 22,
       demonstrative: 4,
       planned: 4,
     });

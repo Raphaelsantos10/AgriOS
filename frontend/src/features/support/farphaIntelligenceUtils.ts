@@ -3,6 +3,7 @@ import type { FarphaIntelligenceContext } from "../../repositories/intelligence/
 export type FarphaIntelligenceErrorCode =
   | "authentication_required"
   | "ai_secret_missing"
+  | "daily_token_limit"
   | "hourly_limit"
   | "database_unavailable"
   | "origin_not_allowed"
@@ -28,12 +29,14 @@ export function currentIntelligenceContext(
   documentTitle: string,
   locale: string,
   timeZone: string,
+  shareOperationalContext = false,
 ): FarphaIntelligenceContext {
   return {
     route: String(location.pathname || "/").slice(0, 240),
     page: String(documentTitle || "FARPHA").slice(0, 160),
     locale: String(locale || "pt-PT").slice(0, 30),
     timeZone: String(timeZone || "Europe/Lisbon").slice(0, 80),
+    shareOperationalContext,
   };
 }
 
@@ -41,6 +44,7 @@ export function intelligenceErrorMessage(error: unknown) {
   const code = error instanceof FarphaIntelligenceError ? error.code : "function_unavailable";
   if (code === "authentication_required") return "Entre novamente na conta para utilizar a Inteligência FARPHA.";
   if (code === "ai_secret_missing") return "A chave da Inteligência ainda não foi configurada nos Secrets do Supabase.";
+  if (code === "daily_token_limit") return "O limite diário da Inteligência foi atingido. O guia local continuará disponível.";
   if (code === "hourly_limit") return "O limite de perguntas desta hora foi atingido. Tente novamente mais tarde.";
   if (code === "origin_not_allowed") return "Este endereço do FARPHA ainda não foi autorizado na Edge Function.";
   if (code === "database_unavailable") return "Execute o SQL da Sprint 107.6 no Supabase.";

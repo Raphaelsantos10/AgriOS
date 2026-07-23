@@ -1,6 +1,6 @@
 # Matriz de maturidade dos módulos FARPHA
 
-Versão: `2026-07-23.108`
+Versão: `2026-07-23.111`
 
 Esta matriz responde de forma verificável à pergunta: **o módulo está ligado a
 dados reais, funciona apenas parcialmente, demonstra uma experiência futura ou
@@ -8,8 +8,8 @@ ainda está planeado?**
 
 | Estado | Total | Significado |
 | --- | ---: | --- |
-| Real | 12 | Fluxo ligado à fonte declarada, sujeito a configuração e validação operacional |
-| Parcial | 24 | Interface utilizável, mas integração, persistência ou validação incompleta |
+| Real | 14 | Fluxo ligado à fonte declarada, sujeito a configuração e validação operacional |
+| Parcial | 22 | Interface utilizável, mas integração, persistência ou validação incompleta |
 | Demonstrativo | 4 | Experiência com dados simulados ou sem motor de produção |
 | Planeado | 4 | Item de roadmap ainda sem implementação operacional |
 | **Total** | **44** | 40 rotas da aplicação e 4 capacidades futuras |
@@ -18,6 +18,7 @@ ainda está planeado?**
 
 - Explorações, detalhe da exploração e GIS.
 - Missões.
+- Ordens de trabalho e custos agrícolas.
 - Clima através de Open-Meteo.
 - Prontidão e segurança local.
 - Solo através de SoilGrids.
@@ -43,10 +44,10 @@ página Intelligence em previsões agrícolas reais.
 
 ## Persistência local prioritária
 
-Ordens de trabalho, custos, inventário, máquinas, diário, colheitas,
-conformidade, tratamentos, água, IFAP/PEPAC e dados fiscais ainda usam
-principalmente armazenamento do navegador. A Sprint 110 migrará estes fluxos
-por prioridade, sem fingir sincronização onde ela ainda não existe.
+Inventário, máquinas, diário, colheitas, conformidade, tratamentos, água,
+IFAP/PEPAC e dados fiscais ainda usam principalmente armazenamento do navegador.
+Ordens de trabalho e custos foram migrados na Sprint 110, mantendo fallback
+local identificado quando o Supabase não está disponível.
 
 ## Fonte integral
 

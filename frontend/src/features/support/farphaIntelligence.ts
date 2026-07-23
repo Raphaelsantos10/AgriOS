@@ -8,6 +8,7 @@ export {
 } from "./farphaIntelligenceUtils";
 
 export const FARPHA_AI_CONVERSATION_KEY = "farpha-ai-conversation-v1";
+export const FARPHA_AI_CONTEXT_KEY = "farpha-ai-share-operational-context-v1";
 
 export async function askFarphaIntelligence(
   message: string,

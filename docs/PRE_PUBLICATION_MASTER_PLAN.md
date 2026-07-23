@@ -49,8 +49,8 @@ Classificar cada módulo como **real**, **parcial**, **demonstrativo** ou
 - [x] Manter a chave privada numa Edge Function autenticada.
 - [x] Distinguir inteligência online e guia local verificado.
 - [ ] Ativar quota real da API e testar respostas de produção.
-- [ ] Contextualizar respostas com dados autorizados da página.
-- [ ] Medir custo, latência, falhas, uso e utilidade.
+- [x] Contextualizar respostas com dados agregados e autorizados pelo utilizador.
+- [x] Medir tokens, latência, falhas, uso, modelo e fontes; utilidade humana continua pendente.
 - [ ] Remover indicadores simulados ou identificá-los claramente.
 - [ ] Validar recomendações com técnicos agrícolas.
 

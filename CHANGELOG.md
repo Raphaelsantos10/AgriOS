@@ -1,5 +1,24 @@
 # FARPHA — Changelog
 
+## Sprint 111 — Inteligência contextual e mensurável
+
+- Contexto operacional agregado disponível apenas após consentimento explícito.
+- Explorações, talhões, ordens e custos consultados com isolamento por utilizador.
+- Nomes, coordenadas e descrições excluídos automaticamente do contexto agrícola.
+- Latência, tokens, modelo, fontes e atualização registados por pedido.
+- Limites configuráveis por hora e por total diário de tokens.
+- Respostas identificadas como online ou guia local, com fallback sem saldo de API.
+- OpenAI Responses API executada apenas na Edge Function com `store: false`.
+- Migração Supabase, RLS, testes e documentação de privacidade adicionados.
+- Página Intelligence continua declarada demonstrativa; esta entrega melhora o Centro de Ajuda.
+
+## Sprint 110 — Persistência operacional
+
+- Ordens de trabalho e custos agrícolas persistidos no Supabase.
+- Repositórios remotos com fallback local e sincronização de registos pendentes.
+- Tabelas `work_orders` e `agricultural_costs` protegidas por RLS.
+- Executor sequencial do `npm run validate` mostra a etapa atual no Windows.
+
 ## Sprint 109.2 — Validação responsiva das capturas
 
 - Capturas mobile passam a usar limite próprio de 360 × 700 px.

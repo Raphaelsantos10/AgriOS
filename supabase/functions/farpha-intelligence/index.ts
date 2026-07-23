@@ -1,10 +1,11 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 type RequestContext = {
   route?: string;
   page?: string;
   locale?: string;
   timeZone?: string;
+  shareOperationalContext?: boolean;
 };
 
 type IntelligenceRequest = {
@@ -17,6 +18,17 @@ type StoredMessage = {
   role: "user" | "assistant";
   content: string;
 };
+
+type OperationalContext = {
+  summary: string;
+  sources: string[];
+  updatedAt: string | null;
+};
+
+type FarmContextRow = { id: string; area: number | string | null; crop: string | null; updated_at: string | null };
+type FieldContextRow = { status: string | null; crop: string | null; area: number | string | null; updated_at: string | null };
+type OrderContextRow = { status: string | null; updated_at: string | null };
+type CostContextRow = { quantity: number | string | null; unit_cost: number | string | null; updated_at: string | null };
 
 const SYSTEM_INSTRUCTIONS = `
 És a Inteligência FARPHA, assistente profissional de uma plataforma agrícola portuguesa.
@@ -80,6 +92,7 @@ function cleanContext(value: unknown): RequestContext {
     page: cleanText(source.page, 160) || undefined,
     locale: cleanText(source.locale, 30) || undefined,
     timeZone: cleanText(source.timeZone, 80) || undefined,
+    shareOperationalContext: source.shareOperationalContext === true,
   };
 }
 
@@ -107,17 +120,97 @@ function outputText(payload: Record<string, unknown>) {
   }).join("\n").trim();
 }
 
-function buildInput(context: RequestContext, history: StoredMessage[]) {
+function latestIso(values: unknown[]) {
+  return values
+    .map((value) => typeof value === "string" ? value : "")
+    .filter(Boolean)
+    .sort()
+    .at(-1) ?? null;
+}
+
+async function loadOperationalContext(
+  admin: SupabaseClient<any>,
+  userId: string,
+  enabled: boolean,
+): Promise<OperationalContext> {
+  if (!enabled) return { summary: "Não autorizado pelo utilizador.", sources: [], updatedAt: null };
+
+  const { data: farms, error: farmsError } = await admin
+    .from("farms")
+    .select("id,area,crop,updated_at")
+    .eq("user_id", userId)
+    .limit(500);
+  if (farmsError) return { summary: "Contexto operacional indisponível.", sources: [], updatedAt: null };
+
+  const farmRows = (farms ?? []) as FarmContextRow[];
+  const farmIds = farmRows.map((farm) => String(farm.id));
+  const fieldsRequest = farmIds.length
+    ? admin.from("fields").select("status,crop,area,updated_at").in("farm_id", farmIds).limit(2000)
+    : Promise.resolve({ data: [], error: null });
+  const [fieldsResult, ordersResult, costsResult] = await Promise.all([
+    fieldsRequest,
+    admin.from("work_orders").select("status,updated_at").eq("owner_id", userId).limit(2000),
+    admin.from("agricultural_costs").select("quantity,unit_cost,updated_at").eq("owner_id", userId).limit(2000),
+  ]);
+
+  const fields = (fieldsResult.error ? [] : fieldsResult.data ?? []) as FieldContextRow[];
+  const orders = (ordersResult.error ? [] : ordersResult.data ?? []) as OrderContextRow[];
+  const costs = (costsResult.error ? [] : costsResult.data ?? []) as CostContextRow[];
+  const totalArea = farmRows.reduce((sum, farm) => sum + Number(farm.area ?? 0), 0);
+  const fieldStates = fields.reduce<Record<string, number>>((totals, field) => {
+    const status = cleanText(field.status, 30) || "sem estado";
+    totals[status] = (totals[status] ?? 0) + 1;
+    return totals;
+  }, {});
+  const crops = [...new Set([
+    ...farmRows.map((farm) => cleanText(farm.crop, 80)),
+    ...fields.map((field) => cleanText(field.crop, 80)),
+  ].filter(Boolean))].slice(0, 8);
+  const openOrders = orders.filter((order) => !["completed", "cancelled"].includes(String(order.status))).length;
+  const totalCosts = costs.reduce(
+    (sum, cost) => sum + Number(cost.quantity ?? 0) * Number(cost.unit_cost ?? 0),
+    0,
+  );
+  const sources = [
+    "explorações",
+    ...(fieldsResult.error ? [] : ["talhões"]),
+    ...(ordersResult.error ? [] : ["ordens"]),
+    ...(costsResult.error ? [] : ["custos"]),
+  ];
+  const updatedAt = latestIso([
+    ...farmRows.map((row) => row.updated_at),
+    ...fields.map((row) => row.updated_at),
+    ...orders.map((row) => row.updated_at),
+    ...costs.map((row) => row.updated_at),
+  ]);
+  const summary = [
+    `Explorações: ${farmRows.length}; área registada: ${totalArea.toFixed(2)} ha.`,
+    `Talhões: ${fields.length}; estados: ${Object.entries(fieldStates).map(([key, count]) => `${key}=${count}`).join(", ") || "sem registos"}.`,
+    `Culturas registadas: ${crops.join(", ") || "sem registos"}.`,
+    `Ordens abertas: ${openOrders} de ${orders.length}.`,
+    `Custos registados: ${totalCosts.toFixed(2)} EUR em ${costs.length} movimentos.`,
+  ].join("\n");
+  return { summary, sources, updatedAt };
+}
+
+function buildInput(
+  context: RequestContext,
+  operational: OperationalContext,
+  history: StoredMessage[],
+) {
   const contextLines = [
     `Página: ${context.page ?? "não indicada"}`,
     `Rota: ${context.route ?? "não indicada"}`,
     `Idioma: ${context.locale ?? "pt-PT"}`,
     `Fuso horário: ${context.timeZone ?? "Europe/Lisbon"}`,
+    `Contexto operacional autorizado: ${context.shareOperationalContext ? "sim" : "não"}`,
+    `Fontes operacionais: ${operational.sources.join(", ") || "nenhuma"}`,
+    `Atualização do contexto: ${operational.updatedAt ?? "não disponível"}`,
   ].join("\n");
   const conversation = history
     .map((message) => `${message.role === "user" ? "Utilizador" : "FARPHA"}: ${message.content}`)
     .join("\n\n");
-  return `CONTEXTO DA INTERFACE\n${contextLines}\n\nCONVERSA RECENTE\n${conversation}`;
+  return `CONTEXTO DA INTERFACE\n${contextLines}\n\nRESUMO OPERACIONAL AGREGADO\n${operational.summary}\n\nCONVERSA RECENTE\n${conversation}`;
 }
 
 Deno.serve(async (request) => {
@@ -174,13 +267,34 @@ Deno.serve(async (request) => {
     auth: { persistSession: false, autoRefreshToken: false },
   });
   const maximum = Math.min(100, Math.max(1, Number(Deno.env.get("FARPHA_AI_REQUESTS_PER_HOUR") ?? "20") || 20));
+  const dailyTokenLimit = Math.min(
+    2_000_000,
+    Math.max(1_000, Number(Deno.env.get("FARPHA_AI_DAILY_TOKEN_LIMIT") ?? "50000") || 50000),
+  );
   const windowStart = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  const { count, error: countError } = await admin
-    .from("farpha_ai_requests")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", user.id)
-    .gte("created_at", windowStart);
-  if (countError) return json(503, { error: "database_unavailable" }, cors.headers);
+  const dayStart = new Date();
+  dayStart.setUTCHours(0, 0, 0, 0);
+  const [hourlyResult, dailyResult] = await Promise.all([
+    admin
+      .from("farpha_ai_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .gte("created_at", windowStart),
+    admin
+      .from("farpha_ai_requests")
+      .select("total_tokens")
+      .eq("user_id", user.id)
+      .gte("created_at", dayStart.toISOString())
+      .limit(1000),
+  ]);
+  if (hourlyResult.error || dailyResult.error) {
+    return json(503, { error: "database_unavailable" }, cors.headers);
+  }
+  const count = hourlyResult.count;
+  const tokensUsedToday = ((dailyResult.data ?? []) as { total_tokens: number | null }[]).reduce(
+    (sum, row) => sum + Number(row.total_tokens ?? 0),
+    0,
+  );
   if ((count ?? 0) >= maximum) {
     await admin.from("farpha_ai_requests").insert({
       user_id: user.id,
@@ -191,6 +305,17 @@ Deno.serve(async (request) => {
       completed_at: new Date().toISOString(),
     });
     return json(429, { error: "hourly_limit", retryAfterSeconds: 3600 }, cors.headers);
+  }
+  if (tokensUsedToday >= dailyTokenLimit) {
+    await admin.from("farpha_ai_requests").insert({
+      user_id: user.id,
+      status: "limited",
+      model,
+      input_characters: message.length,
+      error_code: "daily_token_limit",
+      completed_at: new Date().toISOString(),
+    });
+    return json(429, { error: "daily_token_limit" }, cors.headers);
   }
 
   let conversationId = suppliedConversationId;
@@ -214,6 +339,11 @@ Deno.serve(async (request) => {
   }
 
   const requestId = crypto.randomUUID();
+  const operational = await loadOperationalContext(
+    admin,
+    user.id,
+    context.shareOperationalContext === true,
+  );
   const { error: requestError } = await admin.from("farpha_ai_requests").insert({
     id: requestId,
     user_id: user.id,
@@ -221,6 +351,8 @@ Deno.serve(async (request) => {
     status: "processing",
     model,
     input_characters: message.length,
+    context_sources: operational.sources,
+    context_updated_at: operational.updatedAt,
   });
   if (requestError) return json(503, { error: "database_unavailable" }, cors.headers);
 
@@ -249,6 +381,7 @@ Deno.serve(async (request) => {
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 35000);
+  const providerStartedAt = performance.now();
   try {
     const openAiResponse = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
@@ -259,7 +392,7 @@ Deno.serve(async (request) => {
       body: JSON.stringify({
         model,
         instructions: SYSTEM_INSTRUCTIONS,
-        input: buildInput(context, history),
+        input: buildInput(context, operational, history),
         max_output_tokens: 700,
         store: false,
       }),
@@ -284,6 +417,14 @@ Deno.serve(async (request) => {
 
     const answer = outputText(openAiPayload).slice(0, 8000);
     if (!answer) throw new Error("empty_provider_response");
+    const usage = openAiPayload.usage && typeof openAiPayload.usage === "object"
+      ? openAiPayload.usage as Record<string, unknown>
+      : {};
+    const inputTokens = Math.max(0, Number(usage.input_tokens ?? 0) || 0);
+    const outputTokens = Math.max(0, Number(usage.output_tokens ?? 0) || 0);
+    const totalTokens = Math.max(inputTokens + outputTokens, Number(usage.total_tokens ?? 0) || 0);
+    const latencyMs = Math.max(0, Math.round(performance.now() - providerStartedAt));
+    const providerRequestId = cleanText(openAiPayload.id, 160) || null;
 
     const { error: assistantError } = await admin.from("farpha_ai_messages").insert({
       conversation_id: conversationId,
@@ -298,6 +439,11 @@ Deno.serve(async (request) => {
     await admin.from("farpha_ai_requests").update({
       status: "success",
       output_characters: answer.length,
+      input_tokens: inputTokens,
+      output_tokens: outputTokens,
+      total_tokens: totalTokens,
+      latency_ms: latencyMs,
+      provider_request_id: providerRequestId,
       completed_at: new Date().toISOString(),
     }).eq("id", requestId);
 
@@ -307,6 +453,12 @@ Deno.serve(async (request) => {
       requestId,
       model,
       remaining: Math.max(0, maximum - (count ?? 0) - 1),
+      dailyTokensRemaining: Math.max(0, dailyTokenLimit - tokensUsedToday - totalTokens),
+      latencyMs,
+      inputTokens,
+      outputTokens,
+      contextSources: operational.sources,
+      contextUpdatedAt: operational.updatedAt,
     }, cors.headers);
   } catch (error) {
     const code = error instanceof DOMException && error.name === "AbortError"

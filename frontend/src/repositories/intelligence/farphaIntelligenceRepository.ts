@@ -9,6 +9,7 @@ export type FarphaIntelligenceContext = {
   page: string;
   locale: string;
   timeZone: string;
+  shareOperationalContext: boolean;
 };
 
 export type FarphaIntelligenceRequest = {
@@ -23,6 +24,12 @@ export type FarphaIntelligenceResponse = {
   requestId: string;
   model: string;
   remaining: number;
+  dailyTokensRemaining: number;
+  latencyMs: number;
+  inputTokens: number;
+  outputTokens: number;
+  contextSources: string[];
+  contextUpdatedAt: string | null;
 };
 
 function responseCode(value: unknown): FarphaIntelligenceErrorCode {
@@ -31,6 +38,7 @@ function responseCode(value: unknown): FarphaIntelligenceErrorCode {
     const allowed: FarphaIntelligenceErrorCode[] = [
       "authentication_required",
       "ai_secret_missing",
+      "daily_token_limit",
       "hourly_limit",
       "database_unavailable",
       "origin_not_allowed",

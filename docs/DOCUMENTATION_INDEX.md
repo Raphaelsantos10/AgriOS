@@ -16,6 +16,7 @@
 
 - [Política de segurança](../SECURITY.md)
 - [Baseline do repositório](security/REPOSITORY_SECURITY_BASELINE.md)
+- [Contexto e privacidade da Inteligência FARPHA](AI_CONTEXT_PRIVACY.md)
 - [Runbook de produção](PRODUCTION_RUNBOOK.md)
 - [Backup e recuperação](BACKUP_RECOVERY.md)
 
@@ -26,6 +27,7 @@
 - [Sprint 107.9](sprints/SPRINT_107_9_IDENTIDADE_REPOSITORIO.md)
 - [Sprint 108](sprints/SPRINT_108_MATRIZ_MATURIDADE.md)
 - [Sprint 109](sprints/SPRINT_109_DOCUMENTACAO_PUBLICA.md)
+- [Sprint 111](sprints/SPRINT_111_INTELIGENCIA_CONTEXTUAL.md)
 
 ## Histórico de sprints
 

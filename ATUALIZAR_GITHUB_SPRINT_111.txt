@@ -1,0 +1,18 @@
+FARPHA — PUBLICAR A SPRINT 111 NO GITHUB
+=========================================
+
+Execute apenas depois de instalar o ZIP, executar o SQL da Sprint 111,
+publicar novamente a Edge Function e concluir as validações.
+
+Bloco único para Git Bash:
+
+cd ~/Documents/Projetos/AgriOS &&
+git status &&
+git add -A &&
+git diff --cached --check &&
+git commit -m "feat: Sprint 111 - contextualizar e medir inteligencia FARPHA" &&
+git pull --rebase origin main &&
+git push origin main &&
+git status
+
+Resultado esperado: commit enviado para origin/main e working tree clean.
