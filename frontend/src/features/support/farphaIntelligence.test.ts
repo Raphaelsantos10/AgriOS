@@ -23,6 +23,7 @@ describe("Inteligência FARPHA", () => {
     expect(intelligenceErrorMessage(new FarphaIntelligenceError("ai_secret_missing"))).toContain("Secrets");
     expect(intelligenceErrorMessage(new FarphaIntelligenceError("database_unavailable"))).toContain("107.6");
     expect(intelligenceErrorMessage(new FarphaIntelligenceError("hourly_limit"))).toContain("limite");
+    expect(intelligenceErrorMessage(new FarphaIntelligenceError("provider_quota_exhausted"))).toContain("sem saldo");
   });
 
   it("usa mensagem segura para erros desconhecidos", () => {

@@ -38,7 +38,7 @@ import {
   type SupportTicketStatus,
 } from "./supportCenterUtils";
 
-type Message = { id: number; author: "assistant" | "user"; text: string; path?: string; action?: string };
+type Message = { id: number; author: "assistant" | "user"; text: string; path?: string; action?: string; source?: "online" | "local" };
 type Tab = "assistant" | "tickets" | "contact";
 type TicketFilter = "Todos" | SupportTicketStatus;
 
@@ -87,6 +87,7 @@ export default function SupportAssistant() {
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const messageId = useRef(2);
+  const intelligenceBusyRef = useRef(false);
   const filteredTickets = useMemo(
     () => filter === "Todos" ? tickets : tickets.filter((ticket) => ticket.status === filter),
     [filter, tickets],
@@ -150,14 +151,14 @@ export default function SupportAssistant() {
 
   async function ask(text: string) {
     const clean = text.trim();
-    if (!clean || intelligenceBusy) return;
+    if (!clean || intelligenceBusyRef.current) return;
     const base = messageId.current;
     messageId.current += 2;
     setMessages((current) => [...current, { id: base, author: "user", text: clean }]);
     setQuestion("");
     const onlineEnabled = import.meta.env.VITE_FARPHA_AI_ENABLED !== "false";
     if (mode !== "required" || !session || !onlineEnabled || !navigator.onLine) {
-      setMessages((current) => [...current, { id: base + 1, author: "assistant", ...answerSupportQuestion(clean) }]);
+      setMessages((current) => [...current, { id: base + 1, author: "assistant", source: "local", ...answerSupportQuestion(clean) }]);
       setIntelligenceNotice(
         mode !== "required"
           ? "Guia local ativo. Ative a autenticação Supabase para utilizar a Inteligência online."
@@ -168,6 +169,7 @@ export default function SupportAssistant() {
       return;
     }
 
+    intelligenceBusyRef.current = true;
     setIntelligenceBusy(true);
     setIntelligenceNotice("");
     try {
@@ -182,15 +184,16 @@ export default function SupportAssistant() {
       const result = await askFarphaIntelligence(clean, conversationId, context);
       sessionStorage.setItem(storageKey, result.conversationId);
       setRemainingQuestions(result.remaining);
-      setMessages((current) => [...current, { id: base + 1, author: "assistant", text: result.answer }]);
+      setMessages((current) => [...current, { id: base + 1, author: "assistant", source: "online", text: result.answer }]);
       setIntelligenceNotice(`Resposta protegida · ${result.remaining} perguntas disponíveis nesta hora.`);
     } catch (error) {
       setMessages((current) => [
         ...current,
-        { id: base + 1, author: "assistant", ...answerSupportQuestion(clean) },
+        { id: base + 1, author: "assistant", source: "local", ...answerSupportQuestion(clean) },
       ]);
       setIntelligenceNotice(intelligenceErrorMessage(error));
     } finally {
+      intelligenceBusyRef.current = false;
       setIntelligenceBusy(false);
     }
   }
@@ -307,7 +310,7 @@ export default function SupportAssistant() {
               {intelligenceBusy ? "A analisar…" : mode === "required" && import.meta.env.VITE_FARPHA_AI_ENABLED !== "false" ? "Inteligência segura" : "Guia local"}
             </span>
           </div>
-          <div className="space-y-3">{messages.map((message) => <article key={message.id} className={`max-w-[90%] rounded-2xl p-3 text-sm leading-6 ${message.author === "user" ? "ml-auto bg-[#276545] text-white" : "border border-[var(--farpha-border)] bg-[var(--farpha-surface)] text-[var(--farpha-text)] shadow-sm"}`}><p>{message.text}</p>{message.path && <button onClick={() => navigate(message.path!)} className="mt-2 inline-flex items-center gap-1 font-black text-emerald-700 dark:text-emerald-300">{message.action}<ChevronRight size={15}/></button>}</article>)}</div>
+          <div className="space-y-3">{messages.map((message) => <article key={message.id} className={`max-w-[90%] rounded-2xl p-3 text-sm leading-6 ${message.author === "user" ? "ml-auto bg-[#276545] text-white" : "border border-[var(--farpha-border)] bg-[var(--farpha-surface)] text-[var(--farpha-text)] shadow-sm"}`}>{message.author === "assistant" && message.source && <p className="mb-1 text-[9px] font-black uppercase tracking-[.14em] text-[var(--farpha-text-muted)]">{message.source === "online" ? "Inteligência online" : "Guia local verificado"}</p>}<p>{message.text}</p>{message.path && <button onClick={() => navigate(message.path!)} className="mt-2 inline-flex items-center gap-1 font-black text-emerald-700 dark:text-emerald-300">{message.action}<ChevronRight size={15}/></button>}</article>)}</div>
           {intelligenceBusy && <div role="status" className="mt-3 flex max-w-[90%] items-center gap-2 rounded-2xl border border-[var(--farpha-border)] bg-[var(--farpha-surface)] p-3 text-xs text-[var(--farpha-text-muted)]"><LoaderCircle size={16} className="animate-spin"/>A Inteligência FARPHA está a preparar uma resposta segura…</div>}
           {intelligenceNotice && <p role="status" className="mt-3 rounded-xl bg-[var(--farpha-surface-muted)] p-2 text-[10px] leading-4 text-[var(--farpha-text-muted)]">{intelligenceNotice}</p>}
           {messages.length === 1 && <div className="mt-4 grid gap-2">{quickActions.map((item) => <button key={item} disabled={intelligenceBusy} onClick={() => void ask(item)} className="flex min-h-11 items-center justify-between rounded-xl border border-[var(--farpha-border)] bg-[var(--farpha-surface)] px-3 text-left text-xs font-bold text-[var(--farpha-text)] hover:border-emerald-500 disabled:opacity-50">{item}<ChevronRight size={15}/></button>)}</div>}

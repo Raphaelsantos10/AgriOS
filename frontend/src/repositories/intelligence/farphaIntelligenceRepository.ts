@@ -34,6 +34,7 @@ function responseCode(value: unknown): FarphaIntelligenceErrorCode {
       "hourly_limit",
       "database_unavailable",
       "origin_not_allowed",
+      "provider_quota_exhausted",
       "provider_rate_limit",
       "provider_timeout",
       "provider_unavailable",

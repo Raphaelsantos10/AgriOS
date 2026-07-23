@@ -25,7 +25,20 @@ export type SupportAnswer = {
   text: string;
   path?: string;
   action?: string;
+  intent?: SupportIntent;
 };
+
+export type SupportIntent =
+  | "plans"
+  | "security"
+  | "exploration"
+  | "weather"
+  | "costs"
+  | "diagnostics"
+  | "human"
+  | "getting_started"
+  | "navigation"
+  | "general";
 
 export const SUPPORT_TICKETS_KEY = "farpha-support-tickets-v2";
 export const OPEN_SUPPORT_EVENT = "farpha:open-support";
@@ -158,16 +171,35 @@ export function supportWhatsappHref(ticket: SupportTicket, whatsapp: string) {
   return `https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`;
 }
 
-export function answerSupportQuestion(question: string): SupportAnswer {
+export function classifySupportIntent(question: string): SupportIntent {
   const value = clean(question, 300).toLocaleLowerCase("pt-PT");
-  if (/plano|preço|preco|subscri|cartão|cartao|teste/.test(value)) return { text: "Compare Free, Plus e Pro em Plano e subscrição. A escolha feita na página pública acompanha o cadastro.", path: "/configuracoes#subscricao", action: "Abrir planos" };
-  if (/senha|palavra-passe|2fa|seguran|sessão|sessao/.test(value)) return { text: "Na área Segurança pode recuperar a palavra-passe, configurar MFA e rever sessões. Nunca partilhe códigos ou palavras-passe no apoio.", path: "/configuracoes#seguranca", action: "Abrir segurança" };
-  if (/mapa|talhão|talhao|explora/.test(value)) return { text: "Comece por criar uma exploração. Depois desenhe ou importe os talhões; o mapa relaciona clima, missões, riscos e histórico.", path: "/exploracoes", action: "Abrir explorações" };
-  if (/clima|tempo|chuva|meteor/.test(value)) return { text: "Clima utiliza as coordenadas da exploração selecionada para apresentar previsão e alertas relevantes.", path: "/clima", action: "Abrir clima" };
-  if (/custo|finance|despesa/.test(value)) return { text: "Registe custos por operação e consulte o consolidado no Relatório Financeiro.", path: "/custos", action: "Abrir custos" };
-  if (/erro|problema|branco|carrega|diagn/.test(value)) return { text: "Execute primeiro o Diagnóstico. Se o problema continuar, crie um pedido com a página, a ação, o horário e a mensagem apresentada — sem dados sensíveis.", path: "/diagnostico", action: "Executar diagnóstico" };
-  if (/humano|pessoa|agente|atendente|administrador|whatsapp|telefone/.test(value)) return { text: "Abra Equipa para falar com o administrador. Em Pedidos pode preparar e enviar o contexto completo por email ou WhatsApp." };
-  if (/começar|comecar|primeiro|início|inicio/.test(value)) return { text: "Fluxo recomendado: crie uma exploração, adicione talhões, consulte clima e alertas, registe operações e reveja as prioridades no Dashboard.", path: "/exploracoes", action: "Começar agora" };
-  if (/módulo|modulo|encontrar|navegar/.test(value)) return { text: "Use Ctrl+K ou a pesquisa global para encontrar qualquer módulo. Também posso conduzi-lo se disser a tarefa que pretende realizar." };
-  return { text: "Posso orientar tarefas, localizar módulos e preparar um diagnóstico. Diga o resultado que pretende obter ou crie um pedido para encaminhar a situação à equipa." };
+  if (/mapa|talhão|talhao|parcela|polígono|poligono|desenhar|importar|exploraç|explorac|quinta|fazenda/.test(value)) return "exploration";
+  if (/clima|tempo|chuva|meteor|temperatura|vento|geada/.test(value)) return "weather";
+  if (/custo|finance|despesa|fatura|factura|orçamento|orcamento/.test(value)) return "costs";
+  if (/erro|problema|branco|carrega|diagn|bloque|falha/.test(value)) return "diagnostics";
+  if (/senha|palavra-passe|2fa|mfa|seguran|sessão|sessao|entrar|login/.test(value)) return "security";
+  if (/plano|preço|preco|subscri|pagamento|mensalidade|teste grátis|teste gratis/.test(value)) return "plans";
+  if (/humano|pessoa|agente|atendente|administrador|whatsapp|telefone|equipa/.test(value)) return "human";
+  if (/módulo|modulo|encontrar|navegar|menu|pesquisa/.test(value)) return "navigation";
+  if (/começar|comecar|primeiro|início|inicio/.test(value)) return "getting_started";
+  return "general";
+}
+
+export function answerSupportQuestion(question: string): SupportAnswer {
+  const intent = classifySupportIntent(question);
+  if (intent === "exploration") return {
+    intent,
+    text: "Para começar: 1) abra Explorações; 2) selecione Nova exploração e preencha nome e localização; 3) guarde; 4) abra a exploração no mapa; 5) escolha Novo talhão; 6) desenhe o limite ponto a ponto ou importe GeoJSON/KML; 7) confirme a geometria, cultura e área e guarde. Depois o talhão ficará disponível para clima, operações, custos e histórico.",
+    path: "/exploracoes",
+    action: "Abrir Explorações",
+  };
+  if (intent === "weather") return { intent, text: "Abra Clima depois de selecionar uma exploração com coordenadas. O FARPHA utiliza essa localização para apresentar previsão, chuva, vento e alertas relevantes.", path: "/clima", action: "Abrir Clima" };
+  if (intent === "costs") return { intent, text: "Abra Custos para registar mão de obra, água, combustível, produtos e máquinas. Associe cada registo à exploração, talhão e operação para obter o consolidado financeiro.", path: "/custos", action: "Abrir Custos" };
+  if (intent === "diagnostics") return { intent, text: "Execute primeiro o Diagnóstico. Se o problema continuar, crie um pedido com a página, a ação, o horário e a mensagem apresentada — sem dados sensíveis.", path: "/diagnostico", action: "Executar Diagnóstico" };
+  if (intent === "security") return { intent, text: "Na área Segurança pode recuperar a palavra-passe, configurar MFA e rever sessões. Nunca partilhe códigos ou palavras-passe no apoio.", path: "/configuracoes#seguranca", action: "Abrir Segurança" };
+  if (intent === "plans") return { intent, text: "Compare Free, Plus e Pro em Plano e subscrição. A escolha feita na página pública acompanha o cadastro.", path: "/configuracoes#subscricao", action: "Abrir Planos" };
+  if (intent === "human") return { intent, text: "Abra Equipa para falar com o administrador. Em Pedidos pode criar um chamado e manter toda a conversa sincronizada na sua conta." };
+  if (intent === "navigation") return { intent, text: "Use Ctrl+K ou a pesquisa global para encontrar qualquer módulo. Se indicar a tarefa, o guia pode apontar o destino correto." };
+  if (intent === "getting_started") return { intent, text: "Fluxo inicial recomendado: crie uma exploração, adicione os talhões, consulte clima e alertas, registe operações e reveja as prioridades no Dashboard.", path: "/exploracoes", action: "Começar agora" };
+  return { intent, text: "Posso orientar tarefas, localizar módulos e preparar um diagnóstico. Diga o resultado que pretende obter ou crie um pedido para encaminhar a situação à equipa." };
 }

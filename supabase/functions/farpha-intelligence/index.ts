@@ -267,7 +267,15 @@ Deno.serve(async (request) => {
     });
     const openAiPayload = await openAiResponse.json().catch(() => ({})) as Record<string, unknown>;
     if (!openAiResponse.ok) {
-      const code = openAiResponse.status === 429 ? "provider_rate_limit" : `provider_${openAiResponse.status}`;
+      const providerError = openAiPayload.error && typeof openAiPayload.error === "object"
+        ? openAiPayload.error as Record<string, unknown>
+        : {};
+      const providerReason = `${String(providerError.code ?? "")} ${String(providerError.type ?? "")}`.toLowerCase();
+      const code = openAiResponse.status === 429
+        ? /quota|billing|credit|insufficient/.test(providerReason)
+          ? "provider_quota_exhausted"
+          : "provider_rate_limit"
+        : `provider_${openAiResponse.status}`;
       await admin.from("farpha_ai_requests").update({
         status: "error", error_code: code, completed_at: new Date().toISOString(),
       }).eq("id", requestId);

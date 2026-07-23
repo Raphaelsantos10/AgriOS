@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   answerSupportQuestion,
   changeSupportTicketStatus,
+  classifySupportIntent,
   makeSupportTicket,
   mergeSupportTickets,
   readSupportTickets,
@@ -66,5 +67,13 @@ describe("supportCenterUtils", () => {
     expect(answerSupportQuestion("Como vejo o clima?").path).toBe("/clima");
     expect(answerSupportQuestion("Tenho um erro").path).toBe("/diagnostico");
     expect(answerSupportQuestion("Quero falar com o administrador").text).toContain("Equipa");
+  });
+
+  it("não troca exploração por segurança no fallback", () => {
+    const question = "Como posso criar a minha primeira exploração e desenhar os talhões?";
+    expect(classifySupportIntent(question)).toBe("exploration");
+    expect(answerSupportQuestion(question).path).toBe("/exploracoes");
+    expect(answerSupportQuestion(question).text).toContain("Novo talhão");
+    expect(answerSupportQuestion(question).text).not.toContain("palavra-passe");
   });
 });

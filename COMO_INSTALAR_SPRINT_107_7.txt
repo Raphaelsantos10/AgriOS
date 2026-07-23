@@ -1,0 +1,36 @@
+FARPHA — INSTALAÇÃO DA SPRINT 107.7
+
+Coloque FARPHA_Sprint_107_7_Assistente_Resiliente.zip em Downloads.
+
+Pare o servidor com Ctrl+C e cole no Git Bash:
+
+cd ~/Documents/Projetos
+ENV_BACKUP_FARPHA="$(mktemp)"
+cp AgriOS/frontend/.env.local "$ENV_BACKUP_FARPHA"
+unzip -q -o ~/Downloads/FARPHA_Sprint_107_7_Assistente_Resiliente.zip -d ~/Documents/Projetos
+cp "$ENV_BACKUP_FARPHA" AgriOS/frontend/.env.local
+rm "$ENV_BACKUP_FARPHA"
+cd AgriOS/frontend
+npm install
+npm run validate
+
+PUBLICAR A FUNÇÃO ATUALIZADA
+============================
+
+cd ~/Documents/Projetos/AgriOS
+npx supabase functions deploy farpha-intelligence --project-ref cafvzjljkxtssbqzqzbi
+
+Não é necessário executar SQL e não é necessário recriar os Secrets.
+
+TESTAR SEM PAGAMENTO
+====================
+
+cd ~/Documents/Projetos/AgriOS/frontend
+npm run dev
+
+No Centro de Ajuda, pergunte:
+
+Como posso criar a minha primeira exploração e desenhar os talhões?
+
+A resposta deve mostrar "Guia local verificado" e explicar Explorações,
+Novo talhão, desenho/importação e gravação.

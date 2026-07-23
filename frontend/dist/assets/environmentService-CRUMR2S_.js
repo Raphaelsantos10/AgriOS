@@ -1,1 +1,0 @@
-import{F as e}from"./index-Oq6hDa33.js";async function t(t){let{data:n,error:r}=await e.from(`field_environment_profiles`).select(`*`).eq(`field_id`,t).maybeSingle();if(r)throw r;return n}async function n(t){let{data:n,error:r}=await e.from(`field_environment_profiles`).upsert(t,{onConflict:`field_id`}).select().single();if(r)throw r;return n}export{n,t};

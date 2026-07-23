@@ -1,1 +1,0 @@
-var e=`farpha.weather.latest.v1`;function t(){let t=localStorage.getItem(e);if(!t)return null;try{return JSON.parse(t)}catch{return localStorage.removeItem(e),null}}function n(t,n,r){let i={forecast:t,locationLabel:n,farmId:r,savedAt:new Date().toISOString()};return localStorage.setItem(e,JSON.stringify(i)),i}export{n,t};

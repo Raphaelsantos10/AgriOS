@@ -6,6 +6,7 @@ export type FarphaIntelligenceErrorCode =
   | "hourly_limit"
   | "database_unavailable"
   | "origin_not_allowed"
+  | "provider_quota_exhausted"
   | "provider_rate_limit"
   | "provider_timeout"
   | "provider_unavailable"
@@ -43,6 +44,7 @@ export function intelligenceErrorMessage(error: unknown) {
   if (code === "hourly_limit") return "O limite de perguntas desta hora foi atingido. Tente novamente mais tarde.";
   if (code === "origin_not_allowed") return "Este endereço do FARPHA ainda não foi autorizado na Edge Function.";
   if (code === "database_unavailable") return "Execute o SQL da Sprint 107.6 no Supabase.";
+  if (code === "provider_quota_exhausted") return "A Inteligência online está sem saldo de API. O guia local respondeu e continuará disponível.";
   if (code === "provider_rate_limit") return "O serviço de Inteligência está temporariamente ocupado.";
   if (code === "provider_timeout") return "A resposta demorou demasiado. Tente novamente.";
   if (code === "service_not_configured") return "A Edge Function ainda não está totalmente configurada.";

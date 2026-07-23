@@ -1,0 +1,13 @@
+FARPHA — GITHUB DA SPRINT 107.7
+
+Execute depois de npm run validate e do teste funcional:
+
+cd ~/Documents/Projetos/AgriOS
+git status
+git add .
+git commit -m "fix: Sprint 107.7 - tornar assistente FARPHA resiliente"
+git pull --rebase origin main
+git push origin main
+git status
+
+Nunca adicione frontend/.env.local ou chaves privadas ao Git.
